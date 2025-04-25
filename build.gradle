@@ -1,3 +1,9 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.3'
@@ -30,12 +36,6 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
 }
 
 subprojects {
