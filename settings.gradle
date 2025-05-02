@@ -1,5 +1,6 @@
 rootProject.name = 'routepick'
 
+include 'routepick-common'
 include 'routepick-admin'
 include 'routepick-api'
 include 'routepick-app' 

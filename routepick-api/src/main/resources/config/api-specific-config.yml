@@ -1,0 +1,15 @@
+# API 특화 설정
+api:
+  version: 1.0.0
+  security:
+    jwt:
+      secret: your-secret-key
+      expiration: 86400000 # 24시간
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "*"
+    allowed-headers: "*"
+  rate-limit:
+    enabled: true
+    capacity: 100
+    refill-rate: 10
