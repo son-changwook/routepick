@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: routepick-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: routepick
+      MYSQL_USER: routepick
+      MYSQL_PASSWORD: routepick
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - routepick-network
+
+  routepick-api:
+    build:
+      context: ./backend
+      dockerfile: routepick-api/Dockerfile
+    container_name: routepick-api
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/routepick?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: routepick
+      SPRING_DATASOURCE_PASSWORD: routepick
+    ports:
+      - "8080:8080"
+    networks:
+      - routepick-network
+
+  routepick-admin:
+    build:
+      context: ./backend
+      dockerfile: routepick-admin/Dockerfile
+    container_name: routepick-admin
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/routepick?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: routepick
+      SPRING_DATASOURCE_PASSWORD: routepick
+    ports:
+      - "8081:8081"
+    networks:
+      - routepick-network
+
+  routepick-web:
+    build:
+      context: ./frontend
+      dockerfile: routepick-web/Dockerfile
+    container_name: routepick-web
+    ports:
+      - "80:80"
+    networks:
+      - routepick-network
+
+  routepick-app:
+    build:
+      context: ./frontend
+      dockerfile: routepick-app/Dockerfile
+    container_name: routepick-app
+    ports:
+      - "81:80"
+    networks:
+      - routepick-network
+
+networks:
+  routepick-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
