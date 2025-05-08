@@ -13,6 +13,11 @@ build/
 # Local properties
 local.properties
 
+# Application properties
+**/application.properties
+**/application-*.properties
+**/application-*.yml
+
 # System files
 .DS_Store
 Thumbs.db
