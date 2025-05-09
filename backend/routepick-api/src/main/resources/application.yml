@@ -1,1 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/routepick?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: routepick
+    password: routepick
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.routepick.api.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    com.routepick.api: DEBUG
+    org.springframework: INFO
