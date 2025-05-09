@@ -15,25 +15,34 @@ routepick/
 ## 기술 스택
 
 ### 백엔드
+
 - Spring Boot (Gradle)
 - JDK 17
 - Java + MyBatis
 - MySQL
 
 ### 프론트엔드
+
 - JavaScript + TypeScript
 - Node.js
 - API Gateway
 - WebSocket
 
 ### 인프라
+
 - AWS
 - Docker
 - GitHub
 
+### 개발 환경 세팅
+
+- Docker 설치
+- VS Code Docker 확장 설치 (추천)
+
 ## 개발 환경 설정
 
 ### 필수 요구사항
+
 - JDK 17
 - Node.js
 - MySQL
@@ -41,12 +50,14 @@ routepick/
 - Gradle
 
 ### 백엔드 실행
+
 ```bash
 cd backend
 ./gradlew bootRun
 ```
 
 ### 프론트엔드 실행
+
 ```bash
 cd frontend
 npm install
@@ -54,4 +65,5 @@ npm start
 ```
 
 ## 라이선스
+
 MIT License
