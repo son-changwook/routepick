@@ -2,8 +2,6 @@ rootProject.name = 'routepick'
 
 include 'routepick-admin'
 include 'routepick-api'
-include 'routepick-app'
 
 project(':routepick-admin').projectDir = file('backend/routepick-admin')
 project(':routepick-api').projectDir = file('backend/routepick-api')
-project(':routepick-app').projectDir = file('backend/routepick-app') 

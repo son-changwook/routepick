@@ -99,8 +99,3 @@ project(':routepick-api') {
         mainClass = 'com.routepick.api.ApiApplication'
     }
 }
-
-project(':routepick-app') {
-    // React Native 앱은 별도의 Gradle 설정이 필요하지 않음
-    // 필요한 경우 여기에 추가 설정을 넣을 수 있음
-}
