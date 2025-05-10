@@ -32,6 +32,8 @@ dependencies {
     
     // MyBatis 테스트 의존성 (api 모듈만의 특수 의존성)
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+
+    implementation project(':routepick-common')
 }
 
 bootRun {

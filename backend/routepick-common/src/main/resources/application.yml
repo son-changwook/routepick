@@ -1,0 +1,87 @@
+spring:
+  application:
+    name: routepick-common
+
+# 공통 로깅 설정
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.hibernate: INFO
+    com.routepick.common: DEBUG  # 공통 모듈의 로깅 레벨
+
+# 공통 서버 설정
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+
+# 공통 상수 설정 (constant 패키지 관련)
+constant:
+  date:
+    format: yyyy-MM-dd HH:mm:ss
+    timezone: Asia/Seoul
+  pagination:
+    default-size: 10
+    max-size: 100
+
+# 공통 유틸리티 설정 (util 패키지 관련)
+util:
+  file:
+    upload:
+      max-size: 10MB
+      allowed-types: jpg,jpeg,png,gif
+  validation:
+    password:
+      min-length: 8
+      max-length: 20
+
+# 공통 예외 처리 설정 (exception 패키지 관련)
+exception:
+  handler:
+    enabled: true
+    log-level: ERROR
+  response:
+    include-stacktrace: false
+    include-message: true
+
+# 공통 설정 (config 패키지 관련)
+config:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:your-secret-key}
+      expiration: 86400000  # 24시간
+  cache:
+    type: redis
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+
+# 공통 도메인 설정 (domain 패키지 관련)
+domain:
+  user:
+    status:
+      default: ACTIVE
+    type:
+      default: NORMAL
+  validation:
+    email:
+      pattern: ^[A-Za-z0-9+_.-]+@(.+)$
+    phone:
+      pattern: ^\\d{3}-\\d{3,4}-\\d{4}$
+
+# 공통 메시지 설정
+message:
+  encoding: UTF-8
+  basename: messages/messages
+
+# 공통 API 문서 설정
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
