@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.3'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'io.spring.dependency-management' version '1.1.3'
 }
 
 group = 'com.routepick'
@@ -22,20 +22,24 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // WebSocket 의존성 (api 모듈만의 특수 의존성)
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+    // JWT 관련 의존성 (api 모듈만의 특수 의존성)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
-    
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // MyBatis 테스트 의존성 (api 모듈만의 특수 의존성)
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+}
+
+bootRun {
+    mainClass = 'com.routepick.api.ApiApplication'
+}
+
+bootJar {
+    mainClass = 'com.routepick.api.ApiApplication'
 }
 
 tasks.named('test') {
