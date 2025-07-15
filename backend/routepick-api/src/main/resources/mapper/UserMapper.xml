@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routepick.api.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.routepick.common.domain.user.User">
+        <id property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="userName" column="user_name"/>
+        <result property="phone" column="phone"/>
+        <result property="profileImageUrl" column="profile_image_url"/>
+        <result property="userType" column="user_type"/>
+        <result property="userStatus" column="user_status"/>
+        <result property="lastLoginAt" column="last_login_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 사용자명으로 일반 사용자 조회 -->
+    <select id="findByUsername" resultMap="UserResultMap">
+        SELECT * FROM users 
+        WHERE user_name = #{username} 
+        AND user_type = 'NORMAL'
+        AND user_status != 'DELETED'
+    </select>
+
+    <!-- 이메일로 일반 사용자 조회 -->
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT * FROM users 
+        WHERE email = #{email} 
+        AND user_type = 'NORMAL'
+        AND user_status != 'DELETED'
+    </select>
+
+    <!-- 사용자 ID로 일반 사용자 조회 -->
+    <select id="findById" resultMap="UserResultMap">
+        SELECT * FROM users 
+        WHERE user_id = #{userId} 
+        AND user_type = 'NORMAL'
+        AND user_status != 'DELETED'
+    </select>
+
+    <!-- 활성화된 일반 사용자 목록 조회 -->
+    <select id="findAllActiveUsers" resultMap="UserResultMap">
+        SELECT * FROM users 
+        WHERE user_type = 'NORMAL' 
+        AND user_status = 'ACTIVE'
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 일반 사용자 저장 -->
+    <insert id="insertUser" parameterType="com.routepick.common.domain.user.User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users (
+            email, password_hash, user_name, phone, profile_image_url, 
+            user_type, user_status, created_at, updated_at
+        ) VALUES (
+            #{email}, #{passwordHash}, #{userName}, #{phone}, #{profileImageUrl},
+            'NORMAL', 'ACTIVE', NOW(), NOW()
+        )
+    </insert>
+
+    <!-- 일반 사용자 정보 수정 -->
+    <update id="updateUser" parameterType="com.routepick.common.domain.user.User">
+        UPDATE users SET
+            user_name = #{userName},
+            phone = #{phone},
+            profile_image_url = #{profileImageUrl},
+            updated_at = NOW()
+        WHERE user_id = #{userId} AND user_type = 'NORMAL'
+    </update>
+
+    <!-- 일반 사용자 삭제 (비활성화) -->
+    <update id="deleteUser">
+        UPDATE users SET
+            user_status = 'DELETED',
+            updated_at = NOW()
+        WHERE user_id = #{userId} AND user_type = 'NORMAL'
+    </update>
+
+    <!-- 이메일 중복 확인 -->
+    <select id="existsByEmail" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM users 
+        WHERE email = #{email} AND user_type = 'NORMAL'
+    </select>
+
+    <!-- 사용자명 중복 확인 -->
+    <select id="existsByUsername" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM users 
+        WHERE user_name = #{username} AND user_type = 'NORMAL'
+    </select>
+
+</mapper> 

@@ -4,11 +4,10 @@ import com.routepick.common.domain.common.BaseDomain;
 import com.routepick.common.enums.UserType;
 import com.routepick.common.enums.UserStatus;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,20 +23,19 @@ import java.util.Collections;
  */
 @Getter
 @Setter
-@Builder   
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 public class User extends BaseDomain implements UserDetails {
     
-    private int userId;
+    private Long userId;
     private String email;
     private String passwordHash;
     private String userName;
     private String phone;
     private String profileImageUrl;
-    private LocalDateTime lastLoginAt;
     private UserType userType;
     private UserStatus userStatus;
+    private LocalDateTime lastLoginAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -48,7 +46,7 @@ public class User extends BaseDomain implements UserDetails {
         // 사용자 타입에 따른 권한 부여
         // ADMIN: ROLE_ADMIN
         // GYM_ADMIN: ROLE_GYM_ADMIN
-        // NORMAL: ROLE_USER
+        // USER: ROLE_USER
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userType.name()));
         //getAuthorities() 메서드에서 반환하는 권한에 ROLE_ 접두사가 포함되어 있지만, @PreAuthorize에서는 이를 제외하고 사용합니다.
         //권한 확인 예시
@@ -82,7 +80,7 @@ public class User extends BaseDomain implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return true;    
     }
 
     @Override

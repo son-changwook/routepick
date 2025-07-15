@@ -2,7 +2,6 @@ package com.routepick.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
  * 일반 사용자를 위한 API 서비스를 제공합니다.
  */
 @SpringBootApplication
-@EnableJpaAuditing
 @EnableScheduling
 @EnableMethodSecurity
 public class ApiApplication {
