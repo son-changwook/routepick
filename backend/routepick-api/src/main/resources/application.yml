@@ -3,6 +3,27 @@ spring:
     active: dev
   application:
     name: routepick-api
+  
+  # 이메일 설정
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:routepick@gmail.com}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    default-encoding: UTF-8
+    test-connection: false
 
 # 공통 로깅 설정
 logging:
@@ -10,6 +31,7 @@ logging:
     root: INFO
     org.springframework: INFO
     org.hibernate: INFO
+    com.routepick.api.service.email: DEBUG  # 이메일 서비스 로깅 추가
 
 # 공통 서버 설정
 server:
@@ -17,3 +39,36 @@ server:
     include-message: always
     include-binding-errors: always
     include-stacktrace: never
+
+# 이메일 관련 설정
+email:
+  verification:
+    code-expires-minutes: 5
+    session-expires-minutes: 10
+    from-email: ${MAIL_FROM:noreply@routepick.com}
+    subject: "[RoutePick] 이메일 인증 코드"
+    template:
+      verification-code: |
+        안녕하세요!
+        
+        RoutePick 회원가입을 위한 인증 코드입니다.
+        
+        인증 코드: {verificationCode}
+        
+        이 코드는 5분 후에 만료됩니다.
+        본인이 요청하지 않은 경우 이 이메일을 무시하세요.
+        
+        감사합니다.
+        RoutePick 팀
+
+# Swagger/OpenAPI 설정
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    doc-expansion: none
+    disable-swagger-default-url: true
+  packages-to-scan: com.routepick.api.controller

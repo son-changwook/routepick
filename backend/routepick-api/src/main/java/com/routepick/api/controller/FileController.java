@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * 파일 서빙 컨트롤러
+ * 프로필 이미지 파일을 서빙합니다.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/files")

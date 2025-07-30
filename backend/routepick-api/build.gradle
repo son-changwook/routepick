@@ -34,6 +34,16 @@ dependencies {
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 
     implementation project(':routepick-common')
+
+    // 버킷 4j 의존성 (api 모듈만의 특수 의존성)
+    implementation 'com.bucket4j:bucket4j-core:8.5.0'
+    implementation 'com.bucket4j:bucket4j-caffeine:8.5.0'
+
+    // 이메일 발송을 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    
+    // Swagger/OpenAPI 의존성
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 bootRun {

@@ -1,4 +1,4 @@
-package com.routepick.api.dto;
+package com.routepick.api.dto.auth;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
@@ -32,6 +32,10 @@ public class SignupRequest {
    @NotBlank(message = "전화번호는 필수입니다.")
    @Pattern(regexp = "^01[0-9]-?\\d{3,4}-?\\d{4}$", message = "올바른 전화번호 형식이 아닙니다.")   
    private String phone;
+   
+   // 이메일 인증 토큰 (필수)
+   @NotBlank(message = "이메일 인증 토큰은 필수입니다.")
+   private String registrationToken;
    
    // 약관 동의 (각 약관별 개별 동의)
    @NotNull(message = "이용약관 동의가 필요합니다.")
@@ -72,6 +76,7 @@ public class SignupRequest {
                "email='" + email + '\'' +
                ", userName='" + userName + '\'' +
                ", phone='" + phone + '\'' +
+               ", registrationToken='" + registrationToken + '\'' +
                ", agreeTerms=" + agreeTerms +
                ", agreePrivacy=" + agreePrivacy +
                ", agreeMarketing=" + agreeMarketing +
