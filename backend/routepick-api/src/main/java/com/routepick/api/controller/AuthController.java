@@ -27,6 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
+/**
+ * 인증 관련 컨트롤러
+ * 회원가입, 로그인, 토큰 갱신, 이메일 중복 확인, 인증 코드 발송, 인증 코드 검증을 처리합니다.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")

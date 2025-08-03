@@ -8,6 +8,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 회원가입 요청 DTO
+ * 이메일, 비밀번호, 사용자명, 전화번호, 이메일 인증 토큰, 약관 동의 여부를 입력받아 회원가입 요청을 처리합니다.
+ */
 @Getter
 @Setter
 public class SignupRequest {

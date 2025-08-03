@@ -4,6 +4,10 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * JWT 설정 클래스
+ * JWT 토큰 생성 및 검증에 필요한 설정 정보를 관리합니다.
+ */
 @Data
 @Component
 @ConfigurationProperties(prefix = "jwt")

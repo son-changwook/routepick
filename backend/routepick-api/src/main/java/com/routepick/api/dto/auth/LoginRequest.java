@@ -5,6 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 로그인 요청 DTO
+ * 이메일과 비밀번호를 입력받아 로그인 요청을 처리합니다.
+ */
 @Getter
 @Setter
 public class LoginRequest {

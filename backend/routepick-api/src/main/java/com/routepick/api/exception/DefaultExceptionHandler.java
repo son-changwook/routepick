@@ -20,6 +20,10 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 
+/**
+ * 기본 예외 처리 핸들러
+ * 예외 발생 시 일괄적으로 처리하고 응답을 반환합니다.
+ */
 @Slf4j
 @ControllerAdvice
 public class DefaultExceptionHandler {

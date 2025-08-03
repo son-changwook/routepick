@@ -34,8 +34,8 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     
-    // Swagger/OpenAPI 의존성 (admin 모듈용)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    // Swagger/OpenAPI 의존성 (admin 모듈용, 안정 버전)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.7'
     
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

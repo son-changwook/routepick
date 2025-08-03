@@ -3,6 +3,10 @@ package com.routepick.api.dto.auth;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 로그인 응답 DTO
+ * 로그인 성공 시 발급된 토큰과 사용자 정보를 포함합니다.
+ */
 @Getter
 @Builder
 public class LoginResponse {
