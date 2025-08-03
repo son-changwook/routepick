@@ -22,6 +22,9 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot Web 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
     // WebSocket 의존성 (api 모듈만의 특수 의존성)
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     
@@ -29,6 +32,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    
+    // MyBatis 의존성
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     
     // MyBatis 테스트 의존성 (api 모듈만의 특수 의존성)
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
@@ -42,8 +48,11 @@ dependencies {
     // 이메일 발송을 위한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     
-    // Swagger/OpenAPI 의존성 (안정 버전)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.7'
+    // MySQL 데이터베이스 (개발용)
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+    
+    // Swagger/OpenAPI 의존성 (Spring Boot 3.2.3 호환 버전)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 }
 
 bootRun {

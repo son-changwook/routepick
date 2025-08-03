@@ -72,3 +72,10 @@ springdoc:
     doc-expansion: none
     disable-swagger-default-url: true
   packages-to-scan: com.routepick.api.controller
+
+# JWT 설정 (공통)
+api:
+  jwt:
+    secret: ${JWT_SECRET:routepick-secret-key-2024-very-long-and-secure-key-for-jwt-signing}
+    expiration: ${JWT_EXPIRATION:3600000}  # 1시간 (밀리초)
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:2592000000}  # 30일 (밀리초)

@@ -26,12 +26,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 
-/**
- * 인증 관련 컨트롤러
- * 회원가입, 로그인, 토큰 갱신, 이메일 중복 확인, 인증 코드 발송, 인증 코드 검증을 처리합니다.
- */
 @Slf4j
+@Tag(name = "인증", description = "인증 관련 API (회원가입, 로그인, 토큰 갱신, 이메일 중복 확인, 인증 코드 발송, 인증 코드 검증)")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -41,16 +44,45 @@ public class AuthController {
     private final EmailVerificationService emailVerificationService;
     private final SimpleRateLimitService rateLimitService;
 
-    /**
-     * 회원가입 API
-     * @param request 회원가입 정보
-     * @param profileImage 프로필 이미지 파일 (선택사항)
-     * @return 회원가입 결과
-     */
+    @Operation(
+        summary = "회원가입",
+        description = "이메일 인증 토큰이 필요한 회원가입 API입니다." + 
+        "프로필 이미지는 선택사항이며, 필수 약관에 동의해야 합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "회원가입 성공",
+            content = @Content(
+                mediaType = "application/json"
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청 검증 실패 (이메일 형식 불일치, 비밀번호 형식 불일치, 필수 약관 동의 여부 불일치)"
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "이미 존재하는 이메일"
+        ),
+        @ApiResponse(
+            responseCode = "429",
+            description = "Rate Limit 초과 (이메일 발송 또는 회원가입 요청 너무 많음)" 
+        )
+    })
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestPart("userData") @Valid SignupRequest request,
-                                   @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-                                   HttpServletRequest httpRequest) {
+    public ResponseEntity<?> signup(
+        @Parameter(
+            description = "회원가입 정보 (JSON 형식)",
+            required = true
+        )
+        @RequestPart("userData") @Valid SignupRequest request,
+        @Parameter(
+            description = "프로필 이미지 (선택사항)",
+            required = false
+        )
+        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+        HttpServletRequest httpRequest) {
         
         String clientIp = getClientIp(httpRequest);
         

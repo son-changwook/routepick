@@ -12,7 +12,6 @@
         <result property="isRevoked" column="is_revoked"/>
     </resultMap>
 
-    <!-- 토큰 저장 -->
     <insert id="insertToken" parameterType="com.routepick.common.domain.token.ApiToken" useGeneratedKeys="true" keyProperty="tokenId">
         INSERT INTO api_tokens (
             user_id, token, token_type, expires_at, created_at, is_revoked
@@ -21,25 +20,27 @@
         )
     </insert>
 
-    <!-- 토큰으로 조회 -->
     <select id="findByToken" resultMap="ApiTokenResultMap">
+        <![CDATA[
         SELECT * FROM api_tokens 
         WHERE token = #{token} 
         AND is_revoked = false 
         AND expires_at > NOW()
+        ]]>
     </select>
 
-    <!-- 사용자의 활성 토큰 조회 -->
     <select id="findActiveTokensByUserId" resultMap="ApiTokenResultMap">
+        <![CDATA[
         SELECT * FROM api_tokens 
         WHERE user_id = #{userId} 
         AND is_revoked = false 
         AND expires_at > NOW()
         ORDER BY created_at DESC
+        ]]>
     </select>
 
-    <!-- 사용자의 특정 타입 토큰 조회 -->
     <select id="findByUserIdAndType" resultMap="ApiTokenResultMap">
+        <![CDATA[
         SELECT * FROM api_tokens 
         WHERE user_id = #{userId} 
         AND token_type = #{tokenType}
@@ -47,27 +48,27 @@
         AND expires_at > NOW()
         ORDER BY created_at DESC 
         LIMIT 1
+        ]]>
     </select>
 
-    <!-- 토큰 만료 처리 -->
     <update id="revokeToken">
         UPDATE api_tokens SET
             is_revoked = true
         WHERE token_id = #{tokenId}
     </update>
 
-    <!-- 사용자의 모든 토큰 만료 처리 -->
     <update id="revokeAllTokensByUserId">
         UPDATE api_tokens SET
             is_revoked = true
         WHERE user_id = #{userId}
     </update>
 
-    <!-- 만료된 토큰 삭제 -->
     <delete id="deleteExpiredTokens">
+        <![CDATA[
         DELETE FROM api_tokens 
         WHERE expires_at < NOW() 
         OR is_revoked = true
+        ]]>
     </delete>
 
 </mapper> 

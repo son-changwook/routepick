@@ -57,7 +57,7 @@ public class ApiSecurityConfig {
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/health").permitAll()
                         // Swagger UI 관련 엔드포인트
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         // 그 외 모든 요청은 인증 필요
                         .anyRequest().authenticated())
 

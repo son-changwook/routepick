@@ -25,10 +25,10 @@ public class ApiJwtTokenProvider {
     private String jwtSecret;
 
     @Value("${api.jwt.expiration}")
-    private int jwtExpirationInMs;
+    private long jwtExpirationInMs;
 
     @Value("${api.jwt.refresh-expiration}")
-    private int refreshExpirationInMs;
+    private long refreshExpirationInMs;
 
     private Key getSigningKey() {
         byte[] keyBytes = jwtSecret.getBytes();
