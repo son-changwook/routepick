@@ -126,8 +126,9 @@ public VerifyCodeResponse verifyCode(String email, String verificationCode, Stri
         // 4. 세션 인증 완료 처리
         sessionService.markSessionVerified(sessionToken);
         
-        // 5. 회원가입 토큰 생성 (JWT 기반)
+        // 5. 회원가입 토큰 생성 및 세션에 저장
         String registrationToken = generateRegistrationToken(email);
+        sessionService.setRegistrationToken(sessionToken, registrationToken);
         
         // 6. 응답 생성
         return VerifyCodeResponse.builder()

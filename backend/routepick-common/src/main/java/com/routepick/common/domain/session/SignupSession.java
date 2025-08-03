@@ -11,6 +11,7 @@ public class SignupSession {
     private String sessionId;
     private String email;
     private String verificationCode;
+    private String registrationToken;
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private boolean isVerified;

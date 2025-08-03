@@ -17,6 +17,9 @@ public class SignupSessionService {
     // 메모리 기반 세션 저장소 (실제로는 Redis나 DB 사용 권장)
     private final ConcurrentHashMap<String, SignupSession> sessions = new ConcurrentHashMap<>();
     
+    // 등록 토큰 저장소 (메모리 기반)
+    private final ConcurrentHashMap<String, String> registrationTokens = new ConcurrentHashMap<>();
+    
     /**
      * 세션 생성
      * @param email 이메일
@@ -91,6 +94,21 @@ public class SignupSessionService {
     }
     
     /**
+     * 세션에 등록 토큰 설정
+     * @param sessionId 세션 ID
+     * @param registrationToken 등록 토큰
+     */
+    public void setRegistrationToken(String sessionId, String registrationToken) {
+        SignupSession session = sessions.get(sessionId);
+        if (session != null) {
+            session.setRegistrationToken(registrationToken);
+            // 등록 토큰을 별도 맵에도 저장
+            registrationTokens.put(registrationToken, sessionId);
+            log.debug("등록 토큰 설정: sessionId={}, token={}", sessionId, registrationToken);
+        }
+    }
+    
+    /**
      * 만료된 세션 정리 (스케줄링)
      */
     @Scheduled(fixedRate = 300000) // 5분마다
@@ -123,9 +141,17 @@ public class SignupSessionService {
         log.info("등록 토큰 검증 요청: token={}, email={}", registrationToken, email);
         
         try {
-            var sessionOpt = getSession(registrationToken);
-            if (sessionOpt.isEmpty()) {
+            // 등록 토큰으로 세션 ID 찾기
+            String sessionId = registrationTokens.get(registrationToken);
+            if (sessionId == null) {
                 log.warn("유효하지 않은 등록 토큰: token={}", registrationToken);
+                return false;
+            }
+            
+            // 세션 ID로 세션 찾기
+            var sessionOpt = getSession(sessionId);
+            if (sessionOpt.isEmpty()) {
+                log.warn("등록 토큰에 해당하는 세션을 찾을 수 없음: token={}, sessionId={}", registrationToken, sessionId);
                 return false;
             }
             
@@ -164,6 +190,15 @@ public class SignupSessionService {
      */
     public void consumeRegistrationToken(String registrationToken) {
         log.info("등록 토큰 사용: token={}", registrationToken);
-        sessions.remove(registrationToken);
+        
+        // 등록 토큰으로 세션 ID 찾기
+        String sessionId = registrationTokens.get(registrationToken);
+        if (sessionId != null) {
+            // 세션 삭제
+            sessions.remove(sessionId);
+            // 등록 토큰도 삭제
+            registrationTokens.remove(registrationToken);
+            log.debug("등록 토큰 및 세션 삭제 완료: token={}, sessionId={}", registrationToken, sessionId);
+        }
     }
 }

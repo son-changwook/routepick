@@ -13,7 +13,7 @@ public class SimpleRateLimitService {
 
     private final ConcurrentHashMap<String, RequestCounter> ipCounters = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, RequestCounter> emailCounters = new ConcurrentHashMap<>();
-    private final RequestCounter globalCounter = new RequestCounter(10, 60); // 1분에 10회
+    private final RequestCounter globalCounter = new RequestCounter(1000, 60); // 1분에 1000회 (프로덕션용)
 
     /**
      * IP 기반 Rate Limiting
@@ -22,7 +22,7 @@ public class SimpleRateLimitService {
      */
     public boolean tryConsumeByIp(String ipAddress) {
         RequestCounter counter = ipCounters.computeIfAbsent(ipAddress, 
-            k -> new RequestCounter(3, 60)); // 1분에 3회
+            k -> new RequestCounter(100, 60)); // 1분에 100회 (프로덕션용)
         
         boolean allowed = counter.tryConsume();
         if (!allowed) {
@@ -38,7 +38,7 @@ public class SimpleRateLimitService {
      */
     public boolean tryConsumeByEmail(String email) {
         RequestCounter counter = emailCounters.computeIfAbsent(email, 
-            k -> new RequestCounter(5, 3600)); // 1시간에 5회
+            k -> new RequestCounter(10, 3600)); // 1시간에 10회 (프로덕션용)
         
         boolean allowed = counter.tryConsume();
         if (!allowed) {

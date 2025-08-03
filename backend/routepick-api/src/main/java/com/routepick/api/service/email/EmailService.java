@@ -31,17 +31,25 @@ public class EmailService {
      */
      public void sendVerificationEmail(String toEmail, String verificationCode) {
         try {
+            // 개발 환경에서는 콘솔에 출력
+            String emailContent = emailTemplate.replace("{verificationCode}", verificationCode);
+            
+            log.info("=== 개발 환경 이메일 발송 시뮬레이션 ===");
+            log.info("To: {}", toEmail);
+            log.info("Subject: {}", subject);
+            log.info("Content: {}", emailContent);
+            log.info("인증 코드: {}", verificationCode);
+            log.info("=====================================");
+            
+            // 실제 이메일 발송은 주석 처리 (개발 환경)
+            /*
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
             message.setTo(toEmail);
             message.setSubject(subject);
-            
-            // 템플릿에서 인증 코드 치환
-            String emailContent = emailTemplate.replace("{verificationCode}", verificationCode);
             message.setText(emailContent);
-            
             mailSender.send(message);
-            log.info("인증 코드 이메일 발송 완료: toEmail={}, code={}", toEmail, verificationCode);
+            */
             
         } catch (Exception e) {
             log.error("인증 코드 이메일 발송 실패: toEmail={}, error={}", toEmail, e.getMessage(), e);

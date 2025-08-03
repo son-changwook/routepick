@@ -61,6 +61,14 @@ public class ApiSecurityConfig {
                         // 그 외 모든 요청은 인증 필요
                         .anyRequest().authenticated())
 
+                // 보안 헤더 설정 (Spring Security 6.x 호환)
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.deny())
+                        .contentTypeOptions(contentType -> {})
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .maxAgeInSeconds(31536000)
+                        ))
+
                 // JWT 필터 추가
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -70,10 +78,19 @@ public class ApiSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000", // 개발 환경
-                "https://routepick.com" // 프로덕션 환경
-        ));
+        
+        // 환경변수에서 CORS 설정 가져오기
+        String allowedOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
+        if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
+            configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
+        } else {
+            // 기본값 (개발 환경)
+            configuration.setAllowedOriginPatterns(Arrays.asList(
+                    "http://localhost:3000", // 개발 환경
+                    "https://routepick.com" // 프로덕션 환경
+            ));
+        }
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
