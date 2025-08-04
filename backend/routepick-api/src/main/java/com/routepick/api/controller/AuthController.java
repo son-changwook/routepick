@@ -1,6 +1,7 @@
 package com.routepick.api.controller;
 
 import com.routepick.api.dto.auth.SignupRequest;
+import com.routepick.api.dto.auth.SignupResponse;
 import com.routepick.api.dto.auth.LoginRequest;
 import com.routepick.api.dto.auth.LoginResponse;
 import com.routepick.api.dto.auth.TokenRefreshRequest;
@@ -14,6 +15,7 @@ import com.routepick.api.dto.email.VerifyCodeResponse;
 import com.routepick.api.service.auth.AuthService;
 import com.routepick.api.service.email.EmailVerificationService;
 import com.routepick.api.service.security.SimpleRateLimitService;
+import com.routepick.api.util.InputSanitizer;
 import com.routepick.common.domain.user.User;
 import com.routepick.common.exception.customExceptions.UserNotFoundException;
 import com.routepick.common.exception.customExceptions.InvalidPasswordFormatException;
@@ -54,7 +56,22 @@ public class AuthController {
             responseCode = "200",
             description = "회원가입 성공",
             content = @Content(
-                mediaType = "application/json"
+                mediaType = "application/json",
+                schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = SignupResponse.class),
+                examples = {
+                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "성공 예시",
+                        value = """
+                        {
+                          "userId": 123,
+                          "email": "user@example.com",
+                          "displayName": "climber123",
+                          "profileImageUrl": "https://example.com/profile.jpg",
+                          "message": "회원가입이 성공적으로 완료되었습니다."
+                        }
+                        """
+                    )
+                }
             )
         ),
         @ApiResponse(
@@ -71,7 +88,7 @@ public class AuthController {
         )
     })
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(
+    public ResponseEntity<SignupResponse> signup(
         @Parameter(
             description = "회원가입 정보 (JSON 형식)",
             required = true
@@ -88,32 +105,34 @@ public class AuthController {
         
         // Rate Limiting 체크
         if (!rateLimitService.tryConsumeByIp(clientIp)) {
-            return ResponseEntity.status(429).body("너무 많은 요청입니다. 잠시 후 다시 시도해주세요.");
+            throw new RuntimeException("너무 많은 요청입니다. 잠시 후 다시 시도해주세요.");
         }
         
         if (!rateLimitService.tryConsumeByEmail(request.getEmail())) {
-            return ResponseEntity.status(429).body("해당 이메일로 너무 많은 요청이 발생했습니다.");
+            throw new RuntimeException("해당 이메일로 너무 많은 요청이 발생했습니다.");
         }
         
         if (!rateLimitService.tryConsumeGlobal()) {
-            return ResponseEntity.status(429).body("서비스가 혼잡합니다. 잠시 후 다시 시도해주세요.");
+            throw new RuntimeException("서비스가 혼잡합니다. 잠시 후 다시 시도해주세요.");
         }
         
-        log.info("회원가입 요청: {}", request.getEmail());
+        // 입력 데이터 정제
+        String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
+        log.info("회원가입 요청: {}", sanitizedEmail);
         
         try {
-            User user = authService.signup(request, profileImage);
+            SignupResponse response = authService.signup(request, profileImage);
             
-            log.info("회원가입 성공: {}", user.getEmail());
-            return ResponseEntity.ok(user);
+            log.info("회원가입 성공: {}", response.getEmail());
+            return ResponseEntity.ok(response);
             
         } catch (RequestValidationException e) {
-            log.warn("회원가입 실패 - 요청 검증 실패: {}, error={}", request.getEmail(), e.getMessage());
-            return ResponseEntity.badRequest().body("회원가입에 실패했습니다: " + e.getMessage());
+            log.warn("회원가입 실패 - 요청 검증 실패: {}, error={}", sanitizedEmail, e.getMessage());
+            throw e;
             
         } catch (Exception e) {
             log.error("회원가입 실패: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().body("회원가입에 실패했습니다: " + e.getMessage());
+            throw new RuntimeException("회원가입에 실패했습니다: " + e.getMessage());
         }
     }
     
@@ -128,7 +147,8 @@ public class AuthController {
             responseCode = "200",
             description = "로그인 성공",
             content = @Content(
-                mediaType = "application/json"
+                mediaType = "application/json",
+                schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = LoginResponse.class)
             )
         ),
         @ApiResponse(
@@ -141,30 +161,27 @@ public class AuthController {
         )
     })
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         
-        log.info("로그인 요청: {}", request.getEmail());
+        // 입력 데이터 정제
+        String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
+        log.info("로그인 요청: {}", sanitizedEmail);
         
         try {
             LoginResponse response = authService.login(request);
-            
-            log.info("로그인 성공: {}", request.getEmail());
+            log.info("로그인 성공: {}", sanitizedEmail);
             return ResponseEntity.ok(response);
             
         } catch (UserNotFoundException e) {
-            log.warn("로그인 실패 - 사용자 없음: {}", request.getEmail());
-            return ResponseEntity.status(401).body("이메일 또는 비밀번호가 일치하지 않습니다.");
-            
-        } catch (InvalidPasswordFormatException e) {
-            log.warn("로그인 실패 - 비밀번호 불일치: {}", request.getEmail());
-            return ResponseEntity.status(401).body("이메일 또는 비밀번호가 일치하지 않습니다.");
+            log.warn("로그인 실패 - 사용자를 찾을 수 없음: {}", sanitizedEmail);
+            throw e;
             
         } catch (Exception e) {
             log.error("로그인 실패: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().body("로그인에 실패했습니다: " + e.getMessage());
+            throw new RuntimeException("로그인에 실패했습니다: " + e.getMessage());
         }
     }
-    
+
     @Operation(
         summary = "토큰 갱신",
         description = "리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다."
@@ -174,7 +191,8 @@ public class AuthController {
             responseCode = "200",
             description = "토큰 갱신 성공",
             content = @Content(
-                mediaType = "application/json"
+                mediaType = "application/json",
+                schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = TokenRefreshResponse.class)
             )
         ),
         @ApiResponse(
@@ -187,19 +205,18 @@ public class AuthController {
         )
     })
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody @Valid TokenRefreshRequest request) {
+    public ResponseEntity<TokenRefreshResponse> refreshToken(@RequestBody @Valid TokenRefreshRequest request) {
         
         log.info("토큰 갱신 요청");
         
         try {
             TokenRefreshResponse response = authService.refreshToken(request);
-            
             log.info("토큰 갱신 성공");
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
             log.error("토큰 갱신 실패: {}", e.getMessage(), e);
-            return ResponseEntity.status(401).body("토큰 갱신에 실패했습니다: " + e.getMessage());
+            throw new RuntimeException("토큰 갱신에 실패했습니다: " + e.getMessage());
         }
     }
     
@@ -222,11 +239,12 @@ public class AuthController {
     })
     @PostMapping("/email/check")
     public ResponseEntity<EmailCheckResponse> checkEmailAvailability(@RequestBody @Valid EmailCheckRequest request) {
-        log.info("이메일 중복 확인 요청: {}", request.getEmail());
         
-        EmailCheckResponse response = emailVerificationService.checkEmailAvailability(request.getEmail());
+        // 입력 데이터 정제
+        String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
+        log.info("이메일 중복 확인 요청: {}", sanitizedEmail);
         
-        log.info("이메일 중복 확인 완료: email={}, available={}", request.getEmail(), response.isAvailable());
+        EmailCheckResponse response = emailVerificationService.checkEmailAvailability(sanitizedEmail);
         return ResponseEntity.ok(response);
     }
     
@@ -264,22 +282,18 @@ public class AuthController {
         
         // Rate Limiting 체크
         if (!rateLimitService.tryConsumeByIp(clientIp)) {
-            return ResponseEntity.status(429).body(EmailVerificationResponse.builder()
-                .message("너무 많은 요청입니다. 잠시 후 다시 시도해주세요.")
-                .build());
+            throw new RuntimeException("너무 많은 요청입니다. 잠시 후 다시 시도해주세요.");
         }
         
         if (!rateLimitService.tryConsumeByEmail(request.getEmail())) {
-            return ResponseEntity.status(429).body(EmailVerificationResponse.builder()
-                .message("해당 이메일로 너무 많은 요청이 발생했습니다.")
-                .build());
+            throw new RuntimeException("해당 이메일로 너무 많은 요청이 발생했습니다.");
         }
         
-        log.info("인증 코드 발송 요청: {}", request.getEmail());
+        // 입력 데이터 정제
+        String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
+        log.info("이메일 인증 코드 발송 요청: {}", sanitizedEmail);
         
-        EmailVerificationResponse response = emailVerificationService.sendVerificationCode(request.getEmail());
-        
-        log.info("인증 코드 발송 완료: email={}", request.getEmail());
+        EmailVerificationResponse response = emailVerificationService.sendVerificationCode(sanitizedEmail);
         return ResponseEntity.ok(response);
     }
     
@@ -306,18 +320,14 @@ public class AuthController {
     })
     @PostMapping("/email/verify")
     public ResponseEntity<VerifyCodeResponse> verifyCode(@RequestBody @Valid VerifyCodeRequest request) {
-        log.info("인증 코드 검증 요청: email={}", request.getEmail());
+        
+        log.info("이메일 인증 코드 검증 요청");
         
         VerifyCodeResponse response = emailVerificationService.verifyCode(
             request.getEmail(), 
             request.getVerificationCode(), 
             request.getSessionToken()
         );
-        
-        log.info("인증 코드 검증 완료: email={}, success={}", 
-            request.getEmail(), 
-            response.getRegistrationToken() != null);
-        
         return ResponseEntity.ok(response);
     }
 
@@ -326,9 +336,15 @@ public class AuthController {
      */
     private String getClientIp(HttpServletRequest request) {
         String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
+        if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+            return xForwardedFor.split(",")[0];
         }
+        
+        String xRealIp = request.getHeader("X-Real-IP");
+        if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+            return xRealIp;
+        }
+        
         return request.getRemoteAddr();
     }
 } 

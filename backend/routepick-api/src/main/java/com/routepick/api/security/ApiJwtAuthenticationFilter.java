@@ -19,6 +19,7 @@ import java.io.IOException;
 /**
  * JWT 토큰을 검증하고 인증을 처리하는 필터.
  * 모든 요청에 대해 JWT 토큰의 유효성을 검사하고, 유효한 경우 SecurityContext에 인증 정보를 설정합니다.
+ * JWT 토큰의 sub 필드에서 userId를 추출하여 사용자 정보를 로드합니다.
  */
 @Slf4j
 @Component
@@ -38,11 +39,12 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
-                String userId = jwtService.getClaimsFromToken(jwt).getSubject(); // sub 필드에서 userId 추출
-                String userName = jwtService.getUserNameFromToken(jwt);
-                log.debug("JWT 토큰에서 추출한 userId: {}, 닉네임: {}", userId, userName);
+                // JWT 토큰의 sub 필드에서 userId 추출
+                String userId = jwtService.getClaimsFromToken(jwt).getSubject();
+                String displayName = jwtService.getUserNameFromToken(jwt);
+                log.debug("JWT 토큰에서 추출한 userId: {}, displayName: {}", userId, displayName);
                 
-                // 커스텀 UserDetails 객체 생성 (userId와 닉네임 모두 포함)
+                // UserDetails 객체 생성 (userId로 사용자 정보 로드)
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -51,7 +53,7 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                log.debug("User '{}' authenticated successfully", userId);
+                log.debug("User '{}' (displayName: '{}') authenticated successfully", userId, displayName);
             }
         } catch (Exception ex) {
             log.error("Could not set user authentication in security context", ex);

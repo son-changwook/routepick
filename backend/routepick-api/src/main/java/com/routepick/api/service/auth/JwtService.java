@@ -25,25 +25,30 @@ public class JwtService {
      * 액세스 토큰 생성
      */
     public String generateAccessToken(User user) {
-        return generateToken(user, jwtConfig.getAccessTokenExpiration(), "ACCESS");
+        return generateToken(user, jwtConfig.getExpiration(), "ACCESS");
     }
     
     /**
      * 리프레시 토큰 생성
      */
     public String generateRefreshToken(User user) {
-        return generateToken(user, jwtConfig.getRefreshTokenExpiration(), "REFRESH");
+        return generateToken(user, jwtConfig.getRefreshExpiration(), "REFRESH");
     }
     
     /**
      * 토큰 생성 공통 메서드
+     * JWT 표준에 맞게 구조화:
+     * - sub: 사용자 식별자 (userId)
+     * - iss: 발급자
+     * - iat: 발급 시간
+     * - exp: 만료 시간
+     * - claims: 추가 정보 (email, userName, profileImageUrl, userType, tokenType)
      */
     private String generateToken(User user, long expiration, String tokenType) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + (expiration * 1000));
         
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getUserId());
         claims.put("email", user.getEmail()); // 이메일 정보
         claims.put("userName", user.getUsername()); // 마이페이지용 (닉네임)
         claims.put("profileImageUrl", user.getProfileImageUrl()); // 마이페이지용
@@ -52,7 +57,7 @@ public class JwtService {
         
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(String.valueOf(user.getUserId())) // userId를 sub로 사용
+                .setSubject(String.valueOf(user.getUserId())) // userId를 sub로 사용 (JWT 표준)
                 .setIssuer(jwtConfig.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -77,19 +82,19 @@ public class JwtService {
     }
     
     /**
-     * 토큰에서 사용자 ID 추출
+     * 토큰에서 사용자 ID 추출 (sub 필드)
      */
     public Long getUserIdFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
-        return claims.get("userId", Long.class);
+        return Long.parseLong(claims.getSubject()); // sub 필드에서 userId 추출
     }
     
     /**
-     * 토큰에서 이메일 추출
+     * 토큰에서 이메일 추출 (claims에서 추출)
      */
     public String getEmailFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
-        return claims.getSubject();
+        return claims.get("email", String.class); // claims에서 email 추출
     }
     
     /**
@@ -114,6 +119,14 @@ public class JwtService {
     public String getTokenTypeFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims.get("tokenType", String.class);
+    }
+    
+    /**
+     * 토큰에서 사용자 타입 추출
+     */
+    public String getUserTypeFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("userType", String.class);
     }
     
     /**

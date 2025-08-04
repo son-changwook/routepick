@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * 회원가입 요청 DTO
  * 이메일, 비밀번호, 사용자명, 전화번호, 이메일 인증 토큰, 약관 동의 여부를 입력받아 회원가입 요청을 처리합니다.
+ * 보안을 위한 입력 검증이 강화되었습니다.
  */
 @Schema(description = "회원가입 요청 정보")
 @Getter
@@ -23,6 +24,8 @@ public class SignupRequest {
    @NotBlank(message = "이메일은 필수입니다.")
    @Email(message = "올바른 이메일 형식이 아닙니다.")
    @Size(max = 100, message = "이메일은 100자 이하여야 합니다.")
+   @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", 
+            message = "올바른 이메일 형식이 아닙니다.")
    private String email;
    
    @Schema(description = "사용자 비밀번호 (영문, 숫자, 특수문자 포함)", example = "password123!")
@@ -74,31 +77,33 @@ public class SignupRequest {
    private Boolean agreePrivacy; // 개인정보처리방침 동의
    
    @Schema(description = "마케팅 수신 동의 여부 (선택사항)", example = "false")
-   private Boolean agreeMarketing; // 마케팅 수신 동의 (선택)
+   private Boolean marketingAgreed; // 마케팅 수신 동의
    
    @Schema(description = "위치정보 수집 동의 여부 (선택사항)", example = "false")
-   private Boolean agreeLocation; // 위치정보 수집 동의 (선택)
+   private Boolean locationAgreed; // 위치정보 수집 동의
    
    /**
     * 필수 약관 동의 여부 확인
+    * @return 필수 약관에 모두 동의한 경우 true
     */
    public boolean isRequiredAgreementValid() {
-       return agreeTerms != null && agreeTerms && 
-              agreePrivacy != null && agreePrivacy;
+       return Boolean.TRUE.equals(agreeTerms) && Boolean.TRUE.equals(agreePrivacy);
    }
-
+   
    /**
     * 마케팅 수신 동의 여부 확인
+    * @return 마케팅 수신에 동의한 경우 true
     */
    public boolean isMarketingAgreed() {
-       return agreeMarketing != null && agreeMarketing;
+       return Boolean.TRUE.equals(marketingAgreed);
    }
-
+   
    /**
     * 위치정보 수집 동의 여부 확인
+    * @return 위치정보 수집에 동의한 경우 true
     */
    public boolean isLocationAgreed() {
-       return agreeLocation != null && agreeLocation;
+       return Boolean.TRUE.equals(locationAgreed);
    }
 
    @Override
@@ -114,9 +119,8 @@ public class SignupRequest {
                ", registrationToken='" + registrationToken + '\'' +
                ", agreeTerms=" + agreeTerms +
                ", agreePrivacy=" + agreePrivacy +
-               ", agreeMarketing=" + agreeMarketing +
-               ", agreeLocation=" + agreeLocation +
+               ", marketingAgreed=" + marketingAgreed +
+               ", locationAgreed=" + locationAgreed +
                '}';
    }
-
 }

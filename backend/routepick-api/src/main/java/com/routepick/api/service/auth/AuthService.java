@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.routepick.api.dto.auth.SignupRequest;
+import com.routepick.api.dto.auth.SignupResponse;
 import com.routepick.api.dto.auth.LoginRequest;
 import com.routepick.api.dto.auth.LoginResponse;
 import com.routepick.api.dto.auth.TokenRefreshRequest;
@@ -16,6 +17,7 @@ import com.routepick.api.dto.auth.TokenRefreshResponse;
 import com.routepick.api.mapper.UserMapper;
 import com.routepick.api.mapper.ApiTokenMapper;
 import com.routepick.api.service.email.SignupSessionService;
+import com.routepick.api.util.InputSanitizer;
 import com.routepick.common.domain.user.User;
 import com.routepick.common.domain.token.ApiToken;
 import com.routepick.common.enums.UserStatus;
@@ -45,35 +47,46 @@ public class AuthService {
      * 회원가입 처리
      * @param request 회원가입 요청 정보
      * @param profileImage 프로필 이미지 파일 (선택사항)
-     * @return 생성된 사용자 정보
+     * @return 회원가입 응답 정보
      */
     @Transactional
-    public User signup(SignupRequest request, MultipartFile profileImage) {
+    public SignupResponse signup(SignupRequest request, MultipartFile profileImage) {
 
-        // 1. 이메일 인증 토큰 검증
-        if (!signupSessionService.validateRegistrationToken(request.getRegistrationToken(), request.getEmail())) {
+        // 1. 입력 데이터 정제 및 검증
+        String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
+        String sanitizedUserName = InputSanitizer.sanitizeUserName(request.getUserName());
+        String sanitizedPhone = InputSanitizer.sanitizeInput(request.getPhone());
+        String sanitizedAddress = InputSanitizer.sanitizeInput(request.getAddress());
+        String sanitizedDetailAddress = InputSanitizer.sanitizeInput(request.getDetailAddress());
+        String sanitizedEmergencyContact = InputSanitizer.sanitizeInput(request.getEmergencyContact());
+        
+        // 2. 추가 보안 검증
+        validateInputData(sanitizedEmail, sanitizedUserName, sanitizedPhone);
+
+        // 3. 이메일 인증 토큰 검증
+        if (!signupSessionService.validateRegistrationToken(request.getRegistrationToken(), sanitizedEmail)) {
             throw new RequestValidationException("유효하지 않은 이메일 인증 토큰입니다. 이메일 인증을 다시 진행해주세요.");
         }
 
-        // 2. 이메일 중복 확인
-        if (userMapper.existsByEmail(request.getEmail())) {
+        // 4. 이메일 중복 확인
+        if (userMapper.existsByEmail(sanitizedEmail)) {
             throw new EmailDuplicateException("이미 존재하는 이메일입니다.");
         }
 
-        // 3. 비밀번호 유효성 검사
+        // 5. 비밀번호 유효성 검사
         if (!isValidPassword(request.getPassword())) {
             throw new InvalidPasswordFormatException("비밀번호는 8자 이상이어야 합니다.");
         }
         
-        // 4. 약관 동의 검증
+        // 6. 약관 동의 검증
         if (!request.isRequiredAgreementValid()) {
             throw new IllegalArgumentException("필수 약관에 동의해야 합니다.");
         }
     
-        // 5. 비밀번호 해싱
+        // 7. 비밀번호 해싱
         String hashedPassword = passwordEncoder.encode(request.getPassword());
         
-        // 6. 프로필 이미지 업로드 (있는 경우)
+        // 8. 프로필 이미지 업로드 (있는 경우)
         String profileImageUrl = null;
         if (profileImage != null && !profileImage.isEmpty()) {
             try {
@@ -83,35 +96,76 @@ public class AuthService {
             }
         }
         
-        // 7. User 객체 생성
+        // 9. User 객체 생성 (정제된 데이터 사용)
         User user = User.builder()
-                .email(request.getEmail())
+                .email(sanitizedEmail)
                 .passwordHash(hashedPassword)
-                .userName(request.getUserName())
-                .phone(request.getPhone())
+                .userName(sanitizedUserName)
+                .phone(sanitizedPhone)
                 .profileImageUrl(profileImageUrl)
                 .birthDate(request.getBirthDate() != null ? LocalDate.parse(request.getBirthDate()) : null)
-                .address(request.getAddress())
-                .detailAddress(request.getDetailAddress())
-                .emergencyContact(request.getEmergencyContact())
+                .address(sanitizedAddress)
+                .detailAddress(sanitizedDetailAddress)
+                .emergencyContact(sanitizedEmergencyContact)
                 .userType(UserType.NORMAL)
                 .userStatus(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
         
-        // 8. 사용자 저장
+        // 10. 사용자 저장
         userMapper.insertUser(user);
         
-        // 9. 약관 동의 저장
+        // 11. 약관 동의 저장
         saveUserAgreements(user.getUserId(), request);
         
-        // 10. 등록 토큰 사용 처리 (세션 삭제)
+        // 12. 등록 토큰 사용 처리 (세션 삭제)
         signupSessionService.consumeRegistrationToken(request.getRegistrationToken());
         
-        log.info("새 사용자 등록 완료: {}", user.getEmail());
+        log.info("새 사용자 등록 완료: {}", sanitizedEmail);
         
-        return user;
+        // 13. SignupResponse 생성 및 반환
+        return SignupResponse.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .displayName(user.getUsername())
+                .profileImageUrl(user.getProfileImageUrl())
+                .message("회원가입이 성공적으로 완료되었습니다.")
+                .build();
+    }
+
+    /**
+     * 입력 데이터 보안 검증
+     * @param email 이메일
+     * @param userName 사용자명
+     * @param phone 전화번호
+     */
+    private void validateInputData(String email, String userName, String phone) {
+        // SQL Injection 방지
+        if (email.contains("'") || email.contains("\"") || email.contains(";")) {
+            throw new SecurityException("이메일에 특수문자가 포함되어 있습니다.");
+        }
+        
+        if (userName.contains("'") || userName.contains("\"") || userName.contains(";")) {
+            throw new SecurityException("사용자명에 특수문자가 포함되어 있습니다.");
+        }
+        
+        if (phone.contains("'") || phone.contains("\"") || phone.contains(";")) {
+            throw new SecurityException("전화번호에 특수문자가 포함되어 있습니다.");
+        }
+        
+        // 추가적인 보안 검증
+        if (email.length() > 100) {
+            throw new SecurityException("이메일이 너무 깁니다.");
+        }
+        
+        if (userName.length() > 20) {
+            throw new SecurityException("사용자명이 너무 깁니다.");
+        }
+        
+        if (phone.length() > 20) {
+            throw new SecurityException("전화번호가 너무 깁니다.");
+        }
     }
 
     /**
@@ -137,15 +191,6 @@ public class AuthService {
      */
     private boolean isValidPassword(String password){   
         if(password.length() < 8){
-            return false;
-        }
-        if(!password.matches(".*[A-Z].*")){
-            return false;
-        }
-        if(!password.matches(".*[a-z].*")){
-            return false;
-        }
-        if(!password.matches(".*[0-9].*")){
             return false;
         }
         return true;

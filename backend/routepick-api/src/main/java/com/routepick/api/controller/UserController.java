@@ -45,7 +45,7 @@ public class UserController {
                         {
                           "success": true,
                           "data": {
-                            "userName": "climber123",
+                            "displayName": "climber123",
                             "profileImageUrl": "https://example.com/profile.jpg"
                           },
                           "message": "프로필 정보 조회 성공"
@@ -63,7 +63,7 @@ public class UserController {
             
             // CustomUserDetails에서 직접 정보 추출 (DB 조회 없음)
             SimpleProfileDTO profile = SimpleProfileDTO.builder()
-                .userName(userDetails.getUserName()) // 닉네임
+                .userName(userDetails.getDisplayName()) // 표시용 닉네임
                 .profileImageUrl(userDetails.getProfileImageUrl()) // 프로필 이미지
                 .build();
 
