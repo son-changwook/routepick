@@ -43,6 +43,22 @@ public class SignupRequest {
    @Pattern(regexp = "^01[0-9]-?\\d{3,4}-?\\d{4}$", message = "올바른 전화번호 형식이 아닙니다.")   
    private String phone;
    
+   @Schema(description = "생년월일 (YYYY-MM-DD 형식, 선택사항)", example = "1990-01-01")
+   @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "올바른 생년월일 형식이 아닙니다. (YYYY-MM-DD)")
+   private String birthDate;
+   
+   @Schema(description = "주소 (선택사항)", example = "서울시 강남구")
+   @Size(max = 255, message = "주소는 255자 이하여야 합니다.")
+   private String address;
+   
+   @Schema(description = "상세주소 (선택사항)", example = "테헤란로 123")
+   @Size(max = 255, message = "상세주소는 255자 이하여야 합니다.")
+   private String detailAddress;
+   
+   @Schema(description = "비상연락처 (선택사항)", example = "010-9876-5432")
+   @Pattern(regexp = "^01[0-9]-?\\d{3,4}-?\\d{4}$", message = "올바른 비상연락처 형식이 아닙니다.")
+   private String emergencyContact;
+   
    // 이메일 인증 토큰 (필수)
    @Schema(description = "이메일 인증 후 발급받은 등록 토큰", example = "registration-token-12345")
    @NotBlank(message = "이메일 인증 토큰은 필수입니다.")
@@ -91,6 +107,10 @@ public class SignupRequest {
                "email='" + email + '\'' +
                ", userName='" + userName + '\'' +
                ", phone='" + phone + '\'' +
+               ", birthDate='" + birthDate + '\'' +
+               ", address='" + address + '\'' +
+               ", detailAddress='" + detailAddress + '\'' +
+               ", emergencyContact='" + emergencyContact + '\'' +
                ", registrationToken='" + registrationToken + '\'' +
                ", agreeTerms=" + agreeTerms +
                ", agreePrivacy=" + agreePrivacy +

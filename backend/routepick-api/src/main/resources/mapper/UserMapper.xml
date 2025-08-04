@@ -9,6 +9,10 @@
         <result property="userName" column="user_name"/>
         <result property="phone" column="phone"/>
         <result property="profileImageUrl" column="profile_image_url"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="address" column="address"/>
+        <result property="detailAddress" column="detail_address"/>
+        <result property="emergencyContact" column="emergency_contact"/>
         <result property="userType" column="user_type"/>
         <result property="userStatus" column="user_status"/>
         <result property="lastLoginAt" column="last_login_at"/>
@@ -61,9 +65,11 @@
         <![CDATA[
         INSERT INTO users (
             email, password_hash, user_name, phone, profile_image_url, 
+            birth_date, address, detail_address, emergency_contact,
             user_type, user_status, created_at, updated_at
         ) VALUES (
             #{email}, #{passwordHash}, #{userName}, #{phone}, #{profileImageUrl},
+            #{birthDate}, #{address}, #{detailAddress}, #{emergencyContact},
             'NORMAL', 'ACTIVE', NOW(), NOW()
         )
         ]]>

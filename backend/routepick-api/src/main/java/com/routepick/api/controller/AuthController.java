@@ -119,11 +119,27 @@ public class AuthController {
     
 
     
-    /**
-     * 로그인 API
-     * @param request 로그인 정보
-     * @return 로그인 결과
-     */
+    @Operation(
+        summary = "로그인",
+        description = "이메일과 비밀번호로 로그인하여 JWT 액세스 토큰과 리프레시 토큰을 발급받습니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "로그인 성공",
+            content = @Content(
+                mediaType = "application/json"
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "이메일 또는 비밀번호가 일치하지 않습니다."
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청 형식 오류"
+        )
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
         
@@ -149,11 +165,27 @@ public class AuthController {
         }
     }
     
-    /**
-     * 토큰 갱신 API
-     * @param request 토큰 갱신 요청
-     * @return 토큰 갱신 결과
-     */
+    @Operation(
+        summary = "토큰 갱신",
+        description = "리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "토큰 갱신 성공",
+            content = @Content(
+                mediaType = "application/json"
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "유효하지 않은 리프레시 토큰입니다."
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청 형식 오류"
+        )
+    })
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid TokenRefreshRequest request) {
         
@@ -171,11 +203,23 @@ public class AuthController {
         }
     }
     
-    /**
-     * 이메일 중복 확인 API
-     * @param request 이메일 중복 확인 요청
-     * @return 중복 확인 결과
-     */
+    @Operation(
+        summary = "이메일 중복 확인",
+        description = "회원가입 전 이메일 중복 여부를 확인합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "중복 확인 완료",
+            content = @Content(
+                mediaType = "application/json"
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청 형식 오류"
+        )
+    })
     @PostMapping("/email/check")
     public ResponseEntity<EmailCheckResponse> checkEmailAvailability(@RequestBody @Valid EmailCheckRequest request) {
         log.info("이메일 중복 확인 요청: {}", request.getEmail());
@@ -186,12 +230,31 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * 인증 코드 발송 API
-     * @param request 인증 코드 발송 요청
-     * @param httpRequest HTTP 요청
-     * @return 발송 결과
-     */
+    @Operation(
+        summary = "이메일 인증 코드 발송",
+        description = "회원가입을 위한 이메일 인증 코드를 발송합니다. 5분 후 만료됩니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "인증 코드 발송 성공",
+            content = @Content(
+                mediaType = "application/json"
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청 형식 오류"
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "이미 사용 중인 이메일입니다."
+        ),
+        @ApiResponse(
+            responseCode = "429",
+            description = "Rate Limit 초과 (너무 많은 요청)"
+        )
+    })
     @PostMapping("/email/verification")
     public ResponseEntity<EmailVerificationResponse> sendVerificationCode(
             @RequestBody @Valid EmailVerificationRequest request,
@@ -220,11 +283,27 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * 인증 코드 검증 API
-     * @param request 인증 코드 검증 요청
-     * @return 검증 결과
-     */
+    @Operation(
+        summary = "이메일 인증 코드 검증",
+        description = "발송된 이메일 인증 코드를 검증하고 회원가입 토큰을 발급합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "인증 코드 검증 성공",
+            content = @Content(
+                mediaType = "application/json"
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청 형식 오류"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "유효하지 않은 인증 코드 또는 만료된 세션"
+        )
+    })
     @PostMapping("/email/verify")
     public ResponseEntity<VerifyCodeResponse> verifyCode(@RequestBody @Valid VerifyCodeRequest request) {
         log.info("인증 코드 검증 요청: email={}", request.getEmail());

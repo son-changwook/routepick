@@ -25,7 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final ApiJwtTokenProvider tokenProvider;
+    private final com.routepick.api.service.auth.JwtService jwtService;
     private final ApiUserDetailsService userDetailsService;
 
     @Override
@@ -37,9 +37,13 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                String username = tokenProvider.getUsernameFromJWT(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
+                String userId = jwtService.getClaimsFromToken(jwt).getSubject(); // sub 필드에서 userId 추출
+                String userName = jwtService.getUserNameFromToken(jwt);
+                log.debug("JWT 토큰에서 추출한 userId: {}, 닉네임: {}", userId, userName);
+                
+                // 커스텀 UserDetails 객체 생성 (userId와 닉네임 모두 포함)
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
@@ -47,7 +51,7 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                log.debug("User '{}' authenticated successfully", username);
+                log.debug("User '{}' authenticated successfully", userId);
             }
         } catch (Exception ex) {
             log.error("Could not set user authentication in security context", ex);

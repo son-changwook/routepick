@@ -44,13 +44,15 @@ public class JwtService {
         
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getUserId());
-        claims.put("email", user.getEmail());
+        claims.put("email", user.getEmail()); // 이메일 정보
+        claims.put("userName", user.getUsername()); // 마이페이지용 (닉네임)
+        claims.put("profileImageUrl", user.getProfileImageUrl()); // 마이페이지용
         claims.put("userType", user.getUserType().name());
         claims.put("tokenType", tokenType);
         
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(user.getEmail())
+                .setSubject(String.valueOf(user.getUserId())) // userId를 sub로 사용
                 .setIssuer(jwtConfig.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -91,6 +93,22 @@ public class JwtService {
     }
     
     /**
+     * 토큰에서 닉네임 추출
+     */
+    public String getUserNameFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("userName", String.class);
+    }
+    
+    /**
+     * 토큰에서 프로필 이미지 URL 추출
+     */
+    public String getProfileImageUrlFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("profileImageUrl", String.class);
+    }
+    
+    /**
      * 토큰에서 토큰 타입 추출
      */
     public String getTokenTypeFromToken(String token) {
@@ -101,7 +119,7 @@ public class JwtService {
     /**
      * 토큰에서 Claims 추출
      */
-    private Claims getClaimsFromToken(String token) {
+    public Claims getClaimsFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

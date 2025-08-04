@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,6 +34,10 @@ public class User extends BaseDomain implements UserDetails {
     private String userName;
     private String phone;
     private String profileImageUrl;
+    private LocalDate birthDate;
+    private String address;
+    private String detailAddress;
+    private String emergencyContact;
     private UserType userType;
     private UserStatus userStatus;
     private LocalDateTime lastLoginAt;

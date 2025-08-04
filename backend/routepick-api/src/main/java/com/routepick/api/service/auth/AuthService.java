@@ -1,5 +1,6 @@
 package com.routepick.api.service.auth;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,6 +90,10 @@ public class AuthService {
                 .userName(request.getUserName())
                 .phone(request.getPhone())
                 .profileImageUrl(profileImageUrl)
+                .birthDate(request.getBirthDate() != null ? LocalDate.parse(request.getBirthDate()) : null)
+                .address(request.getAddress())
+                .detailAddress(request.getDetailAddress())
+                .emergencyContact(request.getEmergencyContact())
                 .userType(UserType.NORMAL)
                 .userStatus(UserStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())

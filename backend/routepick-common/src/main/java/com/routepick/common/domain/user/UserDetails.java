@@ -1,6 +1,6 @@
 package com.routepick.common.domain.user;
 
-import java.time.LocalDate;
+
 
 import com.routepick.common.domain.common.BaseDomain;
 import com.routepick.common.enums.Gender;
@@ -17,11 +17,7 @@ import lombok.NoArgsConstructor;
 public class UserDetails extends BaseDomain {
     private Long detailId;
     private Long userId;
-    private LocalDate birthDate;
     private Gender gender;
-    private String address;
-    private String detailAddress;
-    private String emergencyContact;
     private int height;
     private int weight;
     private int wingspan;
