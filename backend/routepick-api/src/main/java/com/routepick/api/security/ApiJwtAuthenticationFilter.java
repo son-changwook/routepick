@@ -1,5 +1,6 @@
 package com.routepick.api.security;
 
+import com.routepick.api.service.auth.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final com.routepick.api.service.auth.JwtService jwtService;
     private final ApiUserDetailsService userDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(
@@ -39,6 +41,13 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
+                // 블랙리스트 검증 추가
+                if (tokenBlacklistService.isBlacklisted(jwt)) {
+                    log.warn("블랙리스트에 있는 토큰으로 접근 시도: {}", jwt.substring(0, 10) + "***");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                
                 // JWT 토큰의 sub 필드에서 userId 추출
                 String userId = jwtService.getClaimsFromToken(jwt).getSubject();
                 String displayName = jwtService.getUserNameFromToken(jwt);

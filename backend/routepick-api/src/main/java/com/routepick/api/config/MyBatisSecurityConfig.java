@@ -2,10 +2,13 @@ package com.routepick.api.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.DependsOn;
 import com.routepick.common.exception.SecurityException;
+
+import jakarta.annotation.PostConstruct;
 
 /**
  * MyBatis 보안 설정
@@ -15,35 +18,43 @@ import com.routepick.common.exception.SecurityException;
  * 2. 타입 핸들러 보안
  * 3. SQL 로깅 보안
  */
-/**
- * MyBatis 보안 설정 클래스
- * 
- * 현재 비활성화 상태 - 순환 참조 문제로 인해 비활성화됨
- * 필요시 수정 후 활성화 가능
- * 
- * 활성화 방법:
- * 1. @Configuration 주석 해제
- * 2. 순환 참조 문제 해결
- * 3. 테스트 후 적용
- */
-// @Configuration
+@Configuration
 public class MyBatisSecurityConfig {
     
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
+    
     /**
-     * 보안 강화된 SqlSessionFactory 설정
+     * MyBatis 보안 설정 초기화
+     * SqlSessionFactory가 생성된 후 실행됩니다.
      */
-    @Bean
-    @Primary
-    public SqlSessionFactory secureSqlSessionFactory() {
-        // 기본 SqlSessionFactory를 생성하고 보안 설정을 적용
-        // 실제 구현에서는 기존 SqlSessionFactory를 사용하도록 수정
-        return null; // 임시로 null 반환
+    @PostConstruct
+    public void configureMyBatisSecurity() {
+        if (sqlSessionFactory == null) {
+            log.warn("SqlSessionFactory가 null입니다. 보안 설정을 건너뜁니다.");
+            return;
+        }
+        
+        try {
+            // 파라미터 바인딩 강화 설정
+            configureParameterBinding();
+            
+            // SQL 로깅 보안 설정
+            configureSecureLogging();
+            
+            // 타입 핸들러 보안 설정
+            configureTypeHandlerSecurity();
+            
+            log.info("MyBatis 보안 설정이 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("MyBatis 보안 설정 중 오류 발생: {}", e.getMessage(), e);
+        }
     }
     
     /**
      * 파라미터 바인딩 강화 설정
      */
-    private void configureParameterBinding(SqlSessionFactory sqlSessionFactory) {
+    private void configureParameterBinding() {
         // MyBatis 설정에서 파라미터 바인딩을 강제로 활성화
         // #{} 문법만 사용하도록 제한 (${} 사용 금지)
         sqlSessionFactory.getConfiguration().setUseGeneratedKeys(true);
@@ -53,12 +64,14 @@ public class MyBatisSecurityConfig {
         sqlSessionFactory.getConfiguration().setDefaultExecutorType(
             org.apache.ibatis.session.ExecutorType.SIMPLE
         );
+        
+        log.info("파라미터 바인딩 강화 설정 완료");
     }
     
     /**
      * SQL 로깅 보안 설정
      */
-    private void configureSecureLogging(SqlSessionFactory sqlSessionFactory) {
+    private void configureSecureLogging() {
         // SQL 로깅에서 민감한 정보 마스킹
         sqlSessionFactory.getConfiguration().setLogImpl(
             org.apache.ibatis.logging.slf4j.Slf4jImpl.class
@@ -70,12 +83,14 @@ public class MyBatisSecurityConfig {
                 org.apache.ibatis.logging.stdout.StdOutImpl.class
             );
         }
+        
+        log.info("SQL 로깅 보안 설정 완료");
     }
     
     /**
      * 타입 핸들러 보안 설정
      */
-    private void configureTypeHandlerSecurity(SqlSessionFactory sqlSessionFactory) {
+    private void configureTypeHandlerSecurity() {
         TypeHandlerRegistry typeHandlerRegistry = sqlSessionFactory.getConfiguration().getTypeHandlerRegistry();
         
         // String 타입 핸들러에 보안 검증 추가
@@ -84,6 +99,8 @@ public class MyBatisSecurityConfig {
         // 기본 타입들에 대한 안전한 핸들러 등록
         typeHandlerRegistry.register(Long.class, new SecureLongTypeHandler());
         typeHandlerRegistry.register(Integer.class, new SecureIntegerTypeHandler());
+        
+        log.info("타입 핸들러 보안 설정 완료");
     }
     
     /**

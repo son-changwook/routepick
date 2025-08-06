@@ -82,6 +82,10 @@
             user_name = #{userName},
             phone = #{phone},
             profile_image_url = #{profileImageUrl},
+            birth_date = #{birthDate},
+            address = #{address},
+            detail_address = #{detailAddress},
+            emergency_contact = #{emergencyContact},
             updated_at = NOW()
         WHERE user_id = #{userId} AND user_type = 'NORMAL'
         ]]>

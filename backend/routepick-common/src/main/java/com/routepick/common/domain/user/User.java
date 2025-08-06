@@ -73,6 +73,15 @@ public class User extends BaseDomain implements UserDetails {
         return userName;
     }
 
+    /**
+     * 실제 사용자 이름을 반환합니다.
+     * Spring Security의 getUsername()과 구분하기 위해 별도 메서드로 제공합니다.
+     * @return 사용자 이름
+     */
+    public String getUserName() {
+        return userName;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return userStatus != UserStatus.DELETED;

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -16,6 +19,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * Redis 설정 클래스
  * 보안 강화된 Redis 연결 및 직렬화 설정을 제공합니다.
+ * Spring Boot의 자동 설정을 제거하고 완전히 커스텀 설정을 사용합니다.
  */
 @Slf4j
 @Configuration
@@ -36,7 +40,7 @@ public class RedisConfig {
     /**
      * Redis 연결 팩토리 설정
      */
-    @Bean
+    @Bean("routepickRedisConnectionFactory")
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
@@ -55,7 +59,7 @@ public class RedisConfig {
     /**
      * Redis Template 설정 (보안 강화된 직렬화)
      */
-    @Bean
+    @Bean("routepickRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -89,9 +93,10 @@ public class RedisConfig {
 
     /**
      * String 전용 Redis Template (성능 최적화)
+     * 이 빈이 RedisTemplate<String, String> 타입의 기본 빈이 됩니다.
      */
-    @Bean("customStringRedisTemplate")
-    public RedisTemplate<String, String> customStringRedisTemplate(RedisConnectionFactory connectionFactory) {
+    @Bean("routepickStringRedisTemplate")
+    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         

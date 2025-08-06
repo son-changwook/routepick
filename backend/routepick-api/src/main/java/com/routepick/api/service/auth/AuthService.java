@@ -31,6 +31,7 @@ import com.routepick.common.exception.customExceptions.InvalidPasswordFormatExce
 import com.routepick.common.exception.customExceptions.UserNotFoundException;
 import com.routepick.common.exception.customExceptions.RequestValidationException;
 import com.routepick.api.service.file.FileService;
+import com.routepick.api.service.auth.TokenBlacklistService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,7 @@ public class AuthService {
     // private final SignupSessionService signupSessionService; // Redis로 대체됨
     private final RedisSignupSessionService redisSignupSessionService;
     private final ValidationService validationService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     /**
      * 회원가입 처리
@@ -139,13 +141,19 @@ public class AuthService {
      */
     private void saveUserAgreements(Long userId, SignupRequest request) {
         // TODO: UserAgreementMapper를 주입받아서 실제 DB 저장 로직 구현
-        // 현재는 로그만 출력
+        // 현재는 로그만 출력하지만, 향후 실제 DB 저장 로직으로 교체 예정
         
         log.info("사용자 {} 약관 동의 저장:", userId);
         log.info("- 이용약관: {}", request.isRequiredAgreementValid() ? "동의" : "미동의");
         log.info("- 개인정보처리방침: {}", request.isRequiredAgreementValid() ? "동의" : "미동의");
         log.info("- 마케팅 수신: {}", request.isMarketingAgreed() ? "동의" : "미동의");
         log.info("- 위치정보 수집: {}", request.isLocationAgreed() ? "동의" : "미동의");
+        
+        // 향후 구현 예정:
+        // 1. UserAgreementMapper 주입
+        // 2. 각 약관별 동의 정보를 DB에 저장
+        // 3. 트랜잭션 처리
+        // 4. 예외 처리
     }
 
 
@@ -324,7 +332,10 @@ public class AuthService {
             // 6. 토큰 무효화 (DB에서 revoke 처리)
             apiTokenMapper.revokeToken(dbToken.getTokenId());
             
-            // 7. 해당 사용자의 모든 토큰 무효화 (선택사항)
+            // 7. 토큰을 블랙리스트에 추가 (Redis)
+            tokenBlacklistService.addToBlacklist(token, 1); // 1시간 동안 블랙리스트 유지
+            
+            // 8. 해당 사용자의 모든 토큰 무효화 (선택사항)
             // apiTokenMapper.revokeAllUserTokens(userId);
             
             log.info("로그아웃 처리 완료: userId={}, tokenId={}", userId, dbToken.getTokenId());
