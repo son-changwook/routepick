@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 인증 관련 컨트롤러
@@ -49,7 +50,7 @@ public class AuthController {
 
     @Operation(
         summary = "회원가입",
-        description = "새로운 사용자 계정을 생성합니다. 이메일 인증이 완료된 후 가능합니다."
+        description = "새로운 사용자 계정을 생성합니다. 이메일 인증이 완료된 후 가능합니다. 프로필 이미지는 선택사항입니다."
     )
     @ApiResponses(value = {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -70,7 +71,8 @@ public class AuthController {
     })
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignupResponse>> signup(
-            @Valid @RequestBody SignupRequest request,
+            @RequestPart("userData") @Valid SignupRequest request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
             HttpServletRequest httpRequest) {
         
         log.info("회원가입 요청 시작");
@@ -86,8 +88,8 @@ public class AuthController {
         request.setEmail(sanitizedEmail);
         request.setUserName(sanitizedUsername);
         
-        // 회원가입 처리 (프로필 이미지 없이)
-        SignupResponse response = authService.signup(request, null);
+        // 회원가입 처리 (프로필 이미지 포함)
+        SignupResponse response = authService.signup(request, profileImage);
         
         log.info("회원가입 완료: userId={}", response.getUserId());
         return ResponseEntity.ok(ApiResponse.success("회원가입이 완료되었습니다.", response));
@@ -207,13 +209,8 @@ public class AuthController {
         // 입력값 정제
         String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
         
-        // 이메일 중복 확인 (임시로 직접 구현)
-        // TODO: AuthService에 checkEmailAvailability 메서드 추가 필요
-        EmailCheckResponse response = EmailCheckResponse.builder()
-            .available(true) // 임시
-            .message("사용 가능한 이메일입니다.")
-            .verificationRequired(false)
-            .build();
+        // 이메일 중복 확인
+        EmailCheckResponse response = emailVerificationService.checkEmailAvailability(sanitizedEmail);
         
         String message = response.isAvailable() ? 
             "사용 가능한 이메일입니다." : "이미 사용 중인 이메일입니다.";
@@ -348,9 +345,7 @@ public class AuthController {
         }
         
         // 로그아웃 처리 (토큰 무효화)
-        // TODO: AuthService에 logout 메서드 추가 필요
-        // authService.logout(token);
-        log.info("토큰 무효화 처리됨: token={}", token.substring(0, 10) + "***");
+        authService.logout(token);
         
         log.info("로그아웃 완료");
         return ResponseEntity.ok(ApiResponse.success("로그아웃이 완료되었습니다."));

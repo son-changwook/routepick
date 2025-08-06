@@ -286,4 +286,53 @@ public class AuthService {
             .build();
     }
     
+    /**
+     * 로그아웃 처리
+     * @param token 무효화할 액세스 토큰
+     */
+    @Transactional
+    public void logout(String token) {
+        log.info("로그아웃 처리 시작");
+        
+        try {
+            // 1. 토큰 유효성 검증
+            if (!jwtService.validateToken(token)) {
+                log.warn("유효하지 않은 토큰으로 로그아웃 시도: {}", token.substring(0, 10) + "***");
+                throw AuthenticationException.invalidToken();
+            }
+            
+            // 2. 토큰 타입 확인 (액세스 토큰만 허용)
+            String tokenType = jwtService.getTokenTypeFromToken(token);
+            if (!"ACCESS".equals(tokenType)) {
+                log.warn("잘못된 토큰 타입으로 로그아웃 시도: {}", tokenType);
+                throw AuthenticationException.tokenTypeMismatch();
+            }
+            
+            // 3. 사용자 ID 추출
+            Long userId = jwtService.getUserIdFromToken(token);
+            
+            // 4. DB에서 토큰 확인
+            ApiToken dbToken = apiTokenMapper.findByToken(token)
+                .orElseThrow(() -> AuthenticationException.invalidToken());
+            
+            // 5. 토큰이 이미 무효화되었는지 확인
+            if (dbToken.getIsRevoked()) {
+                log.warn("이미 무효화된 토큰으로 로그아웃 시도: {}", dbToken.getTokenId());
+                throw AuthenticationException.expiredToken();
+            }
+            
+            // 6. 토큰 무효화 (DB에서 revoke 처리)
+            apiTokenMapper.revokeToken(dbToken.getTokenId());
+            
+            // 7. 해당 사용자의 모든 토큰 무효화 (선택사항)
+            // apiTokenMapper.revokeAllUserTokens(userId);
+            
+            log.info("로그아웃 처리 완료: userId={}, tokenId={}", userId, dbToken.getTokenId());
+            
+        } catch (Exception e) {
+            log.error("로그아웃 처리 중 오류 발생: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+    
 } 
