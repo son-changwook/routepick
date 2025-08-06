@@ -4,6 +4,8 @@ import com.routepick.api.util.FileSecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.routepick.common.exception.FileException;
+import com.routepick.common.exception.SecurityException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +73,7 @@ public class FileService {
             
             // 8. 파일 저장 (덮어쓰기 방지)
             if (Files.exists(filePath)) {
-                throw new SecurityException("파일명 충돌이 발생했습니다. 다시 시도해주세요.");
+                throw FileException.fileNameConflict();
             }
             
             // 9. 안전한 파일 복사
@@ -92,7 +94,7 @@ public class FileService {
             
         } catch (IOException e) {
             log.error("파일 업로드 실패: {}", e.getMessage(), e);
-            throw new RuntimeException("파일 업로드에 실패했습니다.", e);
+            throw FileException.fileUploadFailed(e.getMessage(), e);
         } catch (SecurityException e) {
             log.error("파일 보안 검증 실패: {}", e.getMessage());
             throw e;
@@ -104,20 +106,20 @@ public class FileService {
      */
     private void validateImageFile(MultipartFile file) {
         if (file == null) {
-            throw new IllegalArgumentException("업로드할 파일이 없습니다.");
+            throw FileException.noFile();
         }
         
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("업로드할 파일이 비어있습니다.");
+            throw FileException.emptyFile();
         }
         
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("파일 크기는 5MB 이하여야 합니다.");
+            throw FileException.invalidFileSize(file.getSize(), MAX_FILE_SIZE);
         }
         
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) {
-            throw new IllegalArgumentException("파일명이 없습니다.");
+            throw SecurityException.invalidFilename("파일명이 없습니다");
         }
         
         String extension = getFileExtension(originalFilename).toLowerCase();
@@ -130,7 +132,7 @@ public class FileService {
         }
         
         if (!isValidExtension) {
-            throw new IllegalArgumentException("지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif만 가능)");
+            throw FileException.unsupportedFileType(extension);
         }
     }
     
@@ -139,22 +141,22 @@ public class FileService {
      */
     private void validateFileName(String filename) {
         if (filename == null || filename.isEmpty()) {
-            throw new SecurityException("파일명이 없습니다.");
+            throw SecurityException.invalidFilename("파일명이 없습니다");
         }
         
         // 위험한 문자나 패턴 검사
         if (DANGEROUS_FILENAME_PATTERN.matcher(filename).matches()) {
-            throw new SecurityException("위험한 파일명입니다.");
+            throw SecurityException.invalidFilename("위험한 파일명입니다");
         }
         
         // 파일명 길이 제한
         if (filename.length() > 255) {
-            throw new SecurityException("파일명이 너무 깁니다.");
+            throw SecurityException.invalidFilename("파일명이 너무 깁니다");
         }
         
         // 경로 순회 공격 방지
         if (filename.contains("..") || filename.contains("/") || filename.contains("\\")) {
-            throw new SecurityException("파일명에 경로 정보가 포함되어 있습니다.");
+            throw SecurityException.pathTraversalDetected();
         }
     }
     
@@ -167,7 +169,7 @@ public class FileService {
             int bytesRead = inputStream.read(header);
             
             if (bytesRead < 3) {
-                throw new SecurityException("파일이 너무 작습니다.");
+                throw SecurityException.fileTooSmall(bytesRead, 3);
             }
             
             // JPEG 검증
@@ -188,7 +190,7 @@ public class FileService {
                 return;
             }
             
-            throw new SecurityException("지원하지 않는 파일 형식입니다. 실제 이미지 파일을 업로드해주세요.");
+            throw SecurityException.dangerousFileType("실제 이미지 파일이 아님");
         }
     }
     
@@ -285,7 +287,7 @@ public class FileService {
     private String getFileExtension(String filename) {
         int lastDotIndex = filename.lastIndexOf('.');
         if (lastDotIndex == -1) {
-            throw new IllegalArgumentException("파일 확장자가 없습니다.");
+            throw FileException.noFileExtension();
         }
         return filename.substring(lastDotIndex);
     }

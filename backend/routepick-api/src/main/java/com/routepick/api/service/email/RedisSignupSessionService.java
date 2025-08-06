@@ -5,6 +5,7 @@ import com.routepick.api.util.SecureLogger;
 import com.routepick.common.domain.session.SignupSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.routepick.common.exception.ServiceException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +70,7 @@ public class RedisSignupSessionService {
             
         } catch (Exception e) {
             log.error("세션 생성 실패: sessionId={}, error={}", sessionId, e.getMessage(), e);
-            throw new RuntimeException("세션 생성에 실패했습니다.", e);
+            throw ServiceException.sessionCreationFailed(e);
         }
     }
     

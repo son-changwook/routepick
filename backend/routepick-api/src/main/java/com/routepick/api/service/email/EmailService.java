@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.routepick.common.exception.ServiceException;
 
 @Slf4j
 @Service
@@ -53,7 +54,7 @@ public class EmailService {
             
         } catch (Exception e) {
             log.error("인증 코드 이메일 발송 실패: toEmail={}, error={}", toEmail, e.getMessage(), e);
-            throw new RuntimeException("이메일 발송에 실패했습니다: " + e.getMessage(), e);
+            throw ServiceException.emailSendFailed(e);
         }
      }
     

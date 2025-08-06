@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 import java.time.Duration;
 import java.util.List;
@@ -48,11 +49,11 @@ public class RedisRateLimitService {
         end
         """;
 
-    private final DefaultRedisScript<List<Long>> rateLimitScript;
+    private DefaultRedisScript<List<Long>> rateLimitScript;
 
     @SuppressWarnings("unchecked")
-    public RedisRateLimitService(RedisTemplate<String, String> stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
+    @PostConstruct
+    public void init() {
         this.rateLimitScript = new DefaultRedisScript<>();
         this.rateLimitScript.setScriptText(RATE_LIMIT_SCRIPT);
         this.rateLimitScript.setResultType((Class<List<Long>>) (Class<?>) List.class);

@@ -3,7 +3,10 @@ package com.routepick.api.service.validation;
 import com.routepick.api.dto.auth.SignupRequest;
 import com.routepick.common.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.routepick.api.security.SqlInjectionProtection;
+import com.routepick.common.exception.SecurityException;
 
 import java.util.regex.Pattern;
 
@@ -13,13 +16,14 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ValidationService {
+    
+    private final SqlInjectionProtection sqlInjectionProtection;
 
-    // 보안 위험 패턴들
+    // 보안 위험 패턴들 (정규식 수정)
     private static final Pattern SQL_INJECTION_PATTERN = Pattern.compile(
-        "('|(\\-\\-)|(;)|(\\||\\|)|(\\*|\\*))" +
-        "|((((')+('|[^'])+(')|(\")+((\"|[^\"])+(\")))" +
-        "|(exec(\\s|\\+)+(s|x)p\\w+))"
+        "('|--|;|\\||\\*|exec\\s+s|exec\\s+x)"
     );
     
     private static final Pattern XSS_PATTERN = Pattern.compile(
@@ -105,8 +109,8 @@ public class ValidationService {
             throw ValidationException.invalidEmailFormat();
         }
         
-        // 보안 검증
-        validateSecurityThreats(trimmedEmail, "이메일");
+        // SQL Injection 방지 검증
+        sqlInjectionProtection.validateAndSanitize(trimmedEmail, "email");
     }
 
     /**
@@ -130,8 +134,8 @@ public class ValidationService {
             throw ValidationException.invalidFormat("사용자명", "영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능");
         }
         
-        // 보안 검증
-        validateSecurityThreats(trimmedUserName, "사용자명");
+        // SQL Injection 방지 검증
+        sqlInjectionProtection.validateAndSanitize(trimmedUserName, "username");
     }
 
     /**
@@ -215,27 +219,22 @@ public class ValidationService {
     }
 
     /**
-     * 보안 위협 검증
+     * 보안 위협 검증 (XSS 등)
+     * SQL Injection은 SqlInjectionProtection에서 처리
      * @param input 검증할 입력값
      * @param fieldName 필드명
      */
     private void validateSecurityThreats(String input, String fieldName) {
-        // SQL Injection 검증
-        if (SQL_INJECTION_PATTERN.matcher(input).find()) {
-            log.warn("SQL Injection 시도 감지: field={}, length={}", fieldName, input.length());
-            throw new ValidationException(fieldName, "허용되지 않는 문자가 포함되어 있습니다.");
-        }
-        
         // XSS 검증
         if (XSS_PATTERN.matcher(input).find()) {
             log.warn("XSS 시도 감지: field={}, length={}", fieldName, input.length());
-            throw new ValidationException(fieldName, "허용되지 않는 스크립트가 포함되어 있습니다.");
+            throw SecurityException.xssDetected();
         }
         
         // 위험한 특수문자 검증 (이메일과 사용자명에서는 일부 허용)
         if (!fieldName.equals("이메일") && DANGEROUS_CHARS_PATTERN.matcher(input).find()) {
             log.warn("위험한 특수문자 감지: field={}, length={}", fieldName, input.length());
-            throw new ValidationException(fieldName, "허용되지 않는 특수문자가 포함되어 있습니다.");
+            throw SecurityException.invalidInputFormat(fieldName);
         }
     }
 

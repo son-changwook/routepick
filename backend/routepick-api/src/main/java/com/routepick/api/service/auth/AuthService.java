@@ -18,6 +18,9 @@ import com.routepick.api.mapper.UserMapper;
 import com.routepick.api.mapper.ApiTokenMapper;
 import com.routepick.api.service.email.RedisSignupSessionService;
 import com.routepick.api.service.validation.ValidationService;
+import com.routepick.common.exception.AuthenticationException;
+import com.routepick.common.exception.FileException;
+import com.routepick.common.exception.ServiceException;
 import com.routepick.api.util.InputSanitizer;
 import com.routepick.common.domain.user.User;
 import com.routepick.common.domain.token.ApiToken;
@@ -85,7 +88,7 @@ public class AuthService {
             try {
                 profileImageUrl = fileService.uploadProfileImage(profileImage);
             } catch (Exception e) {
-                throw new IllegalArgumentException("프로필 이미지 업로드에 실패했습니다: " + e.getMessage());
+                throw FileException.fileUploadFailed(e.getMessage(), e);
             }
         }
         
@@ -168,7 +171,16 @@ public class AuthService {
         
         // 4. 계정 상태 확인
         if (user.getUserStatus() != UserStatus.ACTIVE) {
-            throw new IllegalArgumentException("비활성화된 계정입니다.");
+            switch (user.getUserStatus()) {
+                case INACTIVE:
+                    throw AuthenticationException.accountDisabled();
+                case SUSPENDED:
+                    throw AuthenticationException.accountSuspended();
+                case DELETED:
+                    throw AuthenticationException.accountDeleted();
+                default:
+                    throw AuthenticationException.accountDisabled();
+            }
         }
         
         // 5. 기존 토큰 만료 처리
@@ -227,18 +239,18 @@ public class AuthService {
     public TokenRefreshResponse refreshToken(TokenRefreshRequest request) {
         // 1. 리프레시 토큰 검증
         if (!jwtService.validateToken(request.getRefreshToken())) {
-            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+            throw AuthenticationException.invalidRefreshToken();
         }
         
         // 2. 토큰 타입 확인
         String tokenType = jwtService.getTokenTypeFromToken(request.getRefreshToken());
         if (!"REFRESH".equals(tokenType)) {
-            throw new IllegalArgumentException("리프레시 토큰이 아닙니다.");
+            throw AuthenticationException.tokenTypeMismatch();
         }
         
         // 3. 토큰 만료 확인
         if (jwtService.isTokenExpired(request.getRefreshToken())) {
-            throw new IllegalArgumentException("만료된 리프레시 토큰입니다.");
+            throw AuthenticationException.expiredToken();
         }
         
         // 4. 사용자 조회
@@ -248,10 +260,10 @@ public class AuthService {
         
         // 5. DB에서 토큰 확인
         ApiToken dbToken = apiTokenMapper.findByToken(request.getRefreshToken())
-            .orElseThrow(() -> new IllegalArgumentException("DB에 존재하지 않는 토큰입니다."));
+            .orElseThrow(() -> AuthenticationException.invalidToken());
         
         if (dbToken.getIsRevoked()) {
-            throw new IllegalArgumentException("이미 만료된 토큰입니다.");
+            throw AuthenticationException.expiredToken();
         }
         
         // 6. 새 토큰 생성

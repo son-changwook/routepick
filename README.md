@@ -49,6 +49,15 @@ routepick/
 - Docker
 - Gradle
 
+### 보안 설정
+
+#### 비활성화된 보안 컴포넌트
+
+- `MyBatisSecurityConfig.java`: 순환 참조 문제로 인해 비활성화됨
+  - 위치: `backend/routepick-api/src/main/java/com/routepick/api/config/MyBatisSecurityConfig.java`
+  - 활성화 방법: 주석 처리된 `@Configuration` 해제 후 순환 참조 문제 해결
+  - 현재는 기본 MyBatis 보안 + ValidationService로 충분한 보안 제공
+
 ### 백엔드 실행
 
 ```bash
