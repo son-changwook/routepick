@@ -16,17 +16,57 @@ services:
     networks:
       - routepick-network
 
+  redis:
+    image: redis:7.2-alpine
+    container_name: routepick-redis
+    environment:
+      # Redis 설정
+      - REDIS_PASSWORD=routepick-redis-password
+    command: >
+      sh -c "
+        redis-server
+        --requirepass routepick-redis-password
+        --appendonly yes
+        --appendfsync everysec
+        --maxmemory 512mb
+        --maxmemory-policy allkeys-lru
+        --tcp-keepalive 60
+        --timeout 300
+      "
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - routepick-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "routepick-redis-password", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
   routepick-api:
     build:
       context: ./backend
       dockerfile: routepick-api/Dockerfile
     container_name: routepick-api
     depends_on:
-      - mysql
+      mysql:
+        condition: service_started
+      redis:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/routepick?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: routepick
       SPRING_DATASOURCE_PASSWORD: routepick
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: routepick-redis-password
+      SPRING_REDIS_TIMEOUT: 2000ms
+      SPRING_REDIS_LETTUCE_POOL_MAX_ACTIVE: 8
+      SPRING_REDIS_LETTUCE_POOL_MAX_IDLE: 8
+      SPRING_REDIS_LETTUCE_POOL_MIN_IDLE: 0
     ports:
       - "8080:8080"
     networks:
@@ -38,11 +78,17 @@ services:
       dockerfile: routepick-admin/Dockerfile
     container_name: routepick-admin
     depends_on:
-      - mysql
+      mysql:
+        condition: service_started
+      redis:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/routepick?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: routepick
       SPRING_DATASOURCE_PASSWORD: routepick
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: routepick-redis-password
     ports:
       - "8081:8081"
     networks:
@@ -74,3 +120,4 @@ networks:
 
 volumes:
   mysql-data:
+  redis-data:

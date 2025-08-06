@@ -81,13 +81,13 @@ public class InputSanitizer {
         
         // XSS 공격 패턴 검사
         if (containsXssPattern(sanitized)) {
-            log.warn("XSS 공격 패턴이 감지되었습니다: {}", input);
+            log.warn("XSS 공격 패턴이 감지되었습니다. 입력 길이: {}", input != null ? input.length() : 0);
             throw new SecurityException("XSS 공격이 감지되었습니다.");
         }
         
         // SQL Injection 패턴 검사
         if (containsSqlInjectionPattern(sanitized)) {
-            log.warn("SQL Injection 패턴이 감지되었습니다: {}", input);
+            log.warn("SQL Injection 패턴이 감지되었습니다. 입력 길이: {}", input != null ? input.length() : 0);
             throw new SecurityException("SQL Injection 공격이 감지되었습니다.");
         }
         

@@ -4,6 +4,21 @@ spring:
   application:
     name: routepick-api
   
+  # Redis 설정
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD:routepick-redis-password}
+    timeout: ${SPRING_REDIS_TIMEOUT:2000ms}
+    database: 0
+    lettuce:
+      pool:
+        max-active: ${SPRING_REDIS_LETTUCE_POOL_MAX_ACTIVE:8}
+        max-idle: ${SPRING_REDIS_LETTUCE_POOL_MAX_IDLE:8}
+        min-idle: ${SPRING_REDIS_LETTUCE_POOL_MIN_IDLE:0}
+        max-wait: -1ms
+      shutdown-timeout: 100ms
+  
   # 이메일 설정
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}

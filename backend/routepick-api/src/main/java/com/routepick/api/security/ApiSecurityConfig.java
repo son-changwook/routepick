@@ -79,22 +79,60 @@ public class ApiSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // 환경변수에서 CORS 설정 가져오기
+        // 환경별 Origin 설정 (보안 강화)
+        String environment = System.getenv("SPRING_PROFILES_ACTIVE");
         String allowedOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
+        
         if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
             configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
-        } else {
-            // 기본값 (개발 환경)
+        } else if ("prod".equals(environment)) {
+            // 프로덕션 환경: 엄격한 Origin 제한
             configuration.setAllowedOriginPatterns(Arrays.asList(
-                    "http://localhost:3000", // 개발 환경
-                    "https://routepick.com" // 프로덕션 환경
+                    "https://routepick.com",
+                    "https://admin.routepick.com",
+                    "https://www.routepick.com"
+            ));
+        } else {
+            // 개발 환경: 개발용 도메인만 허용
+            configuration.setAllowedOriginPatterns(Arrays.asList(
+                    "http://localhost:3000",  // 웹 개발 서버
+                    "http://localhost:3001",  // 관리자 개발 서버
+                    "http://localhost:8081",  // 모바일 개발 서버
+                    "http://127.0.0.1:3000"
             ));
         }
         
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // 필요한 HTTP 메서드만 허용 (보안 강화)
+        configuration.setAllowedMethods(Arrays.asList(
+            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
+        
+        // 명시적 헤더 설정 (와일드카드 제거로 보안 강화)
+        configuration.setAllowedHeaders(Arrays.asList(
+            "Authorization",
+            "Content-Type",
+            "X-Requested-With",
+            "Accept",
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers",
+            "X-CSRF-Token",
+            "Cache-Control"
+        ));
+        
+        // 클라이언트에 노출할 헤더 제한 (보안 강화)
+        configuration.setExposedHeaders(Arrays.asList(
+            "X-Total-Count",
+            "X-Page-Count",
+            "X-Rate-Limit-Remaining",
+            "X-Rate-Limit-Reset"
+        ));
+        
+        // 인증 정보 포함 허용
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+        
+        // Preflight 캐시 시간 단축 (보안 강화)
+        configuration.setMaxAge(1800L); // 30분으로 단축 (기존 1시간에서)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

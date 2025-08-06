@@ -54,6 +54,9 @@ subprojects {
         // MySQL
         runtimeOnly "mysql:mysql-connector-java:${mysqlVersion}"
         
+        // Redis
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        
         // Lombok
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

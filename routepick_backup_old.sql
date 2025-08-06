@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.43, for Linux (aarch64)
+-- MySQL dump 10.13  Distrib 9.3.0, for macos15.2 (arm64)
 --
--- Host: localhost    Database: routepick
+-- Host: 127.0.0.1    Database: routepick
 -- ------------------------------------------------------
--- Server version	8.0.43
+-- Server version	8.4.5
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -94,17 +94,17 @@ DROP TABLE IF EXISTS `api_tokens`;
 CREATE TABLE `api_tokens` (
   `token_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `token` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `token_type` enum('ACCESS','REFRESH','RESET_PASSWORD','EMAIL_VERIFICATION') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expires_at` timestamp NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_revoked` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`token_id`),
   KEY `idx_api_tokens_user_id` (`user_id`),
+  KEY `idx_api_tokens_token` (`token`),
   KEY `idx_api_tokens_expires_at` (`expires_at`),
-  KEY `idx_api_tokens_token` (`token`(255)),
   CONSTRAINT `api_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,7 +113,6 @@ CREATE TABLE `api_tokens` (
 
 LOCK TABLES `api_tokens` WRITE;
 /*!40000 ALTER TABLE `api_tokens` DISABLE KEYS */;
-INSERT INTO `api_tokens` VALUES (1,1,'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVHlwZSI6Ik5PUk1BTCIsInVzZXJOYW1lIjoidGVzdHVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOjEsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsInN1YiI6IjEiLCJpc3MiOiJyb3V0ZXBpY2stYXBpIiwiaWF0IjoxNzU0MzAzMDQwLCJleHAiOjE3NTQzMDY2NDB9.me7l7GC3dIYvw6ihU2xy6tNITDfc04FDn-mOrFeAyD8','ACCESS','2025-08-04 20:24:00','2025-08-04 10:24:00',1),(2,1,'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVHlwZSI6Ik5PUk1BTCIsInVzZXJOYW1lIjoidGVzdHVzZXIiLCJ0b2tlblR5cGUiOiJSRUZSRVNIIiwidXNlcklkIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiIxIiwiaXNzIjoicm91dGVwaWNrLWFwaSIsImlhdCI6MTc1NDMwMzA0MCwiZXhwIjoxNzU2ODk1MDQwfQ.NKwuMJNAChdNi5mXO9l2Za6oz0t-H2JW7RXvUVpQ9Iw','REFRESH','2025-09-03 19:24:00','2025-08-04 10:24:00',1),(3,1,'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVHlwZSI6Ik5PUk1BTCIsInVzZXJOYW1lIjoidGVzdHVzZXIiLCJ0b2tlblR5cGUiOiJBQ0NFU1MiLCJ1c2VySWQiOjEsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsInN1YiI6IjEiLCJpc3MiOiJyb3V0ZXBpY2stYXBpIiwiaWF0IjoxNzU0MzE4MDA5LCJleHAiOjE3NTQzMjE2MDl9.6sMWRPREtA3AyB7eNgMHij7Pp82kE_UnDL5Mw3SgqxU','ACCESS','2025-08-05 00:33:30','2025-08-04 14:33:29',0),(4,1,'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVHlwZSI6Ik5PUk1BTCIsInVzZXJOYW1lIjoidGVzdHVzZXIiLCJ0b2tlblR5cGUiOiJSRUZSRVNIIiwidXNlcklkIjoxLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiIxIiwiaXNzIjoicm91dGVwaWNrLWFwaSIsImlhdCI6MTc1NDMxODAwOSwiZXhwIjoxNzU2OTEwMDA5fQ.QdN_BNf9vjBbCpfc7JVhZH3Ky8dJKyIvpyCf_Oc8XvY','REFRESH','2025-09-03 23:33:30','2025-08-04 14:33:29',0);
 /*!40000 ALTER TABLE `api_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1185,7 +1184,7 @@ CREATE TABLE `routes` (
   `wall_id` int NOT NULL,
   `setter_id` int DEFAULT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `angle` enum('VERTICAL','SLIGHT_OVERHANG','OVERHANG','ROOF') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `angle` enum('VERTICAL','SLIGHT_OVERHANG','OVERHANG','ROOF') COLLATE utf8mb4_unicode_ci NOT NULL,
   `level_id` int NOT NULL,
   `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -1409,7 +1408,11 @@ DROP TABLE IF EXISTS `user_details`;
 CREATE TABLE `user_details` (
   `detail_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
+  `birth_date` date DEFAULT NULL,
   `gender` enum('MALE','FEMALE','OTHER') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `height` int DEFAULT NULL,
   `weight` int DEFAULT NULL,
   `wingspan` int DEFAULT NULL,
@@ -1523,13 +1526,9 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_login_at` timestamp NULL DEFAULT NULL,
   `user_status` enum('ACTIVE','INACTIVE','SUSPENDED','DELETED') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ACTIVE',
-  `birth_date` date DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `detail_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `emergency_contact` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1538,7 +1537,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'test@example.com','$2a$10$eh5I1DzLFDPArNWM03H01uUA7OIOIdEhaqJzHz4jmFvmxFlTkmlr2','testuser','010-1234-5678',NULL,'NORMAL','2025-08-04 10:21:55','2025-08-04 14:33:29',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432'),(2,'test2@example.com','$2a$10$Gh.x4ZNyCOIX6q9ZvgMm7uhLP3L7Ouqym6X8SQRPvTThzQzVuzi7S','testuser2','010-1234-5678',NULL,'NORMAL','2025-08-04 14:32:39','2025-08-04 14:32:39',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1606,10 +1604,6 @@ LOCK TABLES `webhook_logs` WRITE;
 /*!40000 ALTER TABLE `webhook_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `webhook_logs` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'routepick'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1620,4 +1614,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-06  4:44:18
+-- Dump completed on 2025-08-03 17:38:27

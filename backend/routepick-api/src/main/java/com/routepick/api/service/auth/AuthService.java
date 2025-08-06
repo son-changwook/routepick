@@ -16,7 +16,8 @@ import com.routepick.api.dto.auth.TokenRefreshRequest;
 import com.routepick.api.dto.auth.TokenRefreshResponse;
 import com.routepick.api.mapper.UserMapper;
 import com.routepick.api.mapper.ApiTokenMapper;
-import com.routepick.api.service.email.SignupSessionService;
+import com.routepick.api.service.email.RedisSignupSessionService;
+import com.routepick.api.service.validation.ValidationService;
 import com.routepick.api.util.InputSanitizer;
 import com.routepick.common.domain.user.User;
 import com.routepick.common.domain.token.ApiToken;
@@ -41,7 +42,9 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
-    private final SignupSessionService signupSessionService;
+    // private final SignupSessionService signupSessionService; // Redis로 대체됨
+    private final RedisSignupSessionService redisSignupSessionService;
+    private final ValidationService validationService;
 
     /**
      * 회원가입 처리
@@ -52,35 +55,25 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest request, MultipartFile profileImage) {
 
-        // 1. 입력 데이터 정제 및 검증
+        // 1. 전문적인 검증 서비스를 통한 종합 검증
+        validationService.validateSignupRequest(request);
+
+        // 2. 입력 데이터 정제 (검증 통과 후)
         String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
-        String sanitizedUserName = InputSanitizer.sanitizeUserName(request.getUserName());
+        String sanitizedUserName = InputSanitizer.sanitizeInput(request.getUserName());
         String sanitizedPhone = InputSanitizer.sanitizeInput(request.getPhone());
         String sanitizedAddress = InputSanitizer.sanitizeInput(request.getAddress());
         String sanitizedDetailAddress = InputSanitizer.sanitizeInput(request.getDetailAddress());
         String sanitizedEmergencyContact = InputSanitizer.sanitizeInput(request.getEmergencyContact());
-        
-        // 2. 추가 보안 검증
-        validateInputData(sanitizedEmail, sanitizedUserName, sanitizedPhone);
 
-        // 3. 이메일 인증 토큰 검증
-        if (!signupSessionService.validateRegistrationToken(request.getRegistrationToken(), sanitizedEmail)) {
+        // 3. 이메일 인증 토큰 검증 (Redis 기반)
+        if (!redisSignupSessionService.validateRegistrationToken(request.getRegistrationToken(), sanitizedEmail)) {
             throw new RequestValidationException("유효하지 않은 이메일 인증 토큰입니다. 이메일 인증을 다시 진행해주세요.");
         }
 
         // 4. 이메일 중복 확인
         if (userMapper.existsByEmail(sanitizedEmail)) {
             throw new EmailDuplicateException("이미 존재하는 이메일입니다.");
-        }
-
-        // 5. 비밀번호 유효성 검사
-        if (!isValidPassword(request.getPassword())) {
-            throw new InvalidPasswordFormatException("비밀번호는 8자 이상이어야 합니다.");
-        }
-        
-        // 6. 약관 동의 검증
-        if (!request.isRequiredAgreementValid()) {
-            throw new IllegalArgumentException("필수 약관에 동의해야 합니다.");
         }
     
         // 7. 비밀번호 해싱
@@ -119,8 +112,8 @@ public class AuthService {
         // 11. 약관 동의 저장
         saveUserAgreements(user.getUserId(), request);
         
-        // 12. 등록 토큰 사용 처리 (세션 삭제)
-        signupSessionService.consumeRegistrationToken(request.getRegistrationToken());
+        // 12. 등록 토큰 사용 처리 (Redis 세션 삭제)
+        redisSignupSessionService.consumeRegistrationToken(request.getRegistrationToken());
         
         log.info("새 사용자 등록 완료: {}", sanitizedEmail);
         
@@ -134,39 +127,7 @@ public class AuthService {
                 .build();
     }
 
-    /**
-     * 입력 데이터 보안 검증
-     * @param email 이메일
-     * @param userName 사용자명
-     * @param phone 전화번호
-     */
-    private void validateInputData(String email, String userName, String phone) {
-        // SQL Injection 방지
-        if (email.contains("'") || email.contains("\"") || email.contains(";")) {
-            throw new SecurityException("이메일에 특수문자가 포함되어 있습니다.");
-        }
-        
-        if (userName.contains("'") || userName.contains("\"") || userName.contains(";")) {
-            throw new SecurityException("사용자명에 특수문자가 포함되어 있습니다.");
-        }
-        
-        if (phone.contains("'") || phone.contains("\"") || phone.contains(";")) {
-            throw new SecurityException("전화번호에 특수문자가 포함되어 있습니다.");
-        }
-        
-        // 추가적인 보안 검증
-        if (email.length() > 100) {
-            throw new SecurityException("이메일이 너무 깁니다.");
-        }
-        
-        if (userName.length() > 20) {
-            throw new SecurityException("사용자명이 너무 깁니다.");
-        }
-        
-        if (phone.length() > 20) {
-            throw new SecurityException("전화번호가 너무 깁니다.");
-        }
-    }
+
 
     /**
      * 사용자 약관 동의 저장
@@ -184,17 +145,7 @@ public class AuthService {
         log.info("- 위치정보 수집: {}", request.isLocationAgreed() ? "동의" : "미동의");
     }
 
-    /**
-     * 비밀번호 유효성 검사
-     * @param password 검사할 비밀번호
-     * @return 유효한 비밀번호인 경우 true, 그렇지 않으면 false
-     */
-    private boolean isValidPassword(String password){   
-        if(password.length() < 8){
-            return false;
-        }
-        return true;
-    }
+
     
     /**
      * 로그인 처리
@@ -203,36 +154,39 @@ public class AuthService {
      */
     @Transactional
     public LoginResponse login(LoginRequest request) {
-        // 1. 사용자 조회
+        // 1. 입력값 검증
+        validationService.validateEmail(request.getEmail());
+        
+        // 2. 사용자 조회
         User user = userMapper.findByEmail(request.getEmail())
             .orElseThrow(() -> new UserNotFoundException("존재하지 않는 사용자입니다."));
         
-        // 2. 비밀번호 검증
+        // 3. 비밀번호 검증
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new InvalidPasswordFormatException("비밀번호가 일치하지 않습니다.");
         }
         
-        // 3. 계정 상태 확인
+        // 4. 계정 상태 확인
         if (user.getUserStatus() != UserStatus.ACTIVE) {
             throw new IllegalArgumentException("비활성화된 계정입니다.");
         }
         
-        // 4. 기존 토큰 만료 처리
+        // 5. 기존 토큰 만료 처리
         apiTokenMapper.revokeAllTokensByUserId(user.getUserId());
         
-        // 5. 새 토큰 생성
+        // 6. 새 토큰 생성
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         
-        // 6. 토큰 저장
+        // 7. 토큰 저장
         saveToken(user.getUserId(), accessToken, ApiToken.TokenType.ACCESS, 3600L); // 1시간
         saveToken(user.getUserId(), refreshToken, ApiToken.TokenType.REFRESH, 2592000L); // 30일
         
-        // 7. 마지막 로그인 시간 업데이트
+        // 8. 마지막 로그인 시간 업데이트
         user.setLastLoginAt(LocalDateTime.now());
         userMapper.updateUser(user);
         
-        // 8. 응답 생성
+        // 9. 응답 생성
         return LoginResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.routepick.common.domain.session.SignupSession;
+import com.routepick.api.util.SecureLogger;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -40,7 +41,8 @@ public class SignupSessionService {
             .build();
         
         sessions.put(sessionId, session);
-        log.info("세션 생성 완료: sessionId={}, email={}", sessionId, email);
+        SecureLogger.logWithMaskedEmail("세션 생성 완료: sessionId={}, email={}", 
+            email, sessionId.substring(0, 8) + "***");
         
         return sessionId;
     }
@@ -89,7 +91,7 @@ public class SignupSessionService {
         SignupSession session = sessions.get(sessionId);
         if (session != null) {
             session.setVerificationCode(verificationCode);
-            log.debug("인증 코드 설정: sessionId={}, code={}", sessionId, verificationCode);
+            log.debug("인증 코드 설정: sessionId={}, code=***", sessionId);
         }
     }
     
@@ -104,7 +106,7 @@ public class SignupSessionService {
             session.setRegistrationToken(registrationToken);
             // 등록 토큰을 별도 맵에도 저장
             registrationTokens.put(registrationToken, sessionId);
-            log.debug("등록 토큰 설정: sessionId={}, token={}", sessionId, registrationToken);
+            log.debug("등록 토큰 설정: sessionId={}, token=***", sessionId);
         }
     }
     

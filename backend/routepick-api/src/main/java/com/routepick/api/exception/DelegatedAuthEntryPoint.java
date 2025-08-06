@@ -69,8 +69,8 @@ public class DelegatedAuthEntryPoint implements AuthenticationEntryPoint {
         // 보안 이벤트 로깅
         logSecurityEvent(request, authException);
 
-        // 안전한 예외 메시지 생성
-        String safeMessage = getSafeExceptionMessage(authException);
+        // 안전한 예외 메시지 생성 (로깅에서만 사용)
+        getSafeExceptionMessage(authException);
 
         // 인증 실패 횟수 증가
         incrementFailedAttempts(clientIp);
