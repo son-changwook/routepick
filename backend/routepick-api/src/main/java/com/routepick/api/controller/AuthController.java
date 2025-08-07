@@ -6,6 +6,8 @@ import com.routepick.api.dto.auth.LoginRequest;
 import com.routepick.api.dto.auth.LoginResponse;
 import com.routepick.api.dto.auth.TokenRefreshRequest;
 import com.routepick.api.dto.auth.TokenRefreshResponse;
+import com.routepick.api.dto.auth.NickNameCheckRequest;
+import com.routepick.api.dto.auth.NickNameCheckResponse;
 import com.routepick.api.dto.email.EmailCheckRequest;
 import com.routepick.api.dto.email.EmailCheckResponse;
 import com.routepick.api.dto.email.EmailVerificationRequest;
@@ -37,7 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
  * 표준화된 ApiResponse 구조와 글로벌 예외 처리를 적용했습니다.
  */
 @Slf4j
-@Tag(name = "인증", description = "인증 관련 API (회원가입, 로그인, 토큰 갱신, 이메일 중복 확인, 인증 코드 발송, 인증 코드 검증)")
+@Tag(name = "인증", description = "인증 관련 API (회원가입, 로그인, 토큰 갱신, 이메일/닉네임 중복 확인, 인증 코드 발송, 인증 코드 검증)")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -69,7 +71,8 @@ public class AuthController {
                           "data": {
                             "userId": 123,
                             "email": "user@example.com",
-                            "userName": "climber123",
+                            "userName": "홍길동",
+                            "nickName": "climber123",
                             "profileImageUrl": "/api/files/profiles/user123.jpg"
                           },
                           "timestamp": "2024-01-01T12:00:00"
@@ -107,7 +110,7 @@ public class AuthController {
         ),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "409",
-            description = "이미 존재하는 이메일",
+            description = "이미 존재하는 이메일 또는 닉네임",
             content = @Content(
                 mediaType = "application/json",
                 examples = {
@@ -140,18 +143,14 @@ public class AuthController {
         
         log.info("회원가입 요청 시작");
         
-        // Rate Limit 체크 (IP + 이메일 + 엔드포인트)
+        // Rate Limit 체크
         rateLimitHelper.checkAuthRateLimit(httpRequest, request.getEmail());
         
         // 입력값 정제
         String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
-        String sanitizedUsername = InputSanitizer.sanitizeInput(request.getUserName());
-        
-        // Request 객체 업데이트
         request.setEmail(sanitizedEmail);
-        request.setUserName(sanitizedUsername);
         
-        // 회원가입 처리 (프로필 이미지 포함)
+        // 회원가입 처리
         SignupResponse response = authService.signup(request, profileImage);
         
         log.info("회원가입 완료: userId={}", response.getUserId());
@@ -228,7 +227,7 @@ public class AuthController {
         
         log.info("토큰 갱신 요청 시작");
         
-        // Rate Limit 체크 (IP 기반)
+        // Rate Limit 체크
         rateLimitHelper.checkIpRateLimit(httpRequest);
         
         // 토큰 갱신 처리
@@ -267,21 +266,92 @@ public class AuthController {
         log.info("이메일 중복 확인 요청 시작");
         
         // Rate Limit 체크
-        rateLimitHelper.checkCombinedRateLimit(httpRequest, request.getEmail());
+        rateLimitHelper.checkAuthRateLimit(httpRequest, request.getEmail());
         
         // 입력값 정제
         String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
+        request.setEmail(sanitizedEmail);
         
         // 이메일 중복 확인
         EmailCheckResponse response = emailVerificationService.checkEmailAvailability(sanitizedEmail);
         
-        String message = response.isAvailable() ? 
-            "사용 가능한 이메일입니다." : "이미 사용 중인 이메일입니다.";
-        
         log.info("이메일 중복 확인 완료: email={}, available={}", 
-            sanitizedEmail, response.isAvailable());
+                request.getEmail(), response.isAvailable());
+        return ResponseEntity.ok(ApiResponse.success("이메일 중복 확인이 완료되었습니다.", response));
+    }
+
+    @Operation(
+        summary = "닉네임 중복 확인",
+        description = "회원가입 전 닉네임의 중복 여부를 확인합니다."
+    )
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "닉네임 중복 확인 완료",
+            content = @Content(
+                mediaType = "application/json",
+                examples = {
+                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "사용 가능한 닉네임",
+                        value = """
+                        {
+                          "success": true,
+                          "code": 200,
+                          "message": "닉네임 중복 확인이 완료되었습니다.",
+                          "data": {
+                            "nickName": "climber123",
+                            "available": true,
+                            "message": "사용 가능한 닉네임입니다."
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
+                        }
+                        """
+                    ),
+                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "이미 사용 중인 닉네임",
+                        value = """
+                        {
+                          "success": true,
+                          "code": 200,
+                          "message": "닉네임 중복 확인이 완료되었습니다.",
+                          "data": {
+                            "nickName": "climber123",
+                            "available": false,
+                            "message": "이미 사용 중인 닉네임입니다."
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
+                        }
+                        """
+                    )
+                }
+            )
+        ),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청 (잘못된 닉네임 형식, Rate Limit 초과 등)",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    @PostMapping("/check-nickname")
+    public ResponseEntity<ApiResponse<NickNameCheckResponse>> checkNickName(
+            @Valid @RequestBody NickNameCheckRequest request,
+            HttpServletRequest httpRequest) {
         
-        return ResponseEntity.ok(ApiResponse.success(message, response));
+        log.info("닉네임 중복 확인 요청 시작");
+        
+        // Rate Limit 체크
+        rateLimitHelper.checkIpRateLimit(httpRequest);
+        
+        // 입력값 정제
+        String sanitizedNickName = InputSanitizer.sanitizeInput(request.getNickName());
+        request.setNickName(sanitizedNickName);
+        
+        // 닉네임 중복 확인
+        NickNameCheckResponse response = authService.checkNickNameAvailability(request);
+        
+        log.info("닉네임 중복 확인 완료: nickName={}, available={}", 
+                request.getNickName(), response.isAvailable());
+        return ResponseEntity.ok(ApiResponse.success("닉네임 중복 확인이 완료되었습니다.", response));
     }
 
     @Operation(

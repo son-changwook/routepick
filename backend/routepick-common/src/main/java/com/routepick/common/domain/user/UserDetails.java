@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class UserDetails extends BaseDomain {
     private Long detailId;
     private Long userId;
+    private String nickName; // 닉네임 필드 추가
     private Gender gender;
     private int height;
     private int weight;

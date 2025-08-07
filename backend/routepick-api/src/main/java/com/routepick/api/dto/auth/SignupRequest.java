@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 회원가입 요청 DTO
- * 이메일, 비밀번호, 사용자명, 전화번호, 이메일 인증 토큰, 약관 동의 여부를 입력받아 회원가입 요청을 처리합니다.
+ * 이메일, 비밀번호, 사용자명(실명), 닉네임, 전화번호, 이메일 인증 토큰, 약관 동의 여부를 입력받아 회원가입 요청을 처리합니다.
  * 보안을 위한 입력 검증이 강화되었습니다.
  */
 @Schema(description = "회원가입 요청 정보")
@@ -35,11 +35,17 @@ public class SignupRequest {
             message = "비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다.")
    private String password;
    
-   @Schema(description = "사용자명 (영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능)", example = "climber123")
+   @Schema(description = "사용자 실명 (영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능)", example = "홍길동")
    @NotBlank(message = "사용자명은 필수입니다.")
    @Size(min = 2, max = 20, message = "사용자명은 2자 이상 20자 이하여야 합니다.")
    @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]+$", message = "사용자명은 영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능합니다.")
    private String userName;
+   
+   @Schema(description = "사용자 닉네임 (영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능)", example = "climber123")
+   @NotBlank(message = "닉네임은 필수입니다.")
+   @Size(min = 2, max = 20, message = "닉네임은 2자 이상 20자 이하여야 합니다.")
+   @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]+$", message = "닉네임은 영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능합니다.")
+   private String nickName;
    
    @Schema(description = "전화번호 (010-1234-5678 형식)", example = "010-1234-5678")
    @NotBlank(message = "전화번호는 필수입니다.")
@@ -111,6 +117,7 @@ public class SignupRequest {
        return "SignupRequest{" +
                "email='" + email + '\'' +
                ", userName='" + userName + '\'' +
+               ", nickName='" + nickName + '\'' +
                ", phone='" + phone + '\'' +
                ", birthDate='" + birthDate + '\'' +
                ", address='" + address + '\'' +

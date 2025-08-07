@@ -60,7 +60,7 @@ routepick/
 
 ## 개발 가이드라인
 
-### ⚠️ userName 관련 주의사항
+### ⚠️ userName과 nickName 관련 주의사항
 
 #### 1. Spring Security 컨벤션
 - `getUsername()`: 반드시 String 타입, 사용자 식별자 (userId)
@@ -68,19 +68,21 @@ routepick/
 - JWT 토큰의 sub 필드와 일치해야 함
 
 #### 2. 실제 사용자 정보
-- `getUserName()`: 실제 사용자 이름 (닉네임)
-- `getDisplayName()`: UI 표시용 (userName 또는 email fallback)
+- `getUserName()`: 사용자 실명 (홍길동)
+- `getNickName()`: 사용자 닉네임 (climber123) - UI 표시 우선 사용
 
 #### 3. 혼동 금지
-- `getUsername()` ≠ `getUserName()`
+- `getUsername()` ≠ `getUserName()` ≠ `getNickName()`
 - `getUsername()` = userId (String)
-- `getUserName()` = 실제 사용자 이름
+- `getUserName()` = 사용자 실명
+- `getNickName()` = 사용자 닉네임 (UI 표시 우선)
 
 #### 4. JWT 토큰 구조
 ```json
 {
   "sub": "123",           // userId (String)
-  "userName": "climber123",  // 실제 사용자 이름
+  "userName": "홍길동",      // 사용자 실명
+  "nickName": "climber123", // 사용자 닉네임
   "email": "user@example.com"
 }
 ```
@@ -89,8 +91,8 @@ routepick/
 ```java
 @AuthenticationPrincipal CustomUserDetails userDetails
 Long userId = userDetails.getUserId();           // 사용자 식별자
-String userName = userDetails.getUserName();     // 실제 사용자 이름
-String displayName = userDetails.getDisplayName(); // UI 표시용
+String userName = userDetails.getUserName();     // 사용자 실명
+String nickName = userDetails.getNickName();     // 사용자 닉네임 (UI 표시 우선)
 ```
 
 #### 6. DTO 응답 구조

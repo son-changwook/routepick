@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * 커스텀 UserDetails 구현체
  * 
- * ⚠️ 중요: userName 관련 주의사항
+ * ⚠️ 중요: userName과 nickName 관련 주의사항
  * 
  * 1. Spring Security 컨벤션
  *    - getUsername(): 반드시 String 타입, 사용자 식별자 (userId)
@@ -16,32 +16,35 @@ import java.util.Collection;
  *    - JWT 토큰의 sub 필드와 일치해야 함
  * 
  * 2. 실제 사용자 정보
- *    - getUserName(): 실제 사용자 이름 (닉네임)
- *    - getDisplayName(): UI 표시용 (userName 또는 email fallback)
+ *    - getUserName(): 사용자 실명 (홍길동)
+ *    - getNickName(): 사용자 닉네임 (climber123) - UI 표시 우선 사용
  * 
  * 3. 혼동 금지
- *    - getUsername() ≠ getUserName()
- *    - getUsername() = userId (String)
- *    - getUserName() = 실제 사용자 이름
+ *    - getUsername() ≠ getUserName() ≠ getNickName()
+ *    - getUsername() = userId (String) - Spring Security 식별자
+ *    - getUserName() = 사용자 실명
+ *    - getNickName() = 사용자 닉네임 (UI 표시 우선)
  * 
  * 4. JWT 토큰 구조
  *    {
  *      "sub": "123",           // userId (String)
- *      "userName": "climber123",  // 실제 사용자 이름
+ *      "userName": "홍길동",      // 사용자 실명
+ *      "nickName": "climber123", // 사용자 닉네임
  *      "email": "user@example.com"
  *    }
  * 
  * 5. 사용 예시
  *    @AuthenticationPrincipal CustomUserDetails userDetails
  *    Long userId = userDetails.getUserId();           // 사용자 식별자
- *    String userName = userDetails.getUserName();     // 실제 사용자 이름
- *    String displayName = userDetails.getDisplayName(); // UI 표시용
+ *    String userName = userDetails.getUserName();     // 사용자 실명
+ *    String nickName = userDetails.getNickName();     // 사용자 닉네임 (UI 표시 우선)
  */
 public class CustomUserDetails implements UserDetails {
     
     private final Long userId; // 사용자 식별자
     private final String email; // 이메일 주소
-    private final String userName; // 실제 사용자 이름 (닉네임)
+    private final String userName; // 사용자 실명
+    private final String nickName; // 사용자 닉네임
     private final String profileImageUrl; // 프로필 이미지 URL
     private final String password;
     private final boolean enabled;
@@ -50,13 +53,14 @@ public class CustomUserDetails implements UserDetails {
     private final boolean accountNonLocked;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(Long userId, String email, String userName, String profileImageUrl, 
+    public CustomUserDetails(Long userId, String email, String userName, String nickName, String profileImageUrl, 
                            String password, boolean enabled, boolean accountNonExpired,
                            boolean credentialsNonExpired, boolean accountNonLocked,
                            Collection<? extends GrantedAuthority> authorities) {
         this.userId = userId;
         this.email = email;
         this.userName = userName;
+        this.nickName = nickName;
         this.profileImageUrl = profileImageUrl;
         this.password = password;
         this.enabled = enabled;
@@ -116,20 +120,19 @@ public class CustomUserDetails implements UserDetails {
     }
 
     /**
-     * 실제 사용자 이름을 반환합니다.
-     * @return 사용자 이름 (닉네임)
+     * 사용자 실명을 반환합니다.
+     * @return 사용자 실명
      */
     public String getUserName() {
         return userName;
     }
 
     /**
-     * 사용자 표시명을 반환합니다.
-     * userName이 있으면 userName, 없으면 email을 반환합니다.
-     * @return 사용자 표시명
+     * 사용자 닉네임을 반환합니다.
+     * @return 사용자 닉네임
      */
-    public String getDisplayName() {
-        return userName != null ? userName : email;
+    public String getNickName() {
+        return nickName;
     }
 
     public String getProfileImageUrl() {

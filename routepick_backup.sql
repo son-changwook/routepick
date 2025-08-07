@@ -1409,6 +1409,7 @@ DROP TABLE IF EXISTS `user_details`;
 CREATE TABLE `user_details` (
   `detail_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
+  `nick_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `gender` enum('MALE','FEMALE','OTHER') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `height` int DEFAULT NULL,
   `weight` int DEFAULT NULL,
@@ -1424,13 +1425,14 @@ CREATE TABLE `user_details` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`detail_id`),
+  UNIQUE KEY `nick_name` (`nick_name`),
   KEY `user_id` (`user_id`),
   KEY `level_id` (`level_id`),
   KEY `branch_id` (`branch_id`),
   CONSTRAINT `user_details_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `user_details_ibfk_2` FOREIGN KEY (`level_id`) REFERENCES `climbing_levels` (`level_id`),
   CONSTRAINT `user_details_ibfk_3` FOREIGN KEY (`branch_id`) REFERENCES `gym_branches` (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1439,6 +1441,7 @@ CREATE TABLE `user_details` (
 
 LOCK TABLES `user_details` WRITE;
 /*!40000 ALTER TABLE `user_details` DISABLE KEYS */;
+INSERT INTO `user_details` VALUES (1,1,'testuser',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,NULL,'2025-08-07 09:11:06','2025-08-07 09:11:06'),(2,2,'testuser2',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,NULL,'2025-08-07 09:11:06','2025-08-07 09:11:06');
 /*!40000 ALTER TABLE `user_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1515,7 +1518,7 @@ CREATE TABLE `users` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `profile_image_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_type` enum('NORMAL','ADMIN','GYM_ADMIN') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NORMAL',
@@ -1538,8 +1541,44 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'test@example.com','$2a$10$eh5I1DzLFDPArNWM03H01uUA7OIOIdEhaqJzHz4jmFvmxFlTkmlr2','testuser','010-1234-5678',NULL,'NORMAL','2025-08-04 10:21:55','2025-08-04 14:33:29',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432'),(2,'test2@example.com','$2a$10$Gh.x4ZNyCOIX6q9ZvgMm7uhLP3L7Ouqym6X8SQRPvTThzQzVuzi7S','testuser2','010-1234-5678',NULL,'NORMAL','2025-08-04 14:32:39','2025-08-04 14:32:39',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432');
+INSERT INTO `users` VALUES (1,'test@example.com','$2a$10$eh5I1DzLFDPArNWM03H01uUA7OIOIdEhaqJzHz4jmFvmxFlTkmlr2','testuser','010-1234-5678',NULL,'NORMAL','2025-08-04 10:21:55','2025-08-07 08:27:19',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432'),(2,'test2@example.com','$2a$10$Gh.x4ZNyCOIX6q9ZvgMm7uhLP3L7Ouqym6X8SQRPvTThzQzVuzi7S','testuser2','010-1234-5678',NULL,'NORMAL','2025-08-04 14:32:39','2025-08-07 08:27:19',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users_backup`
+--
+
+DROP TABLE IF EXISTS `users_backup`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users_backup` (
+  `user_id` int NOT NULL DEFAULT '0',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profile_image_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_type` enum('NORMAL','ADMIN','GYM_ADMIN') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NORMAL',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_login_at` timestamp NULL DEFAULT NULL,
+  `user_status` enum('ACTIVE','INACTIVE','SUSPENDED','DELETED') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ACTIVE',
+  `birth_date` date DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emergency_contact` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users_backup`
+--
+
+LOCK TABLES `users_backup` WRITE;
+/*!40000 ALTER TABLE `users_backup` DISABLE KEYS */;
+INSERT INTO `users_backup` VALUES (1,'test@example.com','$2a$10$eh5I1DzLFDPArNWM03H01uUA7OIOIdEhaqJzHz4jmFvmxFlTkmlr2','testuser','010-1234-5678',NULL,'NORMAL','2025-08-04 10:21:55','2025-08-04 14:33:29',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432'),(2,'test2@example.com','$2a$10$Gh.x4ZNyCOIX6q9ZvgMm7uhLP3L7Ouqym6X8SQRPvTThzQzVuzi7S','testuser2','010-1234-5678',NULL,'NORMAL','2025-08-04 14:32:39','2025-08-04 14:32:39',NULL,'ACTIVE','1990-01-01','서울시 강남구','테헤란로 123','010-9876-5432');
+/*!40000 ALTER TABLE `users_backup` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1608,6 +1647,10 @@ LOCK TABLES `webhook_logs` WRITE;
 UNLOCK TABLES;
 
 --
+-- Dumping events for database 'routepick'
+--
+
+--
 -- Dumping routines for database 'routepick'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -1620,4 +1663,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-06  4:44:18
+-- Dump completed on 2025-08-07  9:32:50

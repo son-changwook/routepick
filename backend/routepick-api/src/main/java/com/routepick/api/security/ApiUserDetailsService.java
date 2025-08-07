@@ -1,27 +1,31 @@
 package com.routepick.api.security;
 
 import com.routepick.common.domain.user.User;
+import com.routepick.common.domain.user.UserDetails;
 import com.routepick.common.enums.UserType;
 import com.routepick.api.mapper.UserMapper;
+import com.routepick.api.mapper.UserDetailsMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
  * 사용자 정보를 로드하는 서비스.
  * Spring Security의 UserDetailsService를 구현하여 사용자 인증에 사용됩니다.
  * JWT 토큰의 sub 필드에서 userId를 받아 사용자 정보를 로드합니다.
  * 
- * ⚠️ userName 관련 주의사항:
+ * ⚠️ userName과 nickName 관련 주의사항:
  * 1. user.getUsername() = userId (String) - Spring Security 식별자
- * 2. user.getUserName() = 실제 사용자 이름 (닉네임)
- * 3. 혼동 금지: getUsername() ≠ getUserName()
- * 4. CustomUserDetails 생성 시 올바른 메서드 사용 필수
+ * 2. user.getUserName() = 사용자 실명
+ * 3. userDetails.getNickName() = 사용자 닉네임
+ * 4. 혼동 금지: getUsername() ≠ getUserName() ≠ getNickName()
+ * 5. CustomUserDetails 생성 시 올바른 메서드 사용 필수
  */
 @Slf4j
 @Service
@@ -29,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ApiUserDetailsService implements UserDetailsService {
 
     private final UserMapper userMapper;
+    private final UserDetailsMapper userDetailsMapper;
 
     /**
      * userId로 사용자 정보를 로드합니다.
@@ -40,7 +45,7 @@ public class ApiUserDetailsService implements UserDetailsService {
      */
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         try {
             // JWT 토큰에서 userId가 전달되므로 findById 사용
             User user = userMapper.findById(Long.parseLong(userId))
@@ -60,11 +65,16 @@ public class ApiUserDetailsService implements UserDetailsService {
                 throw new UsernameNotFoundException("비활성화된 계정입니다: " + userId);
             }
 
-            // ⚠️ 주의: user.getUserName() 사용 (실제 사용자 이름)
+            // 사용자 상세 정보에서 닉네임 가져오기
+            Optional<UserDetails> userDetailsOpt = userDetailsMapper.findByUserId(user.getUserId());
+            String nickName = userDetailsOpt.map(UserDetails::getNickName).orElse(null);
+
+            // CustomUserDetails 생성 (실명과 닉네임 구분)
             return new CustomUserDetails(
                     user.getUserId(), // 사용자 식별자
                     user.getEmail(), // 이메일 주소
-                    user.getUserName(), // 실제 사용자 이름 (닉네임)
+                    user.getUserName(), // 사용자 실명
+                    nickName, // 사용자 닉네임
                     user.getProfileImageUrl(), // 프로필 이미지 URL
                     user.getPassword(),
                     user.isEnabled(),

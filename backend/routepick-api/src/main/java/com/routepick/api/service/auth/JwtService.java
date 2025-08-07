@@ -1,6 +1,7 @@
 package com.routepick.api.service.auth;
 
 import com.routepick.api.config.JwtConfig;
+import com.routepick.api.security.CustomUserDetails;
 import com.routepick.common.domain.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -22,21 +23,35 @@ public class JwtService {
     private final JwtConfig jwtConfig;
     
     /**
-     * 액세스 토큰 생성
+     * 액세스 토큰 생성 (User 객체 사용 - 기존 호환성)
      */
     public String generateAccessToken(User user) {
         return generateToken(user, jwtConfig.getExpiration(), "ACCESS");
     }
     
     /**
-     * 리프레시 토큰 생성
+     * 리프레시 토큰 생성 (User 객체 사용 - 기존 호환성)
      */
     public String generateRefreshToken(User user) {
         return generateToken(user, jwtConfig.getRefreshExpiration(), "REFRESH");
     }
     
     /**
-     * 토큰 생성 공통 메서드
+     * 액세스 토큰 생성 (CustomUserDetails 사용 - 닉네임 포함)
+     */
+    public String generateAccessToken(CustomUserDetails userDetails) {
+        return generateToken(userDetails, jwtConfig.getExpiration(), "ACCESS");
+    }
+    
+    /**
+     * 리프레시 토큰 생성 (CustomUserDetails 사용 - 닉네임 포함)
+     */
+    public String generateRefreshToken(CustomUserDetails userDetails) {
+        return generateToken(userDetails, jwtConfig.getRefreshExpiration(), "REFRESH");
+    }
+    
+    /**
+     * 토큰 생성 공통 메서드 (User 객체 사용)
      * JWT 표준에 맞게 구조화:
      * - sub: 사용자 식별자 (userId)
      * - iss: 발급자
@@ -50,7 +65,7 @@ public class JwtService {
         
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail()); // 이메일 정보
-        claims.put("userName", user.getUserName()); // 마이페이지용 (닉네임)
+        claims.put("userName", user.getUserName()); // 사용자 실명
         claims.put("profileImageUrl", user.getProfileImageUrl()); // 마이페이지용
         claims.put("userType", user.getUserType().name());
         claims.put("tokenType", tokenType);
@@ -58,6 +73,37 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(String.valueOf(user.getUserId())) // userId를 sub로 사용 (JWT 표준)
+                .setIssuer(jwtConfig.getIssuer())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+    
+    /**
+     * 토큰 생성 공통 메서드 (CustomUserDetails 사용 - 닉네임 포함)
+     * JWT 표준에 맞게 구조화:
+     * - sub: 사용자 식별자 (userId)
+     * - iss: 발급자
+     * - iat: 발급 시간
+     * - exp: 만료 시간
+     * - claims: 추가 정보 (email, userName, nickName, profileImageUrl, userType, tokenType)
+     */
+    private String generateToken(CustomUserDetails userDetails, long expiration, String tokenType) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (expiration * 1000));
+        
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", userDetails.getEmail()); // 이메일 정보
+        claims.put("userName", userDetails.getUserName()); // 사용자 실명
+        claims.put("nickName", userDetails.getNickName()); // 사용자 닉네임
+        claims.put("profileImageUrl", userDetails.getProfileImageUrl()); // 마이페이지용
+        claims.put("userType", "NORMAL"); // 일반 사용자
+        claims.put("tokenType", tokenType);
+        
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(String.valueOf(userDetails.getUserId())) // userId를 sub로 사용 (JWT 표준)
                 .setIssuer(jwtConfig.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -98,11 +144,19 @@ public class JwtService {
     }
     
     /**
-     * 토큰에서 닉네임 추출
+     * 토큰에서 사용자 실명 추출
      */
     public String getUserNameFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims.get("userName", String.class);
+    }
+    
+    /**
+     * 토큰에서 사용자 닉네임 추출
+     */
+    public String getNickNameFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("nickName", String.class);
     }
     
     /**

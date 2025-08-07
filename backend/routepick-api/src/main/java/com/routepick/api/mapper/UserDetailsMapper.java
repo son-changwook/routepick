@@ -41,4 +41,25 @@ public interface UserDetailsMapper {
      * @return 삭제된 레코드 수
      */
     int deleteUserDetails(@Param("userId") Long userId);
+    
+    /**
+     * 닉네임으로 사용자 상세 정보 조회
+     * @param nickName 닉네임
+     * @return 사용자 상세 정보 (Optional)
+     */
+    Optional<UserDetails> findByNickName(@Param("nickName") String nickName);
+    
+    /**
+     * 닉네임 중복 확인
+     * @param nickName 확인할 닉네임
+     * @return 중복된 경우 true, 중복되지 않은 경우 false
+     */
+    boolean existsByNickName(@Param("nickName") String nickName);
+    
+    /**
+     * 사용자 ID로 닉네임 조회
+     * @param userId 사용자 ID
+     * @return 닉네임 (Optional)
+     */
+    Optional<String> findNickNameByUserId(@Param("userId") Long userId);
 } 

@@ -22,7 +22,7 @@ import java.util.Collections;
  * 사용자 도메인 클래스
  * Spring Security의 UserDetails를 구현하여 인증/인가에 사용됩니다.
  * 
- * ⚠️ 중요: userName 관련 주의사항
+ * ⚠️ 중요: userName과 nickName 관련 주의사항
  * 
  * 1. Spring Security 컨벤션
  *    - getUsername(): 반드시 String 타입, 사용자 식별자 (userId)
@@ -30,23 +30,23 @@ import java.util.Collections;
  *    - JWT 토큰의 sub 필드와 일치해야 함
  * 
  * 2. 실제 사용자 정보
- *    - getUserName(): 실제 사용자 이름 (닉네임)
- *    - getDisplayName(): UI 표시용 (userName 또는 email fallback)
+ *    - getUserName(): 사용자 실명 (홍길동)
+ *    - 닉네임은 UserDetails 테이블에서 관리됨
  * 
  * 3. 혼동 금지
  *    - getUsername() ≠ getUserName()
  *    - getUsername() = userId (String)
- *    - getUserName() = 실제 사용자 이름
+ *    - getUserName() = 사용자 실명
  * 
  * 4. 데이터베이스 필드
- *    - user_name: 실제 사용자 이름 (닉네임)
+ *    - user_name: 사용자 실명
  *    - user_id: 사용자 식별자 (Long)
+ *    - nick_name: 사용자 닉네임 (user_details 테이블)
  * 
  * 5. 사용 예시
  *    User user = userMapper.findById(userId);
  *    String userIdStr = user.getUsername();     // Spring Security 식별자
- *    String userName = user.getUserName();      // 실제 사용자 이름
- *    String displayName = user.getDisplayName(); // UI 표시용
+ *    String userName = user.getUserName();      // 사용자 실명
  */
 @Getter
 @Setter
@@ -105,21 +105,12 @@ public class User extends BaseDomain implements UserDetails {
     }
 
     /**
-     * 실제 사용자 이름을 반환합니다.
+     * 사용자 실명을 반환합니다.
      * Spring Security의 getUsername()과 구분하기 위해 별도 메서드로 제공합니다.
-     * @return 사용자 이름 (닉네임)
+     * @return 사용자 실명
      */
     public String getUserName() {
         return userName;
-    }
-
-    /**
-     * 사용자 표시명을 반환합니다.
-     * UI에서 표시할 사용자 이름을 제공합니다.
-     * @return 사용자 표시명
-     */
-    public String getDisplayName() {
-        return userName != null ? userName : email;
     }
 
     @Override

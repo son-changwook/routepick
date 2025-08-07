@@ -14,7 +14,10 @@ import com.routepick.api.dto.auth.LoginRequest;
 import com.routepick.api.dto.auth.LoginResponse;
 import com.routepick.api.dto.auth.TokenRefreshRequest;
 import com.routepick.api.dto.auth.TokenRefreshResponse;
+import com.routepick.api.dto.auth.NickNameCheckRequest;
+import com.routepick.api.dto.auth.NickNameCheckResponse;
 import com.routepick.api.mapper.UserMapper;
+import com.routepick.api.mapper.UserDetailsMapper;
 import com.routepick.api.mapper.ApiTokenMapper;
 import com.routepick.api.service.email.RedisSignupSessionService;
 import com.routepick.api.service.validation.ValidationService;
@@ -23,6 +26,7 @@ import com.routepick.common.exception.FileException;
 import com.routepick.common.exception.ServiceException;
 import com.routepick.api.util.InputSanitizer;
 import com.routepick.common.domain.user.User;
+import com.routepick.common.domain.user.UserDetails;
 import com.routepick.common.domain.token.ApiToken;
 import com.routepick.common.enums.UserStatus;
 import com.routepick.common.enums.UserType;
@@ -30,8 +34,10 @@ import com.routepick.common.exception.customExceptions.EmailDuplicateException;
 import com.routepick.common.exception.customExceptions.InvalidPasswordFormatException;
 import com.routepick.common.exception.customExceptions.UserNotFoundException;
 import com.routepick.common.exception.customExceptions.RequestValidationException;
+import com.routepick.common.exception.customExceptions.DuplicateResourceException;
 import com.routepick.api.service.file.FileService;
 import com.routepick.api.service.auth.TokenBlacklistService;
+import com.routepick.api.security.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthService {
 
     private final UserMapper userMapper;
+    private final UserDetailsMapper userDetailsMapper;
     private final ApiTokenMapper apiTokenMapper;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -50,6 +57,27 @@ public class AuthService {
     private final RedisSignupSessionService redisSignupSessionService;
     private final ValidationService validationService;
     private final TokenBlacklistService tokenBlacklistService;
+
+    /**
+     * 닉네임 중복 검사
+     * @param request 닉네임 중복 검사 요청 정보
+     * @return 닉네임 중복 검사 응답 정보
+     */
+    public NickNameCheckResponse checkNickNameAvailability(NickNameCheckRequest request) {
+        // 입력값 정제
+        String sanitizedNickName = InputSanitizer.sanitizeInput(request.getNickName());
+        
+        // 닉네임 중복 확인
+        boolean isDuplicate = userDetailsMapper.existsByNickName(sanitizedNickName);
+        
+        if (isDuplicate) {
+            log.info("닉네임 중복 확인 - 중복됨: {}", sanitizedNickName);
+            return NickNameCheckResponse.unavailable(sanitizedNickName);
+        } else {
+            log.info("닉네임 중복 확인 - 사용 가능: {}", sanitizedNickName);
+            return NickNameCheckResponse.available(sanitizedNickName);
+        }
+    }
 
     /**
      * 회원가입 처리
@@ -66,6 +94,7 @@ public class AuthService {
         // 2. 입력 데이터 정제 (검증 통과 후)
         String sanitizedEmail = InputSanitizer.sanitizeEmail(request.getEmail());
         String sanitizedUserName = InputSanitizer.sanitizeInput(request.getUserName());
+        String sanitizedNickName = InputSanitizer.sanitizeInput(request.getNickName());
         String sanitizedPhone = InputSanitizer.sanitizeInput(request.getPhone());
         String sanitizedAddress = InputSanitizer.sanitizeInput(request.getAddress());
         String sanitizedDetailAddress = InputSanitizer.sanitizeInput(request.getDetailAddress());
@@ -80,11 +109,16 @@ public class AuthService {
         if (userMapper.existsByEmail(sanitizedEmail)) {
             throw new EmailDuplicateException("이미 존재하는 이메일입니다.");
         }
+        
+        // 5. 닉네임 중복 확인
+        if (userDetailsMapper.existsByNickName(sanitizedNickName)) {
+            throw new DuplicateResourceException("이미 사용 중인 닉네임입니다.");
+        }
     
-        // 7. 비밀번호 해싱
+        // 6. 비밀번호 해싱
         String hashedPassword = passwordEncoder.encode(request.getPassword());
         
-        // 8. 프로필 이미지 업로드 (있는 경우)
+        // 7. 프로필 이미지 업로드 (있는 경우)
         String profileImageUrl = null;
         if (profileImage != null && !profileImage.isEmpty()) {
             try {
@@ -94,7 +128,7 @@ public class AuthService {
             }
         }
         
-        // 9. User 객체 생성 (정제된 데이터 사용)
+        // 8. User 객체 생성 (정제된 데이터 사용)
         User user = User.builder()
                 .email(sanitizedEmail)
                 .passwordHash(hashedPassword)
@@ -111,8 +145,20 @@ public class AuthService {
                 .updatedAt(LocalDateTime.now())
                 .build();
         
-        // 10. 사용자 저장
+        // 9. 사용자 저장
         userMapper.insertUser(user);
+        
+        // 10. UserDetails 객체 생성 및 저장 (닉네임 포함)
+        UserDetails userDetails = UserDetails.builder()
+                .userId(user.getUserId())
+                .nickName(sanitizedNickName)
+                .followingCount(0)
+                .followerCount(0)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        
+        userDetailsMapper.insertUserDetails(userDetails);
         
         // 11. 약관 동의 저장
         saveUserAgreements(user.getUserId(), request);
@@ -120,13 +166,15 @@ public class AuthService {
         // 12. 등록 토큰 사용 처리 (Redis 세션 삭제)
         redisSignupSessionService.consumeRegistrationToken(request.getRegistrationToken());
         
-        log.info("새 사용자 등록 완료: {}", sanitizedEmail);
+        log.info("새 사용자 등록 완료: email={}, userName={}, nickName={}", 
+                sanitizedEmail, sanitizedUserName, sanitizedNickName);
         
         // 13. SignupResponse 생성 및 반환
         return SignupResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .userName(user.getUserName())
+                .nickName(userDetails.getNickName())
                 .profileImageUrl(user.getProfileImageUrl())
                 .message("회원가입이 성공적으로 완료되었습니다.")
                 .build();
@@ -191,31 +239,49 @@ public class AuthService {
             }
         }
         
-        // 5. 기존 토큰 만료 처리
+        // 5. 사용자 상세 정보 조회 (닉네임 포함)
+        var userDetailsOpt = userDetailsMapper.findByUserId(user.getUserId());
+        String nickName = userDetailsOpt.map(com.routepick.common.domain.user.UserDetails::getNickName).orElse(null);
+        
+        // 6. CustomUserDetails 생성
+        CustomUserDetails customUserDetails = new CustomUserDetails(
+            user.getUserId(),
+            user.getEmail(),
+            user.getUserName(), // 사용자 실명
+            nickName, // 사용자 닉네임
+            user.getProfileImageUrl(),
+            user.getPassword(),
+            user.isEnabled(),
+            user.isAccountNonExpired(),
+            user.isCredentialsNonExpired(),
+            user.isAccountNonLocked(),
+            user.getAuthorities()
+        );
+        
+        // 7. 기존 토큰 만료 처리
         apiTokenMapper.revokeAllTokensByUserId(user.getUserId());
         
-        // 6. 새 토큰 생성
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        // 8. 새 토큰 생성 (CustomUserDetails 사용하여 닉네임 포함)
+        String accessToken = jwtService.generateAccessToken(customUserDetails);
+        String refreshToken = jwtService.generateRefreshToken(customUserDetails);
         
-        // 7. 토큰 저장
+        // 9. 토큰 저장
         saveToken(user.getUserId(), accessToken, ApiToken.TokenType.ACCESS, 3600L); // 1시간
         saveToken(user.getUserId(), refreshToken, ApiToken.TokenType.REFRESH, 2592000L); // 30일
         
-        // 8. 마지막 로그인 시간 업데이트
+        // 10. 마지막 로그인 시간 업데이트
         user.setLastLoginAt(LocalDateTime.now());
         userMapper.updateUser(user);
         
-        // 9. 응답 생성
+        // 11. 응답 생성
         return LoginResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
-            .tokenType("Bearer")
-            .expiresIn(3600L)
             .userInfo(LoginResponse.UserInfo.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
-                .userName(user.getUserName())
+                .userName(user.getUserName()) // 사용자 실명
+                .nickName(nickName) // 사용자 닉네임
                 .profileImageUrl(user.getProfileImageUrl())
                 .build())
             .build();

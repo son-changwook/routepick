@@ -54,7 +54,7 @@ public class UserService {
         // 3. 개인정보 응답 생성 (비밀번호 제외)
         PersonalInfoResponse response = PersonalInfoResponse.builder()
             .email(user.getEmail())
-            .userName(user.getUserName()) // 실제 사용자 이름 필드
+            .userName(user.getUserName()) // 사용자 실명
             .phone(user.getPhone())
             .profileImageUrl(user.getProfileImageUrl())
             .birthDate(user.getBirthDate())
@@ -128,7 +128,7 @@ public class UserService {
         // 6. 수정된 개인정보 조회하여 반환
         PersonalInfoResponse response = PersonalInfoResponse.builder()
             .email(updatedUser.getEmail())
-            .userName(updatedUser.getUserName()) // 실제 사용자 이름 필드
+            .userName(updatedUser.getUserName()) // 사용자 실명
             .phone(updatedUser.getPhone())
             .profileImageUrl(updatedUser.getProfileImageUrl())
             .birthDate(updatedUser.getBirthDate())

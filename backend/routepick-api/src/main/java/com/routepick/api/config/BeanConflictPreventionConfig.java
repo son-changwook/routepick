@@ -18,11 +18,11 @@ import org.springframework.context.annotation.Configuration;
  * 2. 자동 설정 추가 시: 이 클래스에 추가
  * 3. 의존성 주입 시: @Qualifier 임시 방편 사용이 아닌 근본적인 해결 접근이 필요함
  * 
- * ⚠️ userName 관련 주의사항:
+ * ⚠️ userName과 nickName 관련 주의사항:
  * 1. Spring Security 컨벤션: getUsername() = userId (String)
- * 2. 실제 사용자 정보: getUserName() = 실제 사용자 이름
- * 3. 혼동 금지: getUsername() ≠ getUserName()
- * 4. JWT 토큰: sub = userId, userName = 실제 사용자 이름
+ * 2. 실제 사용자 정보: getUserName() = 사용자 실명, getNickName() = 사용자 닉네임
+ * 3. 혼동 금지: getUsername() ≠ getUserName() ≠ getNickName()
+ * 4. JWT 토큰: sub = userId, userName = 사용자 실명, nickName = 사용자 닉네임
  */
 @Slf4j
 @Configuration

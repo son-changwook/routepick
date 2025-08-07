@@ -26,9 +26,14 @@ public class SignupResponse {
     private String email;
     
     /**
-     * 사용자 이름 (닉네임)
+     * 사용자 실명
      */
     private String userName;
+    
+    /**
+     * 사용자 닉네임
+     */
+    private String nickName;
     
     /**
      * 프로필 이미지 URL (선택사항)

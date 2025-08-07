@@ -84,7 +84,7 @@ public class UserController {
         
         // JWT 토큰에서 직접 정보 추출 (DB 조회 없음)
         SimpleProfileDTO profile = SimpleProfileDTO.builder()
-                .userName(userDetails.getDisplayName())
+                .nickName(userDetails.getNickName())
                 .profileImageUrl(userDetails.getProfileImageUrl())
                 .build();
         

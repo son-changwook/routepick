@@ -9,6 +9,7 @@ import org.springframework.context.annotation.DependsOn;
 import com.routepick.common.exception.SecurityException;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * MyBatis 보안 설정
@@ -18,6 +19,7 @@ import jakarta.annotation.PostConstruct;
  * 2. 타입 핸들러 보안
  * 3. SQL 로깅 보안
  */
+@Slf4j
 @Configuration
 public class MyBatisSecurityConfig {
     

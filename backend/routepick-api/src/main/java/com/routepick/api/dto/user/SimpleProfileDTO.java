@@ -16,7 +16,7 @@ import lombok.Setter;
 public class SimpleProfileDTO {
     
     @Schema(description = "사용자 닉네임", example = "climber123")
-    private String userName;
+    private String nickName;
     
     @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg")
     private String profileImageUrl;

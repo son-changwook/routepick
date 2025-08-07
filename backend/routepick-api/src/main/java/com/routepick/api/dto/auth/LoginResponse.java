@@ -21,7 +21,8 @@ public class LoginResponse {
     public static class UserInfo {
         private Long userId;
         private String email;
-        private String userName;
+        private String userName; // 사용자 실명
+        private String nickName; // 사용자 닉네임
         private String profileImageUrl;
     }
 }
