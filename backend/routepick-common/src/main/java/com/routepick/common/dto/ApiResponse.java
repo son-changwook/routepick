@@ -1,67 +1,64 @@
 package com.routepick.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
- * 표준 API 응답 래퍼 클래스
- * 모든 API 응답은 이 구조를 따라야 합니다.
- * 
- * @param <T> 응답 데이터의 타입
+ * 표준화된 API 응답 구조
+ * 모든 API 엔드포인트에서 일관된 응답 형식을 제공합니다.
  */
-@Getter
+@Data
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     
     /**
-     * 응답 코드 (HTTP 상태코드와 동일하거나 비즈니스 로직 코드)
+     * 응답 성공 여부
      */
-    private final int code;
+    private boolean success;
     
     /**
-     * 응답 메시지 (성공/실패 메시지)
+     * HTTP 상태 코드
      */
-    private final String message;
+    private int code;
     
     /**
-     * 실제 응답 데이터 (성공 시에만 포함)
+     * 응답 메시지
      */
-    private final T data;
+    private String message;
     
     /**
-     * 에러 세부 정보 (실패 시에만 포함)
+     * 응답 데이터
      */
-    private final ErrorDetail error;
+    private T data;
     
     /**
-     * 타임스탬프
+     * 응답 시간
      */
-    @Builder.Default
-    private final long timestamp = System.currentTimeMillis();
+    private LocalDateTime timestamp;
     
     /**
-     * 성공 응답 생성 (데이터 포함)
+     * 에러 정보 (실패 시에만 포함)
      */
-    public static <T> ApiResponse<T> success(T data) {
-        return ApiResponse.<T>builder()
-                .code(200)
-                .message("성공")
-                .data(data)
-                .build();
-    }
+    private ErrorInfo error;
     
     /**
-     * 성공 응답 생성 (메시지 커스터마이징)
+     * 성공 응답 생성
      */
     public static <T> ApiResponse<T> success(String message, T data) {
         return ApiResponse.<T>builder()
+                .success(true)
                 .code(200)
                 .message(message)
                 .data(data)
+                .timestamp(LocalDateTime.now())
                 .build();
     }
     
@@ -70,79 +67,58 @@ public class ApiResponse<T> {
      */
     public static <T> ApiResponse<T> success(String message) {
         return ApiResponse.<T>builder()
+                .success(true)
                 .code(200)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .build();
     }
     
     /**
-     * 실패 응답 생성
+     * 에러 응답 생성
      */
     public static <T> ApiResponse<T> error(int code, String message) {
         return ApiResponse.<T>builder()
+                .success(false)
                 .code(code)
                 .message(message)
+                .timestamp(LocalDateTime.now())
+                .error(ErrorInfo.builder()
+                        .code(code)
+                        .message(message)
+                        .build())
                 .build();
     }
     
     /**
-     * 실패 응답 생성 (에러 세부 정보 포함)
+     * 에러 응답 생성 (상세 정보 포함)
      */
-    public static <T> ApiResponse<T> error(int code, String message, ErrorDetail error) {
+    public static <T> ApiResponse<T> error(int code, String message, String details) {
         return ApiResponse.<T>builder()
+                .success(false)
                 .code(code)
                 .message(message)
-                .error(error)
+                .timestamp(LocalDateTime.now())
+                .error(ErrorInfo.builder()
+                        .code(code)
+                        .message(message)
+                        .details(details)
+                        .build())
                 .build();
     }
     
     /**
-     * 에러 세부 정보 클래스
+     * 에러 정보 내부 클래스
      */
-    @Getter
+    @Data
     @Builder
-    @RequiredArgsConstructor
+    @NoArgsConstructor
+    @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class ErrorDetail {
-        /**
-         * 에러 필드명 (검증 오류 시)
-         */
-        private final String field;
-        
-        /**
-         * 에러 상세 메시지
-         */
-        private final String detail;
-        
-        /**
-         * 에러 코드 (비즈니스 로직용)
-         */
-        private final String errorCode;
-        
-        /**
-         * 추적 ID (디버깅용)
-         */
-        private final String traceId;
-        
-        public static ErrorDetail of(String detail) {
-            return ErrorDetail.builder()
-                    .detail(detail)
-                    .build();
-        }
-        
-        public static ErrorDetail of(String field, String detail) {
-            return ErrorDetail.builder()
-                    .field(field)
-                    .detail(detail)
-                    .build();
-        }
-        
-        public static ErrorDetail of(String field, String detail, String errorCode) {
-            return ErrorDetail.builder()
-                    .field(field)
-                    .detail(detail)
-                    .errorCode(errorCode)
-                    .build();
-        }
+    public static class ErrorInfo {
+        private int code;
+        private String message;
+        private String details;
+        private String field;
     }
 }

@@ -16,6 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
  * 사용자 정보를 로드하는 서비스.
  * Spring Security의 UserDetailsService를 구현하여 사용자 인증에 사용됩니다.
  * JWT 토큰의 sub 필드에서 userId를 받아 사용자 정보를 로드합니다.
+ * 
+ * ⚠️ userName 관련 주의사항:
+ * 1. user.getUsername() = userId (String) - Spring Security 식별자
+ * 2. user.getUserName() = 실제 사용자 이름 (닉네임)
+ * 3. 혼동 금지: getUsername() ≠ getUserName()
+ * 4. CustomUserDetails 생성 시 올바른 메서드 사용 필수
  */
 @Slf4j
 @Service
@@ -54,10 +60,11 @@ public class ApiUserDetailsService implements UserDetailsService {
                 throw new UsernameNotFoundException("비활성화된 계정입니다: " + userId);
             }
 
+            // ⚠️ 주의: user.getUserName() 사용 (실제 사용자 이름)
             return new CustomUserDetails(
                     user.getUserId(), // 사용자 식별자
                     user.getEmail(), // 이메일 주소
-                    user.getUsername(), // 표시용 닉네임
+                    user.getUserName(), // 실제 사용자 이름 (닉네임)
                     user.getProfileImageUrl(), // 프로필 이미지 URL
                     user.getPassword(),
                     user.isEnabled(),

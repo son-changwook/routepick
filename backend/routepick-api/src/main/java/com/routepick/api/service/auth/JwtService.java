@@ -50,7 +50,7 @@ public class JwtService {
         
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail()); // 이메일 정보
-        claims.put("userName", user.getUsername()); // 마이페이지용 (닉네임)
+        claims.put("userName", user.getUserName()); // 마이페이지용 (닉네임)
         claims.put("profileImageUrl", user.getProfileImageUrl()); // 마이페이지용
         claims.put("userType", user.getUserType().name());
         claims.put("tokenType", tokenType);

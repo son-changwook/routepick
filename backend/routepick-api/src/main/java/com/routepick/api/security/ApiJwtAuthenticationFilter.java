@@ -50,8 +50,8 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 // JWT 토큰의 sub 필드에서 userId 추출
                 String userId = jwtService.getClaimsFromToken(jwt).getSubject();
-                String displayName = jwtService.getUserNameFromToken(jwt);
-                log.debug("JWT 토큰에서 추출한 userId: {}, displayName: {}", userId, displayName);
+                String userName = jwtService.getUserNameFromToken(jwt);
+                log.debug("JWT 토큰에서 추출한 userId: {}, userName: {}", userId, userName);
                 
                 // UserDetails 객체 생성 (userId로 사용자 정보 로드)
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
@@ -62,7 +62,7 @@ public class ApiJwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                log.debug("User '{}' (displayName: '{}') authenticated successfully", userId, displayName);
+                log.debug("User '{}' (userName: '{}') authenticated successfully", userId, userName);
             }
         } catch (Exception ex) {
             log.error("Could not set user authentication in security context", ex);

@@ -45,7 +45,7 @@ public class AdminUserDetailsService implements UserDetailsService {
         }
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
+                .username(user.getUserName())
                 .password(user.getPassword())
                 .disabled(!user.isEnabled())
                 .accountExpired(!user.isAccountNonExpired())

@@ -45,8 +45,8 @@ public class UserController {
 
     @GetMapping("/profile/simple")
     @Operation(
-        summary = "마이페이지 간단한 프로필 정보 조회", 
-        description = "마이페이지 카테고리에 표시되는 프로필 이미지와 닉네임만 조회합니다. JWT 토큰에서 직접 정보를 추출하므로 DB 조회가 없습니다.",
+        summary = "간단한 프로필 정보 조회", 
+        description = "마이페이지에 표시되는 기본 프로필 정보(닉네임, 프로필 이미지)를 조회합니다. JWT 토큰에서 직접 정보를 추출하므로 DB 조회가 없습니다.",
         security = @SecurityRequirement(name = "Bearer Auth")
     )
     @ApiResponses({
@@ -61,11 +61,13 @@ public class UserController {
                         value = """
                         {
                           "success": true,
+                          "code": 200,
+                          "message": "프로필 정보 조회 성공",
                           "data": {
-                            "displayName": "climber123",
+                            "userName": "climber123",
                             "profileImageUrl": "https://example.com/profile.jpg"
                           },
-                          "message": "프로필 정보 조회 성공"
+                          "timestamp": "2024-01-01T12:00:00"
                         }
                         """
                     )
@@ -77,30 +79,30 @@ public class UserController {
     })
     public ResponseEntity<ResponseDTO<SimpleProfileDTO>> getSimpleProfile(
         @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails) {
-            
-            log.info("간단한 프로필 정보 조회 요청: userId={}", userDetails.getUserId());
-            
-            // CustomUserDetails에서 직접 정보 추출 (DB 조회 없음)
-            SimpleProfileDTO profile = SimpleProfileDTO.builder()
-                .userName(userDetails.getDisplayName()) // 표시용 닉네임
-                .profileImageUrl(userDetails.getProfileImageUrl()) // 프로필 이미지
+        
+        log.info("간단한 프로필 정보 조회 요청: userId={}", userDetails.getUserId());
+        
+        // JWT 토큰에서 직접 정보 추출 (DB 조회 없음)
+        SimpleProfileDTO profile = SimpleProfileDTO.builder()
+                .userName(userDetails.getDisplayName())
+                .profileImageUrl(userDetails.getProfileImageUrl())
                 .build();
-
-            log.info("간단한 프로필 정보 조회 완료: userId={}", userDetails.getUserId());
-            return ResponseEntity.ok(ResponseDTO.success(profile, "프로필 정보 조회 성공"));
+        
+        log.info("간단한 프로필 정보 조회 완료: userId={}", userDetails.getUserId());
+        
+        return ResponseEntity.ok(ResponseDTO.success(profile, "프로필 정보 조회 성공"));
     }
-    
-    @GetMapping("/personal-info")
-    @PreAuthorize("hasRole('USER')")
+
+    @GetMapping("/profile/detail")
     @Operation(
-        summary = "개인정보 조회",
-        description = "본인의 개인정보를 조회합니다. 이메일은 읽기 전용이며, 비밀번호는 보안상 제외됩니다.",
+        summary = "상세 프로필 정보 조회",
+        description = "사용자의 상세 프로필 정보를 조회합니다. 개인정보와 클라이밍 관련 정보를 포함합니다.",
         security = @SecurityRequirement(name = "Bearer Auth")
     )
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200", 
-            description = "개인정보 조회 성공",
+            description = "상세 프로필 정보 조회 성공",
             content = @Content(
                 schema = @Schema(implementation = PersonalInfoResponse.class),
                 examples = {
@@ -108,8 +110,9 @@ public class UserController {
                         name = "성공 예시",
                         value = """
                         {
+                          "success": true,
                           "code": 200,
-                          "message": "개인정보 조회 성공",
+                          "message": "상세 프로필 정보 조회 성공",
                           "data": {
                             "email": "user@example.com",
                             "userName": "climber123",
@@ -119,7 +122,8 @@ public class UserController {
                             "address": "서울시 강남구",
                             "detailAddress": "123-45",
                             "emergencyContact": "010-9876-5432"
-                          }
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
                         }
                         """
                     )
@@ -135,34 +139,33 @@ public class UserController {
         @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails,
         HttpServletRequest httpRequest) {
             
-        log.info("개인정보 조회 요청 시작: userId={}", userDetails.getUserId());
+        log.info("상세 프로필 정보 조회 요청 시작: userId={}", userDetails.getUserId());
         
         // Rate Limit 체크 (IP + 사용자 ID)
         rateLimitHelper.checkEndpointRateLimit(httpRequest, userDetails.getUserId().toString());
         
         // 보안 이벤트 로깅
-        SecureLogger.logSecurityEvent("개인정보 조회 시도: userId={}, ip={}", 
+        SecureLogger.logSecurityEvent("상세 프로필 정보 조회 시도: userId={}, ip={}", 
             userDetails.getUserId(), rateLimitHelper.getClientIpAddress(httpRequest));
         
-        // 개인정보 조회
+        // 상세 프로필 정보 조회
         PersonalInfoResponse personalInfo = userService.getPersonalInfo(userDetails.getUserId());
         
-        log.info("개인정보 조회 완료: userId={}", userDetails.getUserId());
+        log.info("상세 프로필 정보 조회 완료: userId={}", userDetails.getUserId());
         
-        return ResponseEntity.ok(ApiResponse.success("개인정보 조회 성공", personalInfo));
+        return ResponseEntity.ok(ApiResponse.success("상세 프로필 정보 조회 성공", personalInfo));
     }
 
-    @PutMapping("/personal-info")
-    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/profile/detail")
     @Operation(
-        summary = "개인정보 수정",
-        description = "본인의 개인정보를 수정합니다. 이메일과 비밀번호는 별도 API를 통해 수정합니다.",
+        summary = "상세 프로필 정보 수정",
+        description = "사용자의 상세 프로필 정보를 수정합니다. 개인정보와 클라이밍 관련 정보를 포함합니다.",
         security = @SecurityRequirement(name = "Bearer Auth")
     )
     @ApiResponses({
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200", 
-            description = "개인정보 수정 성공",
+            description = "상세 프로필 정보 수정 성공",
             content = @Content(
                 schema = @Schema(implementation = PersonalInfoResponse.class),
                 examples = {
@@ -170,8 +173,9 @@ public class UserController {
                         name = "성공 예시",
                         value = """
                         {
+                          "success": true,
                           "code": 200,
-                          "message": "개인정보 수정 성공",
+                          "message": "상세 프로필 정보 수정 성공",
                           "data": {
                             "email": "user@example.com",
                             "userName": "climber123",
@@ -181,14 +185,15 @@ public class UserController {
                             "address": "서울시 강남구",
                             "detailAddress": "123-45",
                             "emergencyContact": "010-9876-5432"
-                          }
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
                         }
                         """
                     )
                 }
             )
         ),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청 (입력값 오류)"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "429", description = "요청 한도 초과"),
@@ -199,13 +204,13 @@ public class UserController {
         @Valid @RequestBody PersonalInfoUpdateRequest request,
         HttpServletRequest httpRequest) {
             
-        log.info("개인정보 수정 요청 시작: userId={}", userDetails.getUserId());
+        log.info("상세 프로필 정보 수정 요청 시작: userId={}", userDetails.getUserId());
         
         // Rate Limit 체크 (IP + 사용자 ID)
         rateLimitHelper.checkEndpointRateLimit(httpRequest, userDetails.getUserId().toString());
         
         // 보안 이벤트 로깅
-        SecureLogger.logSecurityEvent("개인정보 수정 시도: userId={}, ip={}", 
+        SecureLogger.logSecurityEvent("상세 프로필 정보 수정 시도: userId={}, ip={}", 
             userDetails.getUserId(), rateLimitHelper.getClientIpAddress(httpRequest));
         
         // 입력값 정제
@@ -222,11 +227,11 @@ public class UserController {
         request.setDetailAddress(sanitizedDetailAddress);
         request.setEmergencyContact(sanitizedEmergencyContact);
         
-        // 개인정보 수정
+        // 상세 프로필 정보 수정
         PersonalInfoResponse personalInfo = userService.updatePersonalInfo(userDetails.getUserId(), request);
         
-        log.info("개인정보 수정 완료: userId={}", userDetails.getUserId());
+        log.info("상세 프로필 정보 수정 완료: userId={}", userDetails.getUserId());
         
-        return ResponseEntity.ok(ApiResponse.success("개인정보 수정 성공", personalInfo));
+        return ResponseEntity.ok(ApiResponse.success("상세 프로필 정보 수정 성공", personalInfo));
     }
 }

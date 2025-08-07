@@ -56,17 +56,80 @@ public class AuthController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200",
             description = "회원가입 성공",
-            content = @Content(mediaType = "application/json")
+            content = @Content(
+                mediaType = "application/json",
+                examples = {
+                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "성공 예시",
+                        value = """
+                        {
+                          "success": true,
+                          "code": 200,
+                          "message": "회원가입이 완료되었습니다.",
+                          "data": {
+                            "userId": 123,
+                            "email": "user@example.com",
+                            "userName": "climber123",
+                            "profileImageUrl": "/api/files/profiles/user123.jpg"
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
+                        }
+                        """
+                    )
+                }
+            )
         ),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "400",
             description = "잘못된 요청 (입력값 오류, Rate Limit 초과 등)",
-            content = @Content(mediaType = "application/json")
+            content = @Content(
+                mediaType = "application/json",
+                examples = {
+                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "입력값 오류",
+                        value = """
+                        {
+                          "success": false,
+                          "code": 400,
+                          "message": "입력값이 올바르지 않습니다.",
+                          "error": {
+                            "code": 400,
+                            "message": "입력값이 올바르지 않습니다.",
+                            "details": "이메일 형식이 올바르지 않습니다.",
+                            "field": "email"
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
+                        }
+                        """
+                    )
+                }
+            )
         ),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "409",
             description = "이미 존재하는 이메일",
-            content = @Content(mediaType = "application/json")
+            content = @Content(
+                mediaType = "application/json",
+                examples = {
+                    @io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "중복 이메일",
+                        value = """
+                        {
+                          "success": false,
+                          "code": 409,
+                          "message": "이미 사용 중인 이메일입니다.",
+                          "error": {
+                            "code": 409,
+                            "message": "이미 사용 중인 이메일입니다.",
+                            "details": "user@example.com은 이미 등록된 이메일입니다.",
+                            "field": "email"
+                          },
+                          "timestamp": "2024-01-01T12:00:00"
+                        }
+                        """
+                    )
+                }
+            )
         )
     })
     @PostMapping("/signup")

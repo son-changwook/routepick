@@ -126,7 +126,7 @@ public class AuthService {
         return SignupResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
-                .displayName(user.getUsername())
+                .userName(user.getUserName())
                 .profileImageUrl(user.getProfileImageUrl())
                 .message("회원가입이 성공적으로 완료되었습니다.")
                 .build();
@@ -215,7 +215,7 @@ public class AuthService {
             .userInfo(LoginResponse.UserInfo.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
-                .userName(user.getUsername())
+                .userName(user.getUserName())
                 .profileImageUrl(user.getProfileImageUrl())
                 .build())
             .build();
