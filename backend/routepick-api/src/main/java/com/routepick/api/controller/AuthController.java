@@ -50,6 +50,23 @@ public class AuthController {
     private final EmailVerificationService emailVerificationService;
     private final RateLimitHelper rateLimitHelper;
 
+    /**
+     * 민감한 정보 마스킹
+     * @param input 원본 문자열
+     * @return 마스킹된 문자열
+     */
+    private String maskSensitiveInfo(String input) {
+        if (input == null || input.length() <= 2) {
+            return input;
+        }
+        
+        if (input.length() <= 4) {
+            return input.charAt(0) + "*".repeat(input.length() - 1);
+        }
+        
+        return input.substring(0, 2) + "*".repeat(input.length() - 4) + input.substring(input.length() - 2);
+    }
+
     @Operation(
         summary = "회원가입",
         description = "새로운 사용자 계정을 생성합니다. 이메일 인증이 완료된 후 가능합니다. 프로필 이미지는 선택사항입니다."
@@ -350,7 +367,7 @@ public class AuthController {
         NickNameCheckResponse response = authService.checkNickNameAvailability(request);
         
         log.info("닉네임 중복 확인 완료: nickName={}, available={}", 
-                request.getNickName(), response.isAvailable());
+                maskSensitiveInfo(request.getNickName()), response.isAvailable());
         return ResponseEntity.ok(ApiResponse.success("닉네임 중복 확인이 완료되었습니다.", response));
     }
 
