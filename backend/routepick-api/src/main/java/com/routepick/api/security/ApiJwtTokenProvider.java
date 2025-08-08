@@ -1,61 +1,37 @@
 package com.routepick.api.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import com.routepick.api.service.auth.JwtService;
+import com.routepick.api.security.CustomUserDetails;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * JWT 토큰의 생성, 검증, 갱신을 담당하는 클래스.
- * 일반 사용자용 JWT 토큰을 관리합니다.
- * JWT 표준에 맞게 sub 필드에 userId를 저장합니다.
+ * JWT 토큰 제공자
+ * JWT 토큰의 생성, 검증, 갱신을 담당합니다.
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ApiJwtTokenProvider {
 
-    @Value("${api.jwt.secret}")
-    private String jwtSecret;
-
-    @Value("${api.jwt.expiration}")
-    private long jwtExpirationInMs;
-
-    @Value("${api.jwt.refresh-expiration}")
-    private long refreshExpirationInMs;
-
-    private Key getSigningKey() {
-        byte[] keyBytes = jwtSecret.getBytes();
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+    private final JwtService jwtService;
 
     /**
-     * 액세스 토큰 생성
-     * JWT 표준에 맞게 sub 필드에 userId를 저장합니다.
+     * JWT 토큰 생성
      */
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        Date expiryDate = new Date(now.getTime() + jwtService.getJwtExpirationInMs());
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", userDetails.getAuthorities());
-        claims.put("type", "USER");
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername()) // userId를 sub 필드에 저장
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey())
-                .compact();
+        return jwtService.generateToken(userDetails.getUsername(), 
+            userDetails.getAuthorities().iterator().next(), now, expiryDate);
     }
 
     /**
@@ -63,33 +39,18 @@ public class ApiJwtTokenProvider {
      * JWT 표준에 맞게 sub 필드에 userId를 저장합니다.
      */
     public String generateRefreshToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + refreshExpirationInMs);
+        Date expiryDate = new Date(now.getTime() + jwtService.getRefreshExpirationInMs());
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "REFRESH");
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername()) // userId를 sub 필드에 저장
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey())
-                .compact();
+        return jwtService.generateRefreshToken(userDetails.getUsername(), now, expiryDate);
     }
 
     /**
      * JWT 토큰에서 사용자 ID 추출 (sub 필드)
      */
     public String getUsernameFromJWT(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject(); // sub 필드에서 userId 반환
+        return jwtService.getUsernameFromToken(token);
     }
 
     /**
@@ -97,24 +58,11 @@ public class ApiJwtTokenProvider {
      */
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(authToken);
-
-            return true;
-        } catch (SecurityException ex) {
-            log.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            log.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            log.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty");
+            return jwtService.validateToken(authToken);
+        } catch (JwtException ex) {
+            log.error("Error validating token", ex);
+            return false;
         }
-        return false;
     }
 
     /**
@@ -122,21 +70,7 @@ public class ApiJwtTokenProvider {
      */
     public String refreshToken(String token) {
         try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-
-            Date now = new Date();
-            Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-
-            return Jwts.builder()
-                    .setClaims(claims)
-                    .setIssuedAt(now)
-                    .setExpiration(expiryDate)
-                    .signWith(getSigningKey())
-                    .compact();
+            return jwtService.refreshToken(token);
         } catch (Exception ex) {
             log.error("Error refreshing token", ex);
             return null;

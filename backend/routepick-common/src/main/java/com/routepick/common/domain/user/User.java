@@ -31,17 +31,18 @@ import java.util.Collections;
  * 
  * 2. 실제 사용자 정보
  *    - getUserName(): 사용자 실명 (홍길동)
- *    - 닉네임은 UserDetails 테이블에서 관리됨
+ *    - getNickName(): 사용자 닉네임 (climber123) - users 테이블에서 관리됨
  * 
  * 3. 혼동 금지
- *    - getUsername() ≠ getUserName()
- *    - getUsername() = userId (String)
+ *    - getUsername() ≠ getUserName() ≠ getNickName()
+ *    - getUsername() = userId (String) - Spring Security 식별자
  *    - getUserName() = 사용자 실명
+ *    - getNickName() = 사용자 닉네임
  * 
  * 4. 데이터베이스 필드
  *    - user_name: 사용자 실명
  *    - user_id: 사용자 식별자 (Long)
- *    - nick_name: 사용자 닉네임 (user_details 테이블)
+ *    - nick_name: 사용자 닉네임 (users 테이블)
  * 
  * 5. 사용 예시
  *    User user = userMapper.findById(userId);
@@ -58,6 +59,7 @@ public class User extends BaseDomain implements UserDetails {
     private String email;
     private String passwordHash;
     private String userName;
+    private String nickName;  // 닉네임 필드 추가
     private String phone;
     private String profileImageUrl;
     private LocalDate birthDate;

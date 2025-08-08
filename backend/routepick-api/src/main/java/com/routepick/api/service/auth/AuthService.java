@@ -17,7 +17,7 @@ import com.routepick.api.dto.auth.TokenRefreshResponse;
 import com.routepick.api.dto.auth.NickNameCheckRequest;
 import com.routepick.api.dto.auth.NickNameCheckResponse;
 import com.routepick.api.mapper.UserMapper;
-import com.routepick.api.mapper.UserDetailsMapper;
+import com.routepick.api.mapper.UserProfileMapper;
 import com.routepick.api.mapper.ApiTokenMapper;
 import com.routepick.api.service.email.RedisSignupSessionService;
 import com.routepick.api.service.validation.ValidationService;
@@ -26,7 +26,7 @@ import com.routepick.common.exception.FileException;
 import com.routepick.common.exception.ServiceException;
 import com.routepick.api.util.InputSanitizer;
 import com.routepick.common.domain.user.User;
-import com.routepick.common.domain.user.UserDetails;
+import com.routepick.common.domain.user.UserProfile;
 import com.routepick.common.domain.token.ApiToken;
 import com.routepick.common.enums.UserStatus;
 import com.routepick.common.enums.UserType;
@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthService {
 
     private final UserMapper userMapper;
-    private final UserDetailsMapper userDetailsMapper;
+    private final UserProfileMapper userProfileMapper;
     private final ApiTokenMapper apiTokenMapper;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -68,7 +68,7 @@ public class AuthService {
         String sanitizedNickName = InputSanitizer.sanitizeInput(request.getNickName());
         
         // 닉네임 중복 확인
-        boolean isDuplicate = userDetailsMapper.existsByNickName(sanitizedNickName);
+        boolean isDuplicate = userMapper.existsByNickName(sanitizedNickName);
         
         if (isDuplicate) {
             log.info("닉네임 중복 확인 - 중복됨: {}", sanitizedNickName);
@@ -111,7 +111,7 @@ public class AuthService {
         }
         
         // 5. 닉네임 중복 확인
-        if (userDetailsMapper.existsByNickName(sanitizedNickName)) {
+        if (userMapper.existsByNickName(sanitizedNickName)) {
             throw new DuplicateResourceException("이미 사용 중인 닉네임입니다.");
         }
     
@@ -133,6 +133,7 @@ public class AuthService {
                 .email(sanitizedEmail)
                 .passwordHash(hashedPassword)
                 .userName(sanitizedUserName)
+                .nickName(sanitizedNickName)  // 닉네임 설정
                 .phone(sanitizedPhone)
                 .profileImageUrl(profileImageUrl)
                 .birthDate(request.getBirthDate() != null ? LocalDate.parse(request.getBirthDate()) : null)
@@ -148,33 +149,21 @@ public class AuthService {
         // 9. 사용자 저장
         userMapper.insertUser(user);
         
-        // 10. UserDetails 객체 생성 및 저장 (닉네임 포함)
-        UserDetails userDetails = UserDetails.builder()
-                .userId(user.getUserId())
-                .nickName(sanitizedNickName)
-                .followingCount(0)
-                .followerCount(0)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        
-        userDetailsMapper.insertUserDetails(userDetails);
-        
-        // 11. 약관 동의 저장
+        // 10. 약관 동의 저장
         saveUserAgreements(user.getUserId(), request);
         
-        // 12. 등록 토큰 사용 처리 (Redis 세션 삭제)
+        // 11. 등록 토큰 사용 처리 (Redis 세션 삭제)
         redisSignupSessionService.consumeRegistrationToken(request.getRegistrationToken());
         
         log.info("새 사용자 등록 완료: email={}, userName={}, nickName={}", 
                 sanitizedEmail, sanitizedUserName, sanitizedNickName);
         
-        // 13. SignupResponse 생성 및 반환
+        // 12. SignupResponse 생성 및 반환
         return SignupResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .userName(user.getUserName())
-                .nickName(userDetails.getNickName())
+                .nickName(user.getNickName())
                 .profileImageUrl(user.getProfileImageUrl())
                 .message("회원가입이 성공적으로 완료되었습니다.")
                 .build();
@@ -282,16 +271,14 @@ public class AuthService {
             }
         }
         
-        // 5. 사용자 상세 정보 조회 (닉네임 포함)
-        var userDetailsOpt = userDetailsMapper.findByUserId(user.getUserId());
-        String nickName = userDetailsOpt.map(com.routepick.common.domain.user.UserDetails::getNickName).orElse(null);
+    
         
         // 6. CustomUserDetails 생성
         CustomUserDetails customUserDetails = new CustomUserDetails(
             user.getUserId(),
             user.getEmail(),
             user.getUserName(), // 사용자 실명
-            nickName, // 사용자 닉네임
+            user.getNickName(), // 사용자 닉네임
             user.getProfileImageUrl(),
             user.getPassword(),
             user.isEnabled(),
@@ -324,7 +311,7 @@ public class AuthService {
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .userName(user.getUserName()) // 사용자 실명
-                .nickName(nickName) // 사용자 닉네임
+                .nickName(user.getNickName()) // 사용자 닉네임
                 .profileImageUrl(user.getProfileImageUrl())
                 .build())
             .build();

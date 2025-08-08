@@ -48,9 +48,14 @@ public class ValidationService {
         "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     );
     
-    // 사용자명 패턴 (영문, 숫자, 한글, 언더스코어, 하이픈만 허용)
+    // 사용자명 패턴 (영문, 한글만 허용)
     private static final Pattern USERNAME_PATTERN = Pattern.compile(
-        "^[a-zA-Z0-9가-힣_-]+$"
+        "^[a-zA-Z가-힣]+$"
+    );
+    
+    // 닉네임 패턴 (영문, 숫자, 언더스코어, 마침표, 골뱅이, 하이픈만 허용 - 인스타그램 스타일)
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile(
+        "^[a-zA-Z0-9._@-]+$"
     );
     
     // 전화번호 패턴 (한국 휴대폰 번호)
@@ -70,6 +75,7 @@ public class ValidationService {
     public void validateSignupRequest(SignupRequest request) {
         validateEmail(request.getEmail());
         validateUserName(request.getUserName());
+        validateNickName(request.getNickName());  // 닉네임 검증 추가
         validatePassword(request.getPassword());
         validatePhone(request.getPhone());
         
@@ -131,7 +137,7 @@ public class ValidationService {
         
         // 형식 검증
         if (!USERNAME_PATTERN.matcher(trimmedUserName).matches()) {
-            throw ValidationException.invalidFormat("사용자명", "영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능");
+            throw ValidationException.invalidFormat("사용자명", "영문, 한글만 사용 가능");
         }
         
         // SQL Injection 방지 검증
@@ -307,6 +313,34 @@ public class ValidationService {
             }
         }
         return false;
+    }
+
+    /**
+     * 닉네임 검증
+     * @param nickName 검증할 닉네임
+     */
+    public void validateNickName(String nickName) {
+        if (nickName == null || nickName.trim().isEmpty()) {
+            throw ValidationException.required("닉네임");
+        }
+
+        String trimmedNickName = nickName.trim();
+
+        // 길이 검증
+        if (trimmedNickName.length() < 2 || trimmedNickName.length() > MAX_USERNAME_LENGTH) {
+            throw ValidationException.invalidLength("닉네임", 2, MAX_USERNAME_LENGTH);
+        }
+
+        // 형식 검증 (특수문자는 하이픈과 언더스코어만 허용)
+        if (!NICKNAME_PATTERN.matcher(trimmedNickName).matches()) {
+            throw ValidationException.invalidFormat("닉네임", "영문, 숫자, 언더스코어(_), 마침표(.), 골뱅이(@), 하이픈(-)만 사용 가능");
+        }
+
+        // 보안 위협 검증
+        validateSecurityThreats(trimmedNickName, "닉네임");
+
+        // SQL Injection 방지 검증
+        sqlInjectionProtection.validateAndSanitize(trimmedNickName, "nickname");
     }
 
     /**

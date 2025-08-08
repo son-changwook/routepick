@@ -56,6 +56,8 @@ public class ApiSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/health").permitAll()
+                        // 파일 서빙 API (공개)
+                        .requestMatchers("/api/files/profiles/**").permitAll()
                         // Swagger UI 관련 엔드포인트
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**").permitAll()
                         // 그 외 모든 요청은 인증 필요

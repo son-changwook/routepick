@@ -71,4 +71,21 @@ public class JwtConfig {
                secret.matches(".*[0-9].*") && 
                secret.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*");
     }
+
+    // Getter 메서드들
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public long getExpiration() {
+        return expiration;
+    }
+
+    public long getRefreshExpiration() {
+        return refreshExpiration;
+    }
+
+    public String getIssuer() {
+        return issuer;
+    }
 } 

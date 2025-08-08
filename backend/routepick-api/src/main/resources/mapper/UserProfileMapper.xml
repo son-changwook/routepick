@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.routepick.api.mapper.UserProfileMapper">
+
+    <!-- 사용자 프로필 정보 ResultMap -->
+    <resultMap id="UserProfileResultMap" type="com.routepick.common.domain.user.UserProfile">
+        <id property="detailId" column="detail_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="gender" column="gender"/>
+        <result property="height" column="height"/>
+        <result property="weight" column="weight"/>
+        <result property="wingspan" column="wingspan"/>
+        <result property="pullReach" column="pull_reach"/>
+        <result property="levelId" column="level_id"/>
+        <result property="branchId" column="branch_id"/>
+        <result property="followingCount" column="following_count"/>
+        <result property="followerCount" column="follower_count"/>
+        <result property="statusMessage" column="status_message"/>
+        <result property="bio" column="bio"/>
+        <result property="preferences" column="preferences"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 사용자 ID로 프로필 정보 조회 -->
+    <select id="findByUserId" resultMap="UserProfileResultMap">
+        SELECT * FROM user_profile WHERE user_id = #{userId}
+    </select>
+
+    <!-- 사용자 프로필 정보 저장 -->
+    <insert id="insertUserProfile" parameterType="com.routepick.common.domain.user.UserProfile" useGeneratedKeys="true" keyProperty="detailId">
+        INSERT INTO user_profile (
+            user_id, gender, height, weight, wingspan, pull_reach,
+            level_id, branch_id, following_count, follower_count,
+            status_message, bio, preferences, created_at, updated_at
+        ) VALUES (
+            #{userId}, #{gender}, #{height}, #{weight}, #{wingspan}, #{pullReach},
+            #{levelId}, #{branchId}, #{followingCount}, #{followerCount},
+            #{statusMessage}, #{bio}, #{preferences}, NOW(), NOW()
+        )
+    </insert>
+
+    <!-- 사용자 프로필 정보 수정 -->
+    <update id="updateUserProfile" parameterType="com.routepick.common.domain.user.UserProfile">
+        UPDATE user_profile SET
+            gender = #{gender},
+            height = #{height},
+            weight = #{weight},
+            wingspan = #{wingspan},
+            pull_reach = #{pullReach},
+            level_id = #{levelId},
+            branch_id = #{branchId},
+            following_count = #{followingCount},
+            follower_count = #{followerCount},
+            status_message = #{statusMessage},
+            bio = #{bio},
+            preferences = #{preferences},
+            updated_at = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 사용자 프로필 정보 삭제 -->
+    <delete id="deleteByUserId">
+        DELETE FROM user_profile WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 모든 사용자 프로필 정보 조회 (관리자용) -->
+    <select id="findAll" resultMap="UserProfileResultMap">
+        SELECT * FROM user_profile ORDER BY created_at DESC
+    </select>
+
+</mapper> 

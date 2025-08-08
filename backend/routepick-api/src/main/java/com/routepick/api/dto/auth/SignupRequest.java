@@ -35,16 +35,16 @@ public class SignupRequest {
             message = "비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다.")
    private String password;
    
-   @Schema(description = "사용자 실명 (영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능)", example = "홍길동")
+   @Schema(description = "사용자 실명 (영문, 한글만 사용 가능)", example = "홍길동")
    @NotBlank(message = "사용자명은 필수입니다.")
    @Size(min = 2, max = 20, message = "사용자명은 2자 이상 20자 이하여야 합니다.")
-   @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]+$", message = "사용자명은 영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능합니다.")
+   @Pattern(regexp = "^[a-zA-Z가-힣]+$", message = "사용자명은 영문, 한글만 사용 가능합니다.")
    private String userName;
    
-   @Schema(description = "사용자 닉네임 (영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능)", example = "climber123")
+   @Schema(description = "사용자 닉네임 (영문, 숫자, 언더스코어, 마침표, 하이픈, 골뱅이만 사용 가능)", example = "climber123")
    @NotBlank(message = "닉네임은 필수입니다.")
    @Size(min = 2, max = 20, message = "닉네임은 2자 이상 20자 이하여야 합니다.")
-   @Pattern(regexp = "^[a-zA-Z0-9가-힣_-]+$", message = "닉네임은 영문, 숫자, 한글, 언더스코어, 하이픈만 사용 가능합니다.")
+   @Pattern(regexp = "^[a-zA-Z0-9._@-]+$", message = "닉네임은 영문, 숫자, 언더스코어(_), 마침표(.), 골뱅이(@), 하이픈(-)만 사용 가능합니다.")
    private String nickName;
    
    @Schema(description = "전화번호 (010-1234-5678 형식)", example = "010-1234-5678")

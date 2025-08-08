@@ -1,0 +1,11 @@
+{
+  "email": "testuser15@example.com",
+  "password": "SecurePass123!",
+  "userName": "테스트사용자15",
+  "nickName": "user#test15",
+  "phone": "010-9876-5432",
+  "gender": "MALE",
+  "agreeTerms": true,
+  "agreePrivacy": true,
+  "registrationToken": "eyJhbGciOiJIUzI1NiJ9.eyJwdXJwb3NlIjoic2lnbnVwIiwidG9rZW5UeXBlIjoiUkVHSVNUUkFUSU9OIiwiZW1haWwiOiJ0ZXN0dXNlcjE0QGV4YW1wbGUuY29tIiwiaXNzIjoicm91dGVwaWNrLWFwaS1kZXYiLCJpYXQiOjE3NTQ2NDM5MjMsImV4cCI6MTc1NDY0NDUyM30.4xuvBXwryLNarQy5fV0U1CVuK7QwxpDmUvBAkW7KDfY"
+}

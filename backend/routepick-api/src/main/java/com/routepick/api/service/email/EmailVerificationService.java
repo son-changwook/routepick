@@ -170,7 +170,7 @@ private String generateRegistrationToken(String email) {
         // JWT 토큰에 포함할 정보
         Map<String, Object> claims = Map.of(
             "email", email,
-            "tokenType", "REGISTRATION",
+            "type", "REGISTRATION",
             "purpose", "signup"
         );
         

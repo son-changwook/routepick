@@ -1,24 +1,24 @@
 package com.routepick.api.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.routepick.api.exception.ApiError;
+import com.routepick.common.dto.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 /**
- * 인증 실패 시 처리하는 진입점.
- * 인증되지 않은 요청에 대한 응답을 생성합니다.
+ * API 인증 진입점
+ * 인증되지 않은 요청에 대한 처리를 담당합니다.
  */
 @Slf4j
 @Component
@@ -38,15 +38,12 @@ public class ApiAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 getClientIp(request),
                 authException.getClass().getSimpleName());
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(org.springframework.http.HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ApiError apiError = new ApiError(
-                request.getRequestURI(),
-                "로그인이 필요합니다.",
-                HttpStatus.UNAUTHORIZED.value(),
-                "UNAUTHORIZED",
-                LocalDateTime.now());
+        ApiResponse apiError = ApiResponse.error(
+                org.springframework.http.HttpStatus.UNAUTHORIZED.value(),
+                "로그인이 필요합니다.");
 
         response.getWriter().write(objectMapper.writeValueAsString(apiError));
     }

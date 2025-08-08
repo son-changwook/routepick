@@ -116,6 +116,9 @@ public class ApiRedisConfig {
         return apiRedisTemplate(connectionFactory);
     }
 
+    /**
+     * 표준 이름 호환성 - String Redis Template
+     */
     @Bean("stringRedisTemplate")
     public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         return apiStringRedisTemplate(connectionFactory);

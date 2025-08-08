@@ -55,4 +55,9 @@ public interface UserMapper {
      * 사용자명 중복 확인
      */
     boolean existsByUsername(@Param("username") String username);
+    
+    /**
+     * 닉네임 중복 확인
+     */
+    boolean existsByNickName(@Param("nickName") String nickName);
 } 

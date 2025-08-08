@@ -59,6 +59,15 @@ config:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       database: 0
+      
+# 공통 Rate Limiting 설정
+rate-limit:
+  default:
+    max-requests: 100
+    window-seconds: 60
+  strict:
+    max-requests: 10
+    window-seconds: 60
 
 # 공통 도메인 설정 (domain 패키지 관련)
 domain:

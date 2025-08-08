@@ -11,18 +11,16 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 토큰 블랙리스트 서비스
- * 무효화된 토큰을 Redis에 저장하여 빠른 검증을 제공합니다.
+ * 로그아웃된 토큰을 Redis에 저장하여 재사용을 방지합니다.
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TokenBlacklistService {
     
+    @Qualifier("apiStringRedisTemplate")
     private final RedisTemplate<String, String> redisTemplate;
     private static final String BLACKLIST_PREFIX = "token:blacklist:";
-    
-    public TokenBlacklistService(@Qualifier("apiStringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
     
     /**
      * 토큰을 블랙리스트에 추가

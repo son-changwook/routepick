@@ -1,0 +1,10 @@
+{
+  "email": "testuser3@example.com",
+  "password": "TestPass123!",
+  "userName": "테스트사용자",
+  "nickName": "testclimber123",
+  "phone": "010-1234-5678",
+  "agreeTerms": true,
+  "agreePrivacy": true,
+  "registrationToken": "eyJhbGciOiJIUzUxMiJ9.eyJwdXJwb3NlIjoic2lnbnVwIiwidHlwZSI6IlJFR0lTVFJBVElPTiIsImVtYWlsIjoidGVzdHVzZXIzQGV4YW1wbGUuY29tIiwiaWF0IjoxNzU0NjQ4NDE3LCJleHAiOjE3NTQ2NDkwMTd9.iFDSqBlLBfg4rul_Nk8KyP29AJEVQYjqkafydZtLAfMCEmKnrcaZYI5maRBetUn3kLeyWtjX12EUNtFMQlzq0g"
+}

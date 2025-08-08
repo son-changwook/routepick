@@ -102,11 +102,29 @@ springdoc:
     disable-swagger-default-url: true
   packages-to-scan: com.routepick.api.controller
 
-# JWT 설정 (환경변수 필수화)
+# JWT 설정 (보안 강화)
 api:
   jwt:
     # 프로덕션 환경에서는 반드시 환경변수로 설정해야 함
-    secret: ${JWT_SECRET:routepick-secret-key-2024-very-long-and-secure-key-for-jwt-signing}
-    expiration: ${JWT_EXPIRATION:3600000}  # 1시간 (밀리초)
-    refresh-expiration: ${JWT_REFRESH_EXPIRATION:2592000000}  # 30일 (밀리초)
+    # 개발 환경용 기본값 (프로덕션에서는 반드시 변경)
+    secret: ${JWT_SECRET:Wgk4m2KYZ/lY55oDW4ky4nQM2bkZwqR1yhI8mTH3r5g4o3/LQfifkQHNALXhexGyjQzsOtjYiT06tLhKGDvtXQ==}
+    expiration: ${JWT_EXPIRATION:1800000}  # 30분 (밀리초) - 보안 강화
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}  # 7일 (밀리초) - 보안 강화
     issuer: ${JWT_ISSUER:routepick-api}
+    # 추가 보안 설정
+    algorithm: ${JWT_ALGORITHM:HS512}  # HMAC-SHA512 사용
+    clock-skew: ${JWT_CLOCK_SKEW:30000}  # 30초 클록 스큐 허용
+
+# Rate Limiting 설정
+rate-limit:
+  ip:
+    max-requests: ${RATE_LIMIT_IP_MAX_REQUESTS:100}
+    window-seconds: ${RATE_LIMIT_IP_WINDOW_SECONDS:60}
+  email:
+    max-requests: ${RATE_LIMIT_EMAIL_MAX_REQUESTS:10}
+    window-seconds: ${RATE_LIMIT_EMAIL_WINDOW_SECONDS:3600}
+    
+# 파일 업로드 설정
+file-upload:
+  max-size: ${MAX_FILE_SIZE:5242880}  # 5MB
+  allowed-extensions: ${ALLOWED_FILE_EXTENSIONS:.jpg,.jpeg,.png,.gif}

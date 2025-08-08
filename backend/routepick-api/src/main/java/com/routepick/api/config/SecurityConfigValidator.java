@@ -23,6 +23,9 @@ public class SecurityConfigValidator {
         validateDatabaseCredentials();
         validateEmailCredentials();
         
+        // JWT 보안 검증
+        validateJwtSecurity();
+        
         log.info("보안 설정 검증이 완료되었습니다.");
     }
     
@@ -106,5 +109,40 @@ public class SecurityConfigValidator {
                 log.info("MAIL_PASSWORD 환경변수가 설정되었습니다.");
             }
         }
+    }
+
+    /**
+     * JWT 보안 설정 검증
+     */
+    private void validateJwtSecurity() {
+        String jwtSecret = jwtConfig.getSecretKey();
+        
+        // 시크릿 키 길이 검증
+        if (jwtSecret.length() < 32) {
+            log.error("❌ JWT_SECRET이 너무 짧습니다. 최소 32자 이상이 필요합니다.");
+            log.error("현재 길이: {}자", jwtSecret.length());
+            throw new SecurityException("JWT_SECRET이 너무 짧습니다.");
+        }
+        
+        // 시크릿 키 복잡성 검증
+        if (!jwtSecret.matches(".*[A-Z].*") || 
+            !jwtSecret.matches(".*[a-z].*") || 
+            !jwtSecret.matches(".*[0-9].*") || 
+            !jwtSecret.matches(".*[^A-Za-z0-9].*")) {
+            log.error("❌ JWT_SECRET이 충분히 복잡하지 않습니다.");
+            log.error("영문 대소문자, 숫자, 특수문자를 모두 포함해야 합니다.");
+            throw new SecurityException("JWT_SECRET이 충분히 복잡하지 않습니다.");
+        }
+        
+        // 토큰 만료 시간 검증
+        if (jwtConfig.getExpiration() > 3600000) { // 1시간
+            log.warn("⚠️ JWT_EXPIRATION이 너무 깁니다. 보안을 위해 30분 이하를 권장합니다.");
+        }
+        
+        if (jwtConfig.getRefreshExpiration() > 604800000) { // 7일
+            log.warn("⚠️ JWT_REFRESH_EXPIRATION이 너무 깁니다. 보안을 위해 7일 이하를 권장합니다.");
+        }
+        
+        log.info("✅ JWT 보안 설정이 적절합니다.");
     }
 } 

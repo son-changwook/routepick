@@ -1,36 +1,36 @@
 package com.routepick.common.domain.user;
 
-
-
 import com.routepick.common.domain.common.BaseDomain;
 import com.routepick.common.enums.Gender;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@SuperBuilder
+/**
+ * 사용자 프로필 정보
+ * 사용자의 클라이밍 관련 상세 정보를 저장
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class UserDetails extends BaseDomain {
+@AllArgsConstructor
+@Builder
+public class UserProfile extends BaseDomain {
+    
     private Long detailId;
     private Long userId;
-    private String nickName; // 닉네임 필드 추가
     private Gender gender;
     private int height;
     private int weight;
     private int wingspan;
     private int pullReach;
-    private int levelId;
-    private int branchId;
+    private Integer levelId;  // null 허용을 위해 Integer로 변경
+    private Integer branchId;  // null 허용을 위해 Integer로 변경
     private int followingCount;
     private int followerCount;
     private String statusMessage;
     private String bio;
     private String preferences;
-    
-    
-    
 }

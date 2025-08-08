@@ -1,18 +1,21 @@
 package com.routepick.api.security;
 
-import com.routepick.common.domain.user.User;
-import com.routepick.common.domain.user.UserDetails;
-import com.routepick.common.enums.UserType;
 import com.routepick.api.mapper.UserMapper;
-import com.routepick.api.mapper.UserDetailsMapper;
-
+import com.routepick.api.mapper.UserProfileMapper;
+import com.routepick.common.domain.user.User;
+import com.routepick.api.security.CustomUserDetails;
+import com.routepick.common.enums.UserStatus;
+import com.routepick.common.enums.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -33,7 +36,7 @@ import java.util.Optional;
 public class ApiUserDetailsService implements UserDetailsService {
 
     private final UserMapper userMapper;
-    private final UserDetailsMapper userDetailsMapper;
+    private final UserProfileMapper userProfileMapper;
 
     /**
      * userId로 사용자 정보를 로드합니다.
@@ -65,9 +68,8 @@ public class ApiUserDetailsService implements UserDetailsService {
                 throw new UsernameNotFoundException("비활성화된 계정입니다: " + userId);
             }
 
-            // 사용자 상세 정보에서 닉네임 가져오기
-            Optional<UserDetails> userDetailsOpt = userDetailsMapper.findByUserId(user.getUserId());
-            String nickName = userDetailsOpt.map(UserDetails::getNickName).orElse(null);
+            // 사용자 상세 정보에서 닉네임 가져오기 (이제 User 테이블에서 가져옴)
+            String nickName = user.getNickName();
 
             // CustomUserDetails 생성 (실명과 닉네임 구분)
             return new CustomUserDetails(
