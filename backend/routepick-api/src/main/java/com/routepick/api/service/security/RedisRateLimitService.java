@@ -65,7 +65,7 @@ public class RedisRateLimitService {
      * @return 요청 허용 여부
      */
     public boolean tryConsumeByIp(String ipAddress) {
-        return tryConsume("rate_limit:ip:" + ipAddress, 100, 60); // 1분에 100회
+        return tryConsume("rate_limit:ip:" + ipAddress, 1000, 60); // 1분에 1000회 (개발 환경 완화)
     }
 
     /**
@@ -76,7 +76,7 @@ public class RedisRateLimitService {
     public boolean tryConsumeByEmail(String email) {
         String maskedEmail = SecureLogger.maskEmail(email);
         String key = "rate_limit:email:" + maskedEmail;
-        return tryConsume(key, 10, 3600); // 1시간에 10회
+        return tryConsume(key, 100, 3600); // 1시간에 100회 (개발 환경 완화)
     }
 
     /**

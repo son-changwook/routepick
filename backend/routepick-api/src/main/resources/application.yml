@@ -11,8 +11,6 @@ spring:
     username: ${DB_USERNAME:routepick}
     password: ${DB_PASSWORD:routepick}
   
-  # MyBatis 설정은 루트 레벨에서 관리
-  
   # Redis 설정
   redis:
     host: ${SPRING_REDIS_HOST:localhost}
