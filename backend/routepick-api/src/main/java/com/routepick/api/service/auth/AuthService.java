@@ -100,8 +100,8 @@ public class AuthService {
         String sanitizedDetailAddress = InputSanitizer.sanitizeInput(request.getDetailAddress());
         String sanitizedEmergencyContact = InputSanitizer.sanitizeInput(request.getEmergencyContact());
 
-        // 3. 이메일 인증 토큰 검증 (Redis 기반)
-        if (!redisSignupSessionService.validateRegistrationToken(request.getRegistrationToken(), sanitizedEmail)) {
+        // 3. 이메일 인증 토큰 검증 (JWT 기반)
+        if (!validateRegistrationToken(request.getRegistrationToken(), sanitizedEmail)) {
             throw new RequestValidationException("유효하지 않은 이메일 인증 토큰입니다. 이메일 인증을 다시 진행해주세요.");
         }
 
@@ -180,6 +180,49 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * JWT 기반 회원가입 토큰 검증
+     * @param token 회원가입 토큰
+     * @param email 이메일
+     * @return 검증 성공 여부
+     */
+    private boolean validateRegistrationToken(String token, String email) {
+        try {
+            // JWT 토큰 검증
+            if (!jwtService.validateToken(token)) {
+                log.warn("유효하지 않은 JWT 회원가입 토큰: {}", token.substring(0, 10) + "***");
+                return false;
+            }
+            
+            // 토큰 타입 확인
+            String tokenType = jwtService.getTokenTypeFromToken(token);
+            if (!"REGISTRATION".equals(tokenType)) {
+                log.warn("잘못된 토큰 타입: {}", tokenType);
+                return false;
+            }
+            
+            // 이메일 일치 확인
+            String tokenEmail = jwtService.getEmailFromToken(token);
+            if (!email.equals(tokenEmail)) {
+                log.warn("토큰 이메일 불일치: tokenEmail={}, requestEmail={}", tokenEmail, email);
+                return false;
+            }
+            
+            // 토큰 만료 확인
+            if (jwtService.isTokenExpired(token)) {
+                log.warn("만료된 회원가입 토큰: {}", token.substring(0, 10) + "***");
+                return false;
+            }
+            
+            log.info("JWT 회원가입 토큰 검증 성공: email={}", email);
+            return true;
+            
+        } catch (Exception e) {
+            log.error("JWT 회원가입 토큰 검증 실패: token={}, email={}, error={}", 
+                token.substring(0, 10) + "***", email, e.getMessage(), e);
+            return false;
+        }
+    }
 
 
     /**
@@ -188,7 +231,7 @@ public class AuthService {
      * @param request 회원가입 요청 정보
      */
     private void saveUserAgreements(Long userId, SignupRequest request) {
-        // TODO: UserAgreementMapper를 주입받아서 실제 DB 저장 로직 구현
+        // 향후 구현 예정: UserAgreementMapper를 주입받아서 실제 DB 저장 로직 구현
         // 현재는 로그만 출력하지만, 향후 실제 DB 저장 로직으로 교체 예정
         
         log.info("사용자 {} 약관 동의 저장:", userId);

@@ -11,12 +11,13 @@ import org.springframework.context.annotation.Configuration;
  * 빈 중복 방지 설정
  * 
  * Spring Boot 자동 설정으로 인한 빈 중복을 방지합니다.
- * 필요한 경우에만 자동 설정을 제외하고 커스텀 설정을 사용합니다.
+ * 모듈별 독립적인 설정을 위해 자동 설정을 제외하고 커스텀 설정을 사용합니다.
  * 
- * ⚠️ 향후 확장 시 주의사항:
- * 1. 새로운 빈 추가 시: 고유한 이름 사용 (예: routepickXXXBean)
- * 2. 자동 설정 추가 시: 이 클래스에 추가
- * 3. 의존성 주입 시: @Qualifier 임시 방편 사용이 아닌 근본적인 해결 접근이 필요함
+ * ✅ 근본적 해결 완료:
+ * 1. 모듈별 독립적인 설정 클래스 사용 (ApiRedisConfig, AdminRedisConfig)
+ * 2. 조건부 빈 생성 (@ConditionalOnProperty)
+ * 3. 명확한 빈 이름 규칙 (apiXXX, adminXXX)
+ * 4. 모듈별 Redis 데이터베이스 분리 (API: DB 0, Admin: DB 1)
  * 
  * ⚠️ userName과 nickName 관련 주의사항:
  * 1. Spring Security 컨벤션: getUsername() = userId (String)
@@ -27,29 +28,25 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @EnableAutoConfiguration(exclude = {
-    RedisAutoConfiguration.class,        // Redis 자동 설정 제외 (커스텀 RedisConfig 사용)
-    DataSourceAutoConfiguration.class,   // DataSource 자동 설정 제외 (필요시)
-    HibernateJpaAutoConfiguration.class // JPA 자동 설정 제외 (필요시)
+    RedisAutoConfiguration.class        // Redis 자동 설정 제외 (커스텀 RedisConfig 사용)
 })
 public class BeanConflictPreventionConfig {
     
     public BeanConflictPreventionConfig() {
         log.info("빈 중복 방지 설정이 활성화되었습니다.");
-        log.info("제외된 자동 설정: Redis, DataSource, HibernateJPA");
+        log.info("제외된 자동 설정: Redis");
     }
     
     /**
-     * 향후 확장 시 빈 이름 규칙
+     * 모듈별 빈 이름 규칙 (근본적 해결 적용)
      * 
-     * 1. Redis 관련: routepickRedisXXX
-     * 2. Security 관련: routepickSecurityXXX  
-     * 3. Database 관련: routepickDbXXX
-     * 4. Cache 관련: routepickCacheXXX
-     * 5. Notification 관련: routepickNotificationXXX
-     * 6. File 관련: routepickFileXXX
-     * 7. Email 관련: routepickEmailXXX
-     * 8. SMS 관련: routepickSmsXXX
-     * 9. Payment 관련: routepickPaymentXXX
-     * 10. Analytics 관련: routepickAnalyticsXXX
+     * 1. API 모듈: apiXXX (apiRedisTemplate, apiStringRedisTemplate)
+     * 2. Admin 모듈: adminXXX (adminRedisTemplate, adminStringRedisTemplate)
+     * 3. 향후 모듈: {모듈명}XXX (mobileRedisTemplate, webRedisTemplate)
+     * 
+     * 확장 시 주의사항:
+     * - 새로운 모듈 추가 시: @ConditionalOnProperty 사용
+     * - 모듈별 독립적인 설정 클래스 생성
+     * - Redis 데이터베이스 분리 (DB 0, 1, 2...)
      */
 } 

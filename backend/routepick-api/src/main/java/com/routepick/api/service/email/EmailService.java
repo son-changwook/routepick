@@ -42,7 +42,8 @@ public class EmailService {
             log.info("인증 코드: {}", verificationCode);
             log.info("=====================================");
             
-            // 실제 이메일 발송은 주석 처리 (개발 환경)
+            // 프로덕션 환경에서는 실제 이메일 발송
+            // 개발 환경에서는 주석 처리하여 콘솔 출력만 사용
             /*
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);

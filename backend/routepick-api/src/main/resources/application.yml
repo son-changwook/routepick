@@ -4,6 +4,15 @@ spring:
   application:
     name: routepick-api
   
+  # 데이터베이스 설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:routepick}?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:routepick}
+    password: ${DB_PASSWORD:routepick}
+  
+  # MyBatis 설정은 루트 레벨에서 관리
+  
   # Redis 설정
   redis:
     host: ${SPRING_REDIS_HOST:localhost}
@@ -54,6 +63,13 @@ server:
     include-message: always
     include-binding-errors: always
     include-stacktrace: never
+
+# MyBatis 설정
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.routepick.common.domain
+  configuration:
+    map-underscore-to-camel-case: true
 
 # 이메일 관련 설정
 email:

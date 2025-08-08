@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RedisRateLimitService {
 
-    private final RedisTemplate<String, String> stringRedisTemplate;
+    private final RedisTemplate<String, String> apiStringRedisTemplate;
 
     // Lua 스크립트를 사용한 원자적 Rate Limiting
     private static final String RATE_LIMIT_SCRIPT = """
@@ -130,7 +130,7 @@ public class RedisRateLimitService {
         try {
             long currentTime = System.currentTimeMillis();
             
-            List<Long> result = stringRedisTemplate.execute(
+            List<Long> result = apiStringRedisTemplate.execute(
                 rateLimitScript,
                 List.of(key),
                 String.valueOf(windowSeconds * 1000), // 밀리초로 변환
@@ -179,10 +179,10 @@ public class RedisRateLimitService {
             long windowStart = currentTime - (windowSeconds * 1000L);
 
             // 만료된 요청들 제거
-            stringRedisTemplate.opsForZSet().removeRangeByScore(key, 0, windowStart);
+            apiStringRedisTemplate.opsForZSet().removeRangeByScore(key, 0, windowStart);
             
             // 현재 윈도우 내 요청 수 반환
-            Long count = stringRedisTemplate.opsForZSet().count(key, windowStart, currentTime);
+            Long count = apiStringRedisTemplate.opsForZSet().count(key, windowStart, currentTime);
             return count != null ? count : 0;
 
         } catch (Exception e) {
@@ -197,7 +197,7 @@ public class RedisRateLimitService {
      */
     public void resetRateLimit(String key) {
         try {
-            stringRedisTemplate.delete(key);
+            apiStringRedisTemplate.delete(key);
             log.info("Rate limit reset for key: {}", maskSensitiveKey(key));
         } catch (Exception e) {
             log.error("Failed to reset rate limit for key: {}", key, e);
@@ -211,12 +211,12 @@ public class RedisRateLimitService {
         try {
             // 패턴 매칭으로 모든 rate_limit 키 찾기
             String pattern = "rate_limit:*";
-            stringRedisTemplate.keys(pattern).forEach(key -> {
+            apiStringRedisTemplate.keys(pattern).forEach(key -> {
                 try {
                     // TTL이 설정되지 않은 키들 정리
-                    Long ttl = stringRedisTemplate.getExpire(key);
+                    Long ttl = apiStringRedisTemplate.getExpire(key);
                     if (ttl != null && ttl == -1) {
-                        stringRedisTemplate.expire(key, Duration.ofHours(2));
+                        apiStringRedisTemplate.expire(key, Duration.ofHours(2));
                     }
                 } catch (Exception e) {
                     log.warn("Failed to cleanup rate limit key: {}", key, e);

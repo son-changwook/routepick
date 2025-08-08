@@ -1,11 +1,10 @@
-package com.routepick.api.config;
+package com.routepick.admin.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,13 +16,15 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
- * Redis 설정 클래스
- * 보안 강화된 Redis 연결 및 직렬화 설정을 제공합니다.
- * Spring Boot의 자동 설정을 제거하고 완전히 커스텀 설정을 사용합니다.
+ * Admin 모듈 전용 Redis 설정
+ * 
+ * 조건부 설정으로 Admin 모듈에서만 활성화됩니다.
+ * API 모듈과의 빈 충돌을 방지합니다.
  */
 @Slf4j
 @Configuration
-public class RedisConfig {
+@ConditionalOnProperty(name = "spring.application.name", havingValue = "routepick-admin")
+public class AdminRedisConfig {
 
     @Value("${spring.redis.host}")
     private String redisHost;
@@ -34,84 +35,89 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String redisPassword;
 
-    @Value("${spring.redis.database:0}")
+    @Value("${spring.redis.database:1}")  // Admin은 다른 DB 사용
     private int database;
 
     /**
-     * Redis 연결 팩토리 설정
+     * Admin 모듈 전용 Redis 연결 팩토리
      */
-    @Bean("routepickRedisConnectionFactory")
-    public RedisConnectionFactory redisConnectionFactory() {
+    @Bean("adminRedisConnectionFactory")
+    @Primary
+    public RedisConnectionFactory adminRedisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
         config.setPort(redisPort);
         config.setPassword(redisPassword);
-        config.setDatabase(database);
+        config.setDatabase(database);  // Admin은 DB 1 사용
 
         LettuceConnectionFactory factory = new LettuceConnectionFactory(config);
         
-        log.info("Redis 연결 설정 완료 - Host: {}, Port: {}, Database: {}", 
+        log.info("Admin 모듈 Redis 연결 설정 완료 - Host: {}, Port: {}, Database: {}", 
             redisHost, redisPort, database);
         
         return factory;
     }
 
     /**
-     * Redis Template 설정 (보안 강화된 직렬화)
+     * Admin 모듈 전용 Redis Template (JSON 직렬화)
      */
-    @Bean("routepickRedisTemplate")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    @Bean("adminRedisTemplate")
+    @Primary
+    public RedisTemplate<String, Object> adminRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
         // 보안 강화된 JSON 직렬화 설정
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        
-        // 보안을 위해 기본 타이핑 설정 제거 (더 안전한 방법 사용)
         objectMapper.findAndRegisterModules();
         
-        // 보안 강화: 특정 클래스만 허용하는 직렬화 설정
         GenericJackson2JsonRedisSerializer jsonSerializer = 
             new GenericJackson2JsonRedisSerializer();
 
-        // Key는 String으로, Value는 JSON으로 직렬화
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(jsonSerializer);
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(jsonSerializer);
-
-        // 트랜잭션 지원 활성화
         template.setEnableTransactionSupport(true);
-        
         template.afterPropertiesSet();
         
-        log.info("RedisTemplate 설정 완료 - JSON 직렬화 사용");
+        log.info("Admin 모듈 RedisTemplate 설정 완료");
         
         return template;
     }
 
     /**
-     * String 전용 Redis Template (성능 최적화)
-     * 이 빈이 RedisTemplate<String, String> 타입의 기본 빈이 됩니다.
+     * Admin 모듈 전용 String Redis Template
      */
-    @Bean("routepickStringRedisTemplate")
-    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+    @Bean("adminStringRedisTemplate")
+    public RedisTemplate<String, String> adminStringRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         
-        // 모든 직렬화를 String으로 설정
         StringRedisSerializer stringSerializer = new StringRedisSerializer();
         template.setKeySerializer(stringSerializer);
         template.setValueSerializer(stringSerializer);
         template.setHashKeySerializer(stringSerializer);
         template.setHashValueSerializer(stringSerializer);
-        
         template.setEnableTransactionSupport(true);
         template.afterPropertiesSet();
         
-        log.info("StringRedisTemplate 설정 완료");
+        log.info("Admin 모듈 StringRedisTemplate 설정 완료");
         
         return template;
+    }
+
+    /**
+     * 표준 이름 호환성 (Spring Boot 자동 설정 호환)
+     */
+    @Bean("redisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        return adminRedisTemplate(connectionFactory);
+    }
+
+    @Bean("stringRedisTemplate")
+    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        return adminStringRedisTemplate(connectionFactory);
     }
 }

@@ -1,5 +1,6 @@
 package com.routepick.api;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
  * 일반 사용자를 위한 API 서비스를 제공합니다.
  */
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+@MapperScan("com.routepick.api.mapper")
 @EnableScheduling
 @EnableMethodSecurity
 public class ApiApplication {

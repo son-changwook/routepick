@@ -51,6 +51,25 @@ public class JwtService {
     }
     
     /**
+     * 커스텀 claims로 토큰 생성 (회원가입 토큰 등에 사용)
+     * @param claims 토큰에 포함할 정보
+     * @param expirationSeconds 만료 시간 (초)
+     * @return JWT 토큰
+     */
+    public String generateToken(Map<String, Object> claims, long expirationSeconds) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (expirationSeconds * 1000));
+        
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuer(jwtConfig.getIssuer())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+    
+    /**
      * 토큰 생성 공통 메서드 (User 객체 사용)
      * JWT 표준에 맞게 구조화:
      * - sub: 사용자 식별자 (userId)

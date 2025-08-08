@@ -20,7 +20,7 @@ public class TokenBlacklistService {
     private final RedisTemplate<String, String> redisTemplate;
     private static final String BLACKLIST_PREFIX = "token:blacklist:";
     
-    public TokenBlacklistService(@Qualifier("routepickStringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
+    public TokenBlacklistService(@Qualifier("apiStringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
     

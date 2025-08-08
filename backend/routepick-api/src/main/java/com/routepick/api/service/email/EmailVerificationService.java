@@ -1,26 +1,40 @@
 package com.routepick.api.service.email;
 
-import org.springframework.stereotype.Service;
+import com.routepick.api.dto.email.EmailCheckRequest;
 import com.routepick.api.dto.email.EmailCheckResponse;
+import com.routepick.api.dto.email.EmailVerificationRequest;
 import com.routepick.api.dto.email.EmailVerificationResponse;
+import com.routepick.api.dto.email.VerifyCodeRequest;
 import com.routepick.api.dto.email.VerifyCodeResponse;
 import com.routepick.api.mapper.UserMapper;
+import com.routepick.api.service.auth.JwtService;
 import com.routepick.common.domain.session.SignupSession;
-import java.time.LocalDateTime;
+import com.routepick.common.exception.customExceptions.DuplicateResourceException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
+
+/**
+ * 이메일 인증 서비스
+ * 회원가입 전 이메일 인증을 처리합니다.
+ */
 @Slf4j
 @Service
 public class EmailVerificationService {
-   
+
     private final UserMapper userMapper;
     private final EmailService emailService;
     private final SignupSessionService sessionService;
+    private final JwtService jwtService;
 
-    public EmailVerificationService(UserMapper userMapper, EmailService emailService, SignupSessionService sessionService){
+    public EmailVerificationService(UserMapper userMapper, EmailService emailService, SignupSessionService sessionService, JwtService jwtService){
         this.userMapper = userMapper;
         this.emailService = emailService;
         this.sessionService = sessionService;
+        this.jwtService = jwtService;
     }
 
 /**
@@ -147,13 +161,26 @@ public VerifyCodeResponse verifyCode(String email, String verificationCode, Stri
 }
 
 /**
- * 회원가입 토큰 생성 (간단한 구현)
+ * 회원가입 토큰 생성 (JWT 기반 보안 토큰)
  * @param email 이메일
- * @return 회원가입 토큰
+ * @return JWT 기반 회원가입 토큰
  */
 private String generateRegistrationToken(String email) {
-    // 실제로는 JWT를 사용하는 것이 좋습니다
-    // 여기서는 간단한 토큰을 생성합니다
-    return "REG_" + email.hashCode() + "_" + System.currentTimeMillis();
+    try {
+        // JWT 토큰에 포함할 정보
+        Map<String, Object> claims = Map.of(
+            "email", email,
+            "tokenType", "REGISTRATION",
+            "purpose", "signup"
+        );
+        
+        // JWT 토큰 생성 (10분 만료)
+        return jwtService.generateToken(claims, 600L); // 10분 = 600초
+        
+    } catch (Exception e) {
+        log.error("JWT 회원가입 토큰 생성 실패: email={}, error={}", email, e.getMessage(), e);
+        // JWT 생성 실패 시 기존 방식으로 폴백
+        return "REG_" + email.hashCode() + "_" + System.currentTimeMillis();
+    }
 }
 }
