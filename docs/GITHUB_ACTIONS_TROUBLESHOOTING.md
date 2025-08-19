@@ -191,6 +191,41 @@ Credentials could not be loaded, please check your action inputs: Could not load
 
 ---
 
+## 8. QBaseEntity 컴파일 오류 (로컬 개발환경)
+**오류 현상:**
+- IDE에서 QBaseEntity.java 파일에 빨간 줄 오류 표시
+- BaseEntity 필드 변경 후 생성된 Q 클래스와 불일치
+
+**원인:** 
+1. BaseEntity.java 필드명 변경 (`lastModifiedBy` → `modifiedBy`)
+2. 기존 생성된 QBaseEntity.java가 이전 필드명 기반으로 생성됨
+3. QueryDSL이 `@MappedSuperclass`인 BaseEntity에 대해서도 Q 클래스 생성
+
+**해결책:**
+```bash
+# 1. 생성된 QBaseEntity 파일들 삭제
+rm -rf routepick-backend/bin/generated-sources/annotations/com/routepick/common/QBaseEntity.java
+rm -rf routepick-backend/build/generated/querydsl/com/routepick/common/QBaseEntity.java
+
+# 2. clean 빌드로 재생성
+./gradlew clean compileJava
+```
+
+**.gitignore 업데이트:**
+```gitignore
+# QueryDSL generated files
+**/generated-sources/
+**/generated/querydsl/
+**/QBaseEntity.java
+```
+
+**교훈:** 
+- QueryDSL 생성 파일은 Git에서 제외하여 충돌 방지
+- BaseEntity 변경 시 기존 생성 파일 정리 필요
+- `@MappedSuperclass`도 QueryDSL 생성 대상이 될 수 있음
+
+---
+
 ## 🛠️ actions/upload-artifact v4 업데이트
 
 ### 변경사항
