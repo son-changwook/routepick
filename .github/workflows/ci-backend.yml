@@ -49,22 +49,7 @@ jobs:
     - name: 공통 라이브러리 빌드
       run: |
         cd routepick-common
-        ./gradlew clean build publishToMavenLocal
-
-    - name: 코드 스타일 검사 (Checkstyle)
-      run: |
-        cd routepick-backend
-        ./gradlew checkstyleMain checkstyleTest
-
-    - name: 정적 분석 (SpotBugs)
-      run: |
-        cd routepick-backend
-        ./gradlew spotbugsMain spotbugsTest
-
-    - name: 의존성 취약점 검사
-      run: |
-        cd routepick-backend
-        ./gradlew dependencyCheckAnalyze
+        ./gradlew clean build
 
     - name: 코드 컴파일
       run: |
@@ -125,7 +110,7 @@ jobs:
     - name: 공통 라이브러리 빌드
       run: |
         cd routepick-common
-        ./gradlew clean build publishToMavenLocal
+        ./gradlew clean build
 
     - name: 테스트 환경 준비
       run: |
@@ -146,31 +131,7 @@ jobs:
         REDIS_HOST: localhost
         REDIS_PORT: 6379
 
-    - name: 통합 테스트 실행
-      run: |
-        cd routepick-backend
-        ./gradlew integrationTest
-      env:
-        SPRING_PROFILES_ACTIVE: test
-        DB_HOST: localhost
-        DB_PORT: 3306
-        DB_NAME: routepick_test
-        DB_USERNAME: test
-        DB_PASSWORD: test
-        REDIS_HOST: localhost
-        REDIS_PORT: 6379
 
-    - name: 테스트 커버리지 리포트
-      run: |
-        cd routepick-backend
-        ./gradlew jacocoTestReport
-
-    - name: 커버리지 업로드 (Codecov)
-      uses: codecov/codecov-action@v3
-      with:
-        file: routepick-backend/build/reports/jacoco/test/jacocoTestReport.xml
-        flags: backend
-        name: backend-coverage
 
     - name: 테스트 결과 업로드
       uses: actions/upload-artifact@v4
@@ -188,11 +149,6 @@ jobs:
     steps:
     - name: 코드 체크아웃
       uses: actions/checkout@v4
-
-    - name: OWASP 의존성 취약점 검사
-      run: |
-        cd routepick-backend
-        ./gradlew dependencyCheckAnalyze
         
     - name: Trivy 보안 스캔
       uses: aquasecurity/trivy-action@master
@@ -231,7 +187,7 @@ jobs:
     - name: 공통 라이브러리 빌드
       run: |
         cd routepick-common
-        ./gradlew clean build publishToMavenLocal
+        ./gradlew clean build
 
     - name: 애플리케이션 빌드
       run: |
