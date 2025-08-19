@@ -17,6 +17,7 @@ log/
 build/
 target/
 *.jar
+!gradle-wrapper.jar
 *.war
 *.ear
 *.class
