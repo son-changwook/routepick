@@ -159,11 +159,12 @@ jobs:
         format: 'sarif'
         output: 'trivy-results.sarif'
 
-    - name: 보안 스캔 결과 업로드
-      uses: github/codeql-action/upload-sarif@v2
+    - name: 보안 스캔 결과 보관
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        sarif_file: 'trivy-results.sarif'
+        name: trivy-security-scan
+        path: 'trivy-results.sarif'
 
   # Docker 이미지 빌드
   build-image:
