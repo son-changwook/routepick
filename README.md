@@ -143,6 +143,24 @@ npm run dev
 ./scripts/deployment/deploy-all.sh prod
 ```
 
+## 📖 문서
+
+### 개발 문서
+- [📋 프로젝트 진행 상황](CLAUDE.md)
+- [🚨 GitHub Actions 트러블슈팅 가이드](docs/GITHUB_ACTIONS_TROUBLESHOOTING.md)
+
+### 분석 문서
+- [📊 데이터베이스 스키마 분석](step1-1_schema_analysis.md)
+- [🏷️ 태그 시스템 심층 분석](step1-2_tag_system_analysis.md)
+- [🏗️ Spring Boot 설계 가이드](step1-3_spring_boot_guide.md)
+- [⚡ 예외 처리 체계 설계](step3-1_exception_base.md)
+
+### 설계 문서
+- [🏛️ 프로젝트 구조 설계](step2-1_backend_structure.md)
+- [📱 Frontend 구조 설계](step2-2_frontend_structure.md)
+- [☁️ 인프라 설정](step2-3_infrastructure_setup.md)
+- [👤 User 도메인 엔티티 설계](step4-1_base_user_entities.md)
+
 ---
 
 <div align="center">
