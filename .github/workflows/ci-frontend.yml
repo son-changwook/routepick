@@ -99,7 +99,7 @@ jobs:
 
     - name: Android APK 업로드
       if: github.ref == 'refs/heads/develop'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: android-apk
         path: routepick-app/android/app/build/outputs/apk/debug/app-debug.apk
@@ -163,7 +163,7 @@ jobs:
         pnpm run build
 
     - name: 빌드 아티팩트 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: admin-web-build
         path: routepick-admin/dist/
@@ -207,7 +207,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: E2E 테스트 결과 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: cypress-screenshots
