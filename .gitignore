@@ -25,6 +25,11 @@ target/
 .project
 .settings/
 
+# QueryDSL generated files
+**/generated-sources/
+**/generated/querydsl/
+**/QBaseEntity.java
+
 # IntelliJ IDEA
 .idea/
 *.iml
