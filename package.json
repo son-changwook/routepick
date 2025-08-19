@@ -1,0 +1,19 @@
+{
+  "name": "routepick",
+  "version": "1.0.0",
+  "description": "RoutePick project using Claude Code",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["routepick", "claude-code"],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

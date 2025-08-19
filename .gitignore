@@ -1,0 +1,261 @@
+# RoutePickr GitIgnore 파일
+
+# 환경 변수 파일
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+
+# 로그 파일
+*.log
+logs/
+log/
+
+# Java/Gradle
+.gradle/
+build/
+target/
+*.jar
+*.war
+*.ear
+*.class
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+# Visual Studio Code
+.vscode/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+.npm
+
+# React Native
+.expo/
+.expo-shared/
+expo-env.d.ts
+
+# Android
+android/app/build/
+android/.gradle/
+android/gradle/
+android/gradlew*
+android/local.properties
+android/app/release/
+*.apk
+*.aab
+
+# iOS
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+*.xcworkspace
+*.xcuserdata
+DerivedData/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate.d/
+
+# AWS
+.aws/
+aws-exports.js
+
+# 데이터베이스 백업
+*.sql.backup
+*.dump
+*.sqlite
+*.db
+
+# 업로드 파일
+uploads/
+files/
+media/
+static/media/
+
+# 테스트 결과
+coverage/
+test-results/
+cypress/videos/
+cypress/screenshots/
+reports/
+
+# 임시 파일
+tmp/
+temp/
+cache/
+.cache/
+
+# 민감한 정보
+secrets/
+keys/
+certificates/
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.jks
+google-services.json
+GoogleService-Info.plist
+
+# 운영 설정 파일
+application-prod.yml
+application-production.yml
+
+# API 키 및 설정
+firebase-adminsdk*.json
+kakao-admin-key.json
+naver-client-secret.json
+
+# 모니터링 데이터
+grafana/data/
+prometheus/data/
+elasticsearch/data/
+
+# 백업 파일
+*.backup
+*.bak
+*~
+
+# 컴파일된 바이너리
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 패키지 파일
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# 로컬 개발 도구
+.tool-versions
+.nvmrc
+.sdkmanrc
+
+# JetBrains 도구
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Kubernetes
+*.kubeconfig
+kube-config
+k8s-secrets/
+
+# Helm
+charts/*.tgz
+
+# 로컬 스크립트
+scripts/local/
+local-*
+
+# 성능 분석 파일
+*.prof
+*.heap
+*.cpuprofile
+
+# 기타 IDE
+*.sublime-*
+.vscode-test/
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
