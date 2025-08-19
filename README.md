@@ -153,7 +153,9 @@ npm run dev
 - [📊 데이터베이스 스키마 분석](step1-1_schema_analysis.md)
 - [🏷️ 태그 시스템 심층 분석](step1-2_tag_system_analysis.md)
 - [🏗️ Spring Boot 설계 가이드](step1-3_spring_boot_guide.md)
-- [⚡ 예외 처리 체계 설계](step3-1_exception_base.md)
+- [⚡ 예외 처리 체계 기본 설계](step3-1_exception_base.md)
+- [🚨 도메인별 커스텀 예외 클래스](step3-2_domain_exceptions.md)
+- [🔒 GlobalExceptionHandler 및 보안 강화](step3-3_global_handler_security.md)
 
 ### 설계 문서
 - [🏛️ 프로젝트 구조 설계](step2-1_backend_structure.md)
