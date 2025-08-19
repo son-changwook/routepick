@@ -115,7 +115,8 @@ jobs:
     - name: 테스트 환경 준비
       run: |
         # 테스트 데이터베이스 스키마 생성
-        mysql -h 127.0.0.1 -u test -ptest routepick_test < database/routepick.sql
+        # CREATE DATABASE와 USE 문을 제거하고 테이블만 생성
+        sed '18,19d' database/routepick.sql | mysql -h 127.0.0.1 -u test -ptest routepick_test
 
     - name: 단위 테스트 실행
       run: |
