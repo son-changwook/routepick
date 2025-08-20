@@ -28,7 +28,7 @@ RoutePickr/
 ├── 🖥️ routepick-backend/      # Spring Boot API 서버
 ├── 📦 routepick-common/       # 공통 라이브러리 (Java)
 ├── ☁️ routepick-infrastructure/ # Terraform AWS 인프라
-├── 🗄️ database/              # MySQL 스키마 (50 테이블)
+├── 🗄️ database/              # MySQL 스키마 (50 테이블, 50 엔티티)
 ├── 🐳 docker/                # Docker 개발 환경
 └── 🚀 scripts/               # 배포 및 운영 스크립트
 ```
@@ -38,7 +38,7 @@ RoutePickr/
 ### Backend
 - **Spring Boot 3.2** (Java 17)
 - **MySQL 8.0** + **Redis 7.0**
-- **QueryDSL** + **JPA Auditing**
+- **QueryDSL** + **JPA Auditing** (50개 Repository 완성)
 - **JWT** + **OAuth2** + **Spring Security**
 - **AWS S3** + **Firebase FCM**
 
@@ -114,10 +114,10 @@ cd routepick-backend
 # 공통 라이브러리 빌드
 cd ../routepick-common && ./gradlew publishToMavenLocal
 
-# 애플리케이션 실행
+# 애플리케이션 실행 (50개 Repository 로드)
 ./gradlew bootRun
 
-# 테스트 실행
+# 테스트 실행 (Repository 통합 테스트 포함)
 ./gradlew test integrationTest
 ```
 
@@ -146,28 +146,57 @@ npm run dev
 ## 📖 문서
 
 ### 개발 문서
-- [📋 프로젝트 진행 상황](CLAUDE.md)
+- [📋 프로젝트 진행 상황](CLAUDE.md) - **5단계 완료 (Repository 레이어)**
 - [🚨 GitHub Actions 트러블슈팅 가이드](docs/GITHUB_ACTIONS_TROUBLESHOOTING.md)
 
-### 분석 문서
+### 1단계: 분석 문서
 - [📊 데이터베이스 스키마 분석](step1-1_schema_analysis.md)
 - [🏷️ 태그 시스템 심층 분석](step1-2_tag_system_analysis.md)
 - [🏗️ Spring Boot 설계 가이드](step1-3_spring_boot_guide.md)
+
+### 2단계: 구조 설계 문서
+- [🏛️ Backend 프로젝트 구조](step2-1_backend_structure.md)
+- [📱 Frontend 구조 설계](step2-2_frontend_structure.md)
+- [☁️ 인프라 설정](step2-3_infrastructure_setup.md)
+
+### 3단계: 예외 처리 체계
 - [⚡ 예외 처리 체계 기본 설계](step3-1_exception_base.md)
 - [🚨 도메인별 커스텀 예외 클래스](step3-2_domain_exceptions.md)
 - [🔒 GlobalExceptionHandler 및 보안 강화](step3-3_global_handler_security.md)
 
-### 설계 문서
-- [🏛️ 프로젝트 구조 설계](step2-1_backend_structure.md)
-- [📱 Frontend 구조 설계](step2-2_frontend_structure.md)
-- [☁️ 인프라 설정](step2-3_infrastructure_setup.md)
-- [👤 User 도메인 엔티티 설계](step4-1_base_user_entities.md)
+### 4단계: JPA 엔티티 설계 (50개)
+- [👤 Base & User 엔티티](step4-1_base_user_entities.md)
+- [🏷️ Tag 비즈니스 엔티티](step4-2_tag_business_entities.md)
+- [🏢 Gym 관련 엔티티](step4-3a_gym_entities.md)
+- [🧗 Route 관련 엔티티](step4-3b_route_entities.md)
+- [⚡ Climbing & Activity 엔티티](step4-3c_climbing_activity_entities.md)
+- [💬 Community 엔티티](step4-4a_community_entities.md)
+- [💳 Payment & Notification 엔티티](step4-4b_payment_notification.md)
+- [🔧 System Final 엔티티](step4-4c_system_final.md)
+
+### 5단계: Repository 레이어 설계 (50개) ✨
+- [👤 Base & User Repository](step5-1_base_user_repositories.md)
+- [🏷️ Tag System Repository](step5-2_tag_repositories_focused.md)
+- [🏢 Gym Core Repository](step5-3a_gym_core_repositories.md)
+- [🏗️ Gym Additional Repository](step5-3b_gym_additional_repositories.md)
+- [🧗 Route Core Repository](step5-3c_route_core_repositories.md)
+- [📸 Route Media Repository](step5-3d_route_media_repositories.md)
+- [⭐ Route Interaction Repository](step5-3e_route_interaction_repositories.md)
+- [⚡ Climbing & Activity Repository](step5-3f_climbing_activity_repositories.md)
+- [💬 Community Core Repository](step5-4a_community_core_repositories.md)
+- [👍 Community Interaction Repository](step5-4b_community_interaction_repositories.md)
+- [📱 Community Media Repository](step5-4c_community_media_repositories.md)
+- [💳 Payment Repository](step5-4d_payment_repositories.md)
+- [🔔 Notification Repository](step5-4e_notification_repositories.md)
+- [🔧 System Final Repository](step5-4f_system_final_repositories.md)
 
 ---
 
 <div align="center">
 
 **🧗‍♀️ RoutePickr로 더 나은 클라이밍 경험을 시작하세요! 🧗‍♂️**
+
+**✅ 5단계 완료** - Repository 레이어 50개 완성 (77% 달성)
 
 Made with ❤️ by RoutePickr Team
 
