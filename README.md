@@ -38,7 +38,7 @@ RoutePickr/
 ### Backend
 - **Spring Boot 3.2** (Java 17)
 - **MySQL 8.0** + **Redis 7.0**
-- **QueryDSL** + **JPA Auditing** (50개 Repository 완성)
+- **QueryDSL** + **JPA Auditing** (51개 Repository 완성)
 - **JWT** + **OAuth2** + **Spring Security**
 - **AWS S3** + **Firebase FCM**
 
@@ -114,10 +114,10 @@ cd routepick-backend
 # 공통 라이브러리 빌드
 cd ../routepick-common && ./gradlew publishToMavenLocal
 
-# 애플리케이션 실행 (50개 Repository 로드)
+# 애플리케이션 실행
 ./gradlew bootRun
 
-# 테스트 실행 (Repository 통합 테스트 포함)
+# 테스트 실행
 ./gradlew test integrationTest
 ```
 
@@ -146,49 +146,84 @@ npm run dev
 ## 📖 문서
 
 ### 개발 문서
-- [📋 프로젝트 진행 상황](CLAUDE.md) - **5단계 완료 (Repository 레이어)**
+- [📋 프로젝트 진행 상황](CLAUDE.md) - **6단계 Auth & User Service 완료**
 - [🚨 GitHub Actions 트러블슈팅 가이드](docs/GITHUB_ACTIONS_TROUBLESHOOTING.md)
 
 ### 1단계: 분석 문서
 - [📊 데이터베이스 스키마 분석](step1-1_schema_analysis.md)
 - [🏷️ 태그 시스템 심층 분석](step1-2_tag_system_analysis.md)
-- [🏗️ Spring Boot 설계 가이드](step1-3_spring_boot_guide.md)
+- [🏗️ 아키텍처 및 소셜 로그인](step1-3a_architecture_social_recommendation.md)
+- [🇰🇷 한국 특화 비즈니스 규칙](step1-3b_korean_business_jpa.md)
+- [⚡ 성능 최적화 및 보안 강화](step1-3c_performance_security.md)
 
 ### 2단계: 구조 설계 문서
 - [🏛️ Backend 프로젝트 구조](step2-1_backend_structure.md)
 - [📱 Frontend 구조 설계](step2-2_frontend_structure.md)
 - [☁️ 인프라 설정](step2-3_infrastructure_setup.md)
 
-### 3단계: 예외 처리 체계
-- [⚡ 예외 처리 체계 기본 설계](step3-1_exception_base.md)
-- [🚨 도메인별 커스텀 예외 클래스](step3-2_domain_exceptions.md)
-- [🔒 GlobalExceptionHandler 및 보안 강화](step3-3_global_handler_security.md)
+### 3단계: 예외 처리 체계 (177개 ErrorCode)
+- [🔧 BaseException 설계 및 보안 원칙](step3-1a_base_exception_design.md)
+- [📋 ErrorCode Enum 체계 (177개)](step3-1b_error_codes.md)
+- [📊 예외 통계 및 모니터링](step3-1c_statistics_monitoring.md)
+- [🔐 인증/사용자 예외](step3-2a_auth_user_exceptions.md)
+- [🏢 체육관/루트 예외](step3-2b_gym_route_exceptions.md)
+- [🏷️ 태그/결제 예외](step3-2c_tag_payment_exceptions.md)
+- [🛡️ 검증/시스템 예외](step3-2d_validation_system_exceptions.md)
+- [🌐 전역 예외 처리 핵심](step3-3a_global_handler_core.md)
+- [🔒 보안 강화 기능](step3-3b_security_features.md)
+- [📈 모니터링 및 테스트](step3-3c_monitoring_testing.md)
 
 ### 4단계: JPA 엔티티 설계 (50개)
-- [👤 Base & User 엔티티](step4-1_base_user_entities.md)
-- [🏷️ Tag 비즈니스 엔티티](step4-2_tag_business_entities.md)
-- [🏢 Gym 관련 엔티티](step4-3a_gym_entities.md)
-- [🧗 Route 관련 엔티티](step4-3b_route_entities.md)
-- [⚡ Climbing & Activity 엔티티](step4-3c_climbing_activity_entities.md)
-- [💬 Community 엔티티](step4-4a_community_entities.md)
-- [💳 Payment & Notification 엔티티](step4-4b_payment_notification.md)
-- [🔧 System Final 엔티티](step4-4c_system_final.md)
+- [🏗️ Base 공통 엔티티 및 Enum](step4-1a_base_common_entities.md)
+- [👤 User 핵심 엔티티](step4-1b_user_core_entities.md)  
+- [🔐 User 확장 엔티티 및 보안 강화](step4-1c_user_extended_entities.md)
+- [🏷️ 통합 태그 시스템 엔티티](step4-2a_tag_system_entities.md)
+- [🏢 암장 관리 엔티티](step4-2b1_gym_management_entities.md)
+- [🧗 루트 관리 엔티티](step4-2b2_route_management_entities.md)
+- [🧗‍♀️ 클라이밍 최적화 엔티티](step4-2c_climbing_optimization_entities.md)
+- [🏢 Gym 관련 엔티티](step4-3a_gym_management_entities.md)
+- [🧗 Route 핵심 엔티티](step4-3b1_route_core_entities.md)
+- [⭐ Route 상호작용 엔티티](step4-3b2_route_interaction_entities.md)
+- [🎯 Climbing 시스템 엔티티](step4-3c1_climbing_system_entities.md)
+- [📈 User 활동 엔티티](step4-3c2_user_activity_entities.md)
+- [💬 Community 핵심 엔티티](step4-4a1_community_core_entities.md)
+- [👥 Community 상호작용 엔티티](step4-4a2_community_interaction_entities.md)
+- [💳 Payment 결제 시스템 엔티티](step4-4b1_payment_entities.md)
+- [🔔 Notification 알림 시스템 엔티티](step4-4b2_notification_entities.md)
+- [🔧 System 관리 엔티티](step4-4c1_system_management_entities.md)
+- [📊 System 로깅 엔티티](step4-4c2_system_logging_entities.md)
 
-### 5단계: Repository 레이어 설계 (50개) ✨
-- [👤 Base & User Repository](step5-1_base_user_repositories.md)
+### 6단계: Service 레이어 구현 (Auth & User 관리)
+- [🔐 JWT 인증 및 소셜 로그인 Service](step6-1a_auth_service.md)
+- [📧 비동기 이메일 발송 및 Redis 인증 코드 Service](step6-1b_email_service.md)
+- [👤 사용자 관리, 프로필, 팔로우 Service](step6-1c_user_service.md)
+- [✅ 본인인증, 약관동의 및 보안 유틸리티](step6-1d_verification_security.md)
+
+### 5단계: Repository 레이어 설계 ✨
+- [📋 Common Repository & QueryDSL](step5-1a_common_repositories.md)
+- [👤 User Core Repository](step5-1b1_user_core_repositories.md)
+- [🔐 User Verification Repository](step5-1b2_user_verification_repositories.md)  
+- [👥 UserFollow & Missing Repository](step5-1c_missing_repositories.md)
 - [🏷️ Tag System Repository](step5-2_tag_repositories_focused.md)
 - [🏢 Gym Core Repository](step5-3a_gym_core_repositories.md)
 - [🏗️ Gym Additional Repository](step5-3b_gym_additional_repositories.md)
-- [🧗 Route Core Repository](step5-3c_route_core_repositories.md)
-- [📸 Route Media Repository](step5-3d_route_media_repositories.md)
-- [⭐ Route Interaction Repository](step5-3e_route_interaction_repositories.md)
-- [⚡ Climbing & Activity Repository](step5-3f_climbing_activity_repositories.md)
-- [💬 Community Core Repository](step5-4a_community_core_repositories.md)
+- [🧗 Route Core Repository](step5-3c1_route_core_repositories.md)
+- [🔧 Route QueryDSL Repository](step5-3c2_route_querydsl_repositories.md)
+- [📸 Route Image Repository](step5-3d1_route_image_repositories.md)
+- [🎬 Route Video Repository](step5-3d2_route_video_repositories.md)
+- [⭐ Route Comment Repository](step5-3e1_route_comment_repositories.md)
+- [🗳️ Route Vote & Scrap Repository](step5-3e2_route_vote_scrap_repositories.md)
+- [🧗‍♂️ Climbing Level & Shoe Repository](step5-3f1_climbing_level_shoe_repositories.md)
+- [⚡ User Activity Repository](step5-3f2_user_activity_repositories.md)
+- [💬 Community Core Repository](step5-4a1_community_core_repositories.md)
+- [📱 Community Category Repository](step5-4a2_community_category_repositories.md)
 - [👍 Community Interaction Repository](step5-4b_community_interaction_repositories.md)
-- [📱 Community Media Repository](step5-4c_community_media_repositories.md)
+- [📸 Community Post Media Repository](step5-4c1_community_post_media_repositories.md)
+- [💬 Community Comment Repository](step5-4c2_community_comment_repositories.md)
 - [💳 Payment Repository](step5-4d_payment_repositories.md)
 - [🔔 Notification Repository](step5-4e_notification_repositories.md)
-- [🔧 System Final Repository](step5-4f_system_final_repositories.md)
+- [📧 Message System Repository](step5-4f1_message_system_repositories.md)
+- [🔧 System Management Repository](step5-4f2_system_management_repositories.md)
 
 ---
 
@@ -196,7 +231,7 @@ npm run dev
 
 **🧗‍♀️ RoutePickr로 더 나은 클라이밍 경험을 시작하세요! 🧗‍♂️**
 
-**✅ 5단계 완료** - Repository 레이어 50개 완성 (77% 달성)
+**✅ 6단계 Auth & User Service 완료** - 인증 및 사용자 관리 시스템 완성 (83% 달성)
 
 Made with ❤️ by RoutePickr Team
 
