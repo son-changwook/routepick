@@ -146,7 +146,7 @@ npm run dev
 ## 📖 문서
 
 ### 개발 문서
-- [📋 프로젝트 진행 상황](CLAUDE.md) - **6단계 Service 레이어 완료 (8개 Service)**
+- [📋 프로젝트 진행 상황](CLAUDE.md) - **6단계 Service 레이어 완료 (총 20개 Service)**
 - [🚨 GitHub Actions 트러블슈팅 가이드](docs/GITHUB_ACTIONS_TROUBLESHOOTING.md)
 
 ### 1단계: 분석 문서
@@ -219,18 +219,45 @@ npm run dev
 - [📧 Message System Repository](step5-4f1_message_system_repositories.md)
 - [🔧 System Management Repository](step5-4f2_system_management_repositories.md)
 
-### 6단계: Service 레이어 구현 ✨ (Auth & User & Gym & Route 관리)
-#### 6-1: 인증 및 사용자 관리 Service
+### 6단계: Service 레이어 구현 ✨ (총 20개 Service 완성)
+#### 6-1: 인증 및 사용자 관리 Service (4개)
 - [🔐 JWT 인증 및 소셜 로그인 Service](step6-1a_auth_service.md)
 - [📧 비동기 이메일 발송 및 Redis 인증 코드 Service](step6-1b_email_service.md)
 - [👤 사용자 관리, 프로필, 팔로우 Service](step6-1c_user_service.md)
 - [✅ 본인인증, 약관동의 및 보안 유틸리티](step6-1d_verification_security.md)
 
-#### 6-2: 체육관 및 루트 관리 Service
+#### 6-2: 체육관 및 루트 관리 Service (4개)
 - [🏢 체육관 관리 Service (한국좌표 검증, 공간쿼리)](step6-2a_gym_service.md)
 - [🧗 루트 관리 Service (V등급/YDS 변환, 난이도 투표)](step6-2b_route_service.md)
 - [🎬 루트 미디어 Service (이미지/동영상, 썸네일, 댓글시스템)](step6-2c_route_media_service.md)
 - [📊 클라이밍 기록 Service (통계분석, 신발관리, 성장추적)](step6-2d_climbing_record_service.md)
+
+#### 6-3: 태그 및 커뮤니티 관리 Service (4개)
+- [🏷️ 태그 관리 Service (추천 알고리즘, 태그 매칭)](step6-3a_tag_service.md)
+- [🎯 사용자 선호도 Service (개인화 추천, 학습 알고리즘)](step6-3b_user_preference_service.md)
+- [💬 커뮤니티 Service (게시글, 댓글, 좋아요 시스템)](step6-3a_community_service.md)
+- [📸 커뮤니티 미디어 Service (이미지/동영상 업로드, CDN)](step6-3b_community_media_service.md)
+
+#### 6-4: 메시지 및 알림 Service (4개)
+- [💬 메시지 Service (1:1 채팅, 루트 공유, 실시간)](step6-4a_message_service.md)
+- [🔔 알림 Service (푸시, 인앱, 이메일 알림)](step6-4b_notification_service.md)
+- [📢 공지사항 Service (Notice, Banner, Popup 관리)](step6-4c_notice_service.md)
+- [📊 알림 통계 Service (발송률, 클릭률, A/B 테스트)](step6-4d_notification_analytics_service.md)
+
+#### 6-5: 결제 및 운영 Service (4개)
+- [💳 결제 Service (PG연동, 가상계좌, 환불처리)](step6-5a_payment_service.md)
+- [🎫 결제 아이템 Service (이용권, 상품, 할인 관리)](step6-5b_payment_item_service.md)
+- [💰 환불 Service (자동/수동 환불, 부분환불)](step6-5c_refund_service.md)
+- [📈 결제 통계 Service (매출분석, 구매패턴, 리포트)](step6-5d_payment_analytics_service.md)
+
+#### 6-6: 시스템 관리 Service (4개)
+- [📊 API 로그 Service (호출로깅, 성능모니터링)](step6-6a_api_log_service.md)
+- [🔗 외부 API Service (API 설정, 상태모니터링)](step6-6b_external_api_service.md)
+- [🗄️ 캐시 Service (Redis 관리, TTL 최적화)](step6-6c_cache_service.md)
+- [🔧 시스템 Service (상태모니터링, 헬스체크)](step6-6d_system_service.md)
+
+#### 최종 검증
+- [✅ Service 레이어 완성 검증 (총 20개 Service)](step6-6e_service_layer_validation.md)
 
 ---
 
@@ -238,7 +265,7 @@ npm run dev
 
 **🧗‍♀️ RoutePickr로 더 나은 클라이밍 경험을 시작하세요! 🧗‍♂️**
 
-**✅ 6단계 Service 레이어 완료** - Auth & User & Gym & Route 관리 8개 Service 완성 (89% 달성)
+**✅ 6단계 Service 레이어 완료** - 총 20개 Service 완성 (Auth, User, Gym, Route, Tag, Community, Message, Notification, Payment, System)
 
 Made with ❤️ by RoutePickr Team
 
