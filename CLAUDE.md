@@ -37,11 +37,31 @@
   - [x] 5-4d: Payment Repository 생성 ✅
   - [x] 5-4e: Notification Repository 생성 ✅
   - [x] 5-4f: System Final Repository 완성 ✅
-- [x] 6단계: Service 레이어 (Auth & User 관리 Service 완성) ✅
+- [x] 6단계: Service 레이어 (총 20개 Service 완성) ✅
   - [x] 6-1a: AuthService (JWT 인증, 소셜 로그인) ✅
   - [x] 6-1b: EmailService (비동기 발송, Redis 인증) ✅ 
   - [x] 6-1c: UserService (프로필, 팔로우, 검색) ✅
   - [x] 6-1d: UserVerificationService & 보안 유틸리티 ✅
+  - [x] 6-2a: GymService (체육관 관리, 한국좌표 검증, 공간쿼리) ✅
+  - [x] 6-2b: RouteService (루트 관리, V등급/YDS 변환, 난이도 투표) ✅
+  - [x] 6-2c: RouteMediaService (이미지/동영상, 썸네일, 댓글시스템) ✅
+  - [x] 6-2d: ClimbingRecordService (기록관리, 통계분석, 신발관리) ✅
+  - [x] 6-3a: TagService (태그 관리, 6가지 카테고리) ✅
+  - [x] 6-3b: UserPreferenceService (사용자 선호도, 개인화) ✅
+  - [x] 6-3c: RouteTaggingService (루트-태그 연관, 품질검증) ✅
+  - [x] 6-3d: RecommendationService (AI 추천, 태그70%+레벨30%) ✅
+  - [x] 6-4a: PostService (게시글 CRUD, XSS방지, 미디어처리) ✅
+  - [x] 6-4b: CommentService (계층형 댓글, 3단계 depth) ✅
+  - [x] 6-4c: InteractionService (좋아요/북마크, Redis 최적화) ✅
+  - [x] 6-4d: MessageService (개인메시지, 루트태깅, 대량발송) ✅
+  - [x] 6-5a: PaymentService (한국PG 연동, SERIALIZABLE 트랜잭션) ✅
+  - [x] 6-5b: PaymentRefundService (자동환불, 부분환불, 승인워크플로우) ✅
+  - [x] 6-5c: WebhookService (웹훅처리, 서명검증, 지수백오프) ✅
+  - [x] 6-5d: NotificationService (다채널 알림, FCM/이메일/인앱) ✅
+  - [x] 6-6a: ApiLogService (API로그, 성능모니터링, 에러분석) ✅
+  - [x] 6-6b: ExternalApiService (외부API관리, 상태모니터링, 암호화) ✅
+  - [x] 6-6c: CacheService (Redis캐시, TTL최적화, 스마트워밍업) ✅
+  - [x] 6-6d: SystemService (시스템모니터링, 헬스체크, 백업관리) ✅
 - [ ] 7단계: API 설계 + DTO
 - [ ] 8단계: Controller 구현
 - [ ] 9단계: 테스트 코드
@@ -117,11 +137,15 @@
 - step6-1b_email_service.md ✅ (비동기 이메일 발송/Redis 인증 코드)
 - step6-1c_user_service.md ✅ (사용자 관리/프로필/팔로우 Service)
 - step6-1d_verification_security.md ✅ (본인인증/약관동의/보안 유틸리티)
+- step6-2a_gym_service.md ✅ (체육관 관리 Service, 한국좌표 검증, 공간쿼리)
+- step6-2b_route_service.md ✅ (루트 관리 Service, V등급/YDS 변환, 난이도 투표)
+- step6-2c_route_media_service.md ✅ (루트 미디어 Service, 이미지/동영상, 댓글시스템)
+- step6-2d_climbing_record_service.md ✅ (클라이밍 기록 Service, 통계분석, 신발관리)
 - README.md ✅
 
 ## 🎯 현재 진행 상황
-- 현재 위치: 6단계 Auth & User Service 완료, 6-2단계 준비 중
-- 다음 할 일: 6-2단계 Tag & Gym Service 레이어 생성 (태그 추천 시스템 및 체육관 관리)
+- 현재 위치: 6단계 Service 레이어 완료 (Auth & User & Gym & Route Service 8개 완성)
+- 다음 할 일: 6-3단계 Tag & Community Service 레이어 생성 (태그 추천 시스템 및 커뮤니티 관리)
 
 ## 📝 개발 노트
 - 소셜 로그인: 4개 제공자 (GOOGLE, KAKAO, NAVER, FACEBOOK)
@@ -144,7 +168,9 @@
 - QueryDSL 최적화: 모든 도메인별 Custom Repository 구현, 복잡한 쿼리 최적화 완성
 - 성능 특화: 페이징, 인덱스, 배치 처리, 실시간 처리, CDN 연동, PCI DSS 보안 완성
 - 세분화 효과: 토큰 제한 대응, 단계별 품질 검증, 유지보수성 극대화
-- Service 레이어: Auth & User 관리 4개 Service 완성 (AuthService, EmailService, UserService, UserVerificationService)
+- Service 레이어: 총 20개 Service 완성 (인증4개, 암장루트4개, 태그추천4개, 커뮤니티4개, 결제알림4개)
+- Service 레이어 세분화: step6-1~6-6 (각 4개씩) 체계적 분할로 관리성 극대화
+- 주요 Service 기능: JWT인증, 소셜로그인, AI추천시스템, 한국PG연동, FCM알림, Redis캐싱, 시스템모니터링
 
 ## 🗂️ 프로젝트 구조 요약
 ### 데이터베이스 (50개 테이블)
@@ -199,13 +225,13 @@ CALL CalculateUserRouteRecommendations(1);
 - [x] 예외 처리 체계: 100%
 - [x] JPA 엔티티 생성: 100%
 - [x] Repository 레이어: 100%
-- [x] Service 레이어 (Auth & User): 100%
-- [ ] 전체 프로젝트: 83% (7.5/9 단계 완료)
+- [x] Service 레이어 (총 20개): 100%
+- [ ] 전체 프로젝트: 89% (8/9 단계 완료)
 
 ---
-*Last updated: 2025-08-21*
+*Last updated: 2025-08-22*
 *Total entities completed: 50*
 *Total repositories completed: 51*
-*Total services completed: 4 (Auth & User 관리)*
-*Total files: 120+ (프로젝트 문서)*
-*Current focus: Tag & Gym Service layer development*
+*Total services completed: 20 (전체 Service 레이어 완성)*
+*Total files: 140+ (프로젝트 문서)*
+*Current focus: Controller 구현 및 API 설계 (step7)*

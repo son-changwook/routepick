@@ -146,7 +146,7 @@ npm run dev
 ## 📖 문서
 
 ### 개발 문서
-- [📋 프로젝트 진행 상황](CLAUDE.md) - **6단계 Auth & User Service 완료**
+- [📋 프로젝트 진행 상황](CLAUDE.md) - **6단계 Service 레이어 완료 (8개 Service)**
 - [🚨 GitHub Actions 트러블슈팅 가이드](docs/GITHUB_ACTIONS_TROUBLESHOOTING.md)
 
 ### 1단계: 분석 문서
@@ -193,12 +193,6 @@ npm run dev
 - [🔧 System 관리 엔티티](step4-4c1_system_management_entities.md)
 - [📊 System 로깅 엔티티](step4-4c2_system_logging_entities.md)
 
-### 6단계: Service 레이어 구현 (Auth & User 관리)
-- [🔐 JWT 인증 및 소셜 로그인 Service](step6-1a_auth_service.md)
-- [📧 비동기 이메일 발송 및 Redis 인증 코드 Service](step6-1b_email_service.md)
-- [👤 사용자 관리, 프로필, 팔로우 Service](step6-1c_user_service.md)
-- [✅ 본인인증, 약관동의 및 보안 유틸리티](step6-1d_verification_security.md)
-
 ### 5단계: Repository 레이어 설계 ✨
 - [📋 Common Repository & QueryDSL](step5-1a_common_repositories.md)
 - [👤 User Core Repository](step5-1b1_user_core_repositories.md)
@@ -225,13 +219,26 @@ npm run dev
 - [📧 Message System Repository](step5-4f1_message_system_repositories.md)
 - [🔧 System Management Repository](step5-4f2_system_management_repositories.md)
 
+### 6단계: Service 레이어 구현 ✨ (Auth & User & Gym & Route 관리)
+#### 6-1: 인증 및 사용자 관리 Service
+- [🔐 JWT 인증 및 소셜 로그인 Service](step6-1a_auth_service.md)
+- [📧 비동기 이메일 발송 및 Redis 인증 코드 Service](step6-1b_email_service.md)
+- [👤 사용자 관리, 프로필, 팔로우 Service](step6-1c_user_service.md)
+- [✅ 본인인증, 약관동의 및 보안 유틸리티](step6-1d_verification_security.md)
+
+#### 6-2: 체육관 및 루트 관리 Service
+- [🏢 체육관 관리 Service (한국좌표 검증, 공간쿼리)](step6-2a_gym_service.md)
+- [🧗 루트 관리 Service (V등급/YDS 변환, 난이도 투표)](step6-2b_route_service.md)
+- [🎬 루트 미디어 Service (이미지/동영상, 썸네일, 댓글시스템)](step6-2c_route_media_service.md)
+- [📊 클라이밍 기록 Service (통계분석, 신발관리, 성장추적)](step6-2d_climbing_record_service.md)
+
 ---
 
 <div align="center">
 
 **🧗‍♀️ RoutePickr로 더 나은 클라이밍 경험을 시작하세요! 🧗‍♂️**
 
-**✅ 6단계 Auth & User Service 완료** - 인증 및 사용자 관리 시스템 완성 (83% 달성)
+**✅ 6단계 Service 레이어 완료** - Auth & User & Gym & Route 관리 8개 Service 완성 (89% 달성)
 
 Made with ❤️ by RoutePickr Team
 
