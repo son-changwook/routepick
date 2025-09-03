@@ -447,4 +447,4 @@ app:
 
 ---
 
-*CommentService 좋아요 및 신고 기능 구현 완료*
+*CommentService 좋아요 및 신고 기능 설계 완료*

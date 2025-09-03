@@ -1,4 +1,4 @@
-# Step 9-1a: JwtTokenProvider 테스트 구현
+# Step 9-1a: JwtTokenProvider 테스트 설계
 
 > JWT 토큰 생성/검증 보안 테스트  
 > 생성일: 2025-08-27  
@@ -546,5 +546,5 @@ public class JwtTestConfiguration {
 
 ---
 
-*Step 9-1a 완료: JwtTokenProvider 보안 테스트 구현*
-*다음 단계: AuthService 단위 테스트 구현*
+*Step 9-1a 완료: JwtTokenProvider 보안 테스트 설계*
+*다음 단계: AuthService 단위 테스트 설계*

@@ -761,7 +761,7 @@ public class RouteTagResponse {
 }
 ```
 
-## ✅ 구현 완료
+## ✅ 설계 완료
 - [x] Request DTOs (10개)
 - [x] Response DTOs (10개)
 - [x] 한국어 검증 적용 (@KoreanText)
@@ -770,4 +770,4 @@ public class RouteTagResponse {
 - [x] JSON 날짜 포맷 통일
 
 ---
-*Request/Response DTO 20개 구현 완료 - 다음: 보안 패치 적용*
+*Request/Response DTO 20개 설계 완료 - 다음: 보안 패치 적용*

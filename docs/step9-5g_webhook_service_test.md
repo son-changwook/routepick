@@ -782,7 +782,7 @@ public enum ApiProvider {
 
 ## ✅ 2단계 완료
 
-WebhookService의 모든 핵심 기능을 포괄하는 30개의 테스트 케이스를 구현했습니다:
+WebhookService의 모든 핵심 기능을 포괄하는 30개의 테스트 설계했습니다:
 
 - **웹훅 처리**: 타입별 분기 처리 및 PG 연동
 - **중복 방지**: 메모리 캐시 + DB 기반 중복 확인
@@ -794,4 +794,4 @@ WebhookService의 견고성과 안정성을 보장하는 포괄적인 테스트�
 
 ---
 
-*WebhookService 테스트 완료: 30개 테스트 케이스 구현*
+*WebhookService 테스트 설계*

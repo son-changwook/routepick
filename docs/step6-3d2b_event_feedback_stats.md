@@ -244,4 +244,4 @@ public class SchedulingConfig {
 
 ---
 
-*RecommendationService 구현 완료: AI 기반 개인화 추천 시스템*
+*RecommendationService 설계 완료: AI 기반 개인화 추천 시스템*

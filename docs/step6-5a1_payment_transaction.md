@@ -657,4 +657,4 @@ public class PaymentService {
 
 ---
 
-*PaymentService 구현 완료: 결제 거래 처리 시스템*
+*PaymentService 설계 완료: 결제 거래 처리 시스템*

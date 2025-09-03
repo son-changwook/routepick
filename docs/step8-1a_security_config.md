@@ -271,7 +271,7 @@ Strict-Transport-Security: max-age=31536000
 
 ## ✅ 체크리스트
 
-### 구현 완료
+### 설계 완료
 - [x] Spring Security 6.x FilterChain 설정
 - [x] JWT 필터 체인 구성
 - [x] OAuth2 로그인 설정
@@ -287,4 +287,4 @@ Strict-Transport-Security: max-age=31536000
 - [ ] OAuth2 Handlers
 
 ---
-*SecurityConfig 구현 완료 - 다음: JwtAuthenticationFilter 구현*
+*SecurityConfig 설계 완료 - 다음: JwtAuthenticationFilter 구현*

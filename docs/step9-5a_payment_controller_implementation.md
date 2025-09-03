@@ -1,4 +1,4 @@
-# Step 9-5a: PaymentController 실제 구현
+# Step 9-5a: PaymentController 실제 설계
 
 ## 📋 구현 목표
 - **결제 처리 API**: 한국 PG사 연동 결제 시스템
@@ -630,7 +630,7 @@ class PaymentControllerTest {
 
 ---
 
-**다음 단계**: step9-5b_payment_service_implementation.md (PaymentService 구현)  
+**다음 단계**: step9-5b_payment_service_implementation.md (PaymentService 설계)  
 **연관 시스템**: step8 보안 시스템 (Rate Limiting, Audit Log) 완전 통합  
 **성능 목표**: 결제 API 응답시간 3초 이내, 처리량 100 TPS  
 

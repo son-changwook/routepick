@@ -678,7 +678,7 @@ public class GymSecurityService {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **보안 강화 GymController** - GPS 마스킹, 위치 정보 보호  
 ✅ **보안 강화 RouteController** - 권한 검증, 중복 방지  
 ✅ **보안 강화 ClimbingController** - 개인정보 보호, 이상 패턴 감지  

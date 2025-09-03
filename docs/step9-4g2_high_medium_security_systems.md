@@ -1,7 +1,7 @@
-# 9-4g2: High/Medium 보안 시스템 구현 (완전본)
+# 9-4g2: High/Medium 보안 시스템 설계 (완전본)
 
 > **RoutePickr - 클라이밍 루트 추천 플랫폼**  
-> Step 9-4g: 종합 보안 구현 및 강화 (High/Medium 보안 시스템 Part)
+> Step 9-4g: 종합 보안 설계 및 강화 (High/Medium 보안 시스템 Part)
 
 ## 📋 이 문서의 내용
 
@@ -808,7 +808,7 @@ public class ComprehensiveSecurityConfig {
 
 ---
 
-## 📊 보안 구현 완료 후 예상 결과
+## 📊 보안 설계 완료 후 예상 결과
 
 ### 보안 점수 개선
 - **이전**: 72/100 (B등급)
@@ -842,8 +842,8 @@ public class ComprehensiveSecurityConfig {
 ## 🏆 완성 현황
 
 ### step9-4g 분할 완료
-- **step9-4g1_critical_security_implementation.md**: Critical 보안 구현 (Rate Limiting + XSS) ✅
-- **step9-4g2_high_medium_security_systems.md**: High/Medium 보안 시스템 구현 ✅
+- **step9-4g1_critical_security_implementation.md**: Critical 보안 설계 (Rate Limiting + XSS) ✅
+- **step9-4g2_high_medium_security_systems.md**: High/Medium 보안 시스템 설계 ✅
 
 ### 🎯 **총 95점 보안 등급 A+ 달성**
 
@@ -861,7 +861,7 @@ public class ComprehensiveSecurityConfig {
 
 **최종 평가**: 프로덕션 환경에 안전하게 배포 가능한 보안 등급 달성
 
-*Step 9-4g2 완료: High/Medium 보안 시스템 구현 완전본*  
+*Step 9-4g2 완료: High/Medium 보안 시스템 설계 완전본*  
 *보안 등급: 72점 → 95점 (A+ 달성)*  
 *스팸 방지: 팔로우/메시지 다중 패턴 탐지*  
 *파일 보안: 바이러스 스캔 + 시그니처 검증*  

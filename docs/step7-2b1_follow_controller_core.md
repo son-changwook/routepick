@@ -593,4 +593,4 @@ public class FollowService {
 **연관 파일:**
 - **step7-2b2_follow_analytics_recommendations.md**: 팔로우 분석 및 추천 시스템
 
-*step7-2b1 완성: FollowController 핵심 기능 구현 완료*
+*step7-2b1 완성: FollowController 핵심 기능 설계 완료*

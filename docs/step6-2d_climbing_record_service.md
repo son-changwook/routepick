@@ -703,5 +703,5 @@ public class ClimbingRecordService {
 - ✅ **step6-2c_route_media_service.md**: 루트 미디어 서비스
 - ✅ **step6-2d_climbing_record_service.md**: 클라이밍 기록 서비스
 
-*step6-2d 완성: 클라이밍 기록 도메인 완전 구현 완료*  
-*전체 Gym & Route 도메인 Service 레이어 구현 완료! 🎉*
+*step6-2d 완성: 클라이밍 기록 도메인 완전 설계 완료*  
+*전체 Gym & Route 도메인 Service 레이어 설계 완료! 🎉*

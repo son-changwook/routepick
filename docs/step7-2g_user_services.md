@@ -843,7 +843,7 @@ public class SensitiveDataMaskingService {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **UserProfileService** - 프로필 조회/수정, 권한 체크  
 ✅ **FollowService** - 팔로우/언팔로우, 통계 조회  
 ✅ **ImageStorageService** - 이미지 업로드/삭제, 보안 처리  

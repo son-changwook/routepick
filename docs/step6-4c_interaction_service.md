@@ -653,4 +653,4 @@ spring:
 
 ---
 
-*InteractionService 구현 완료: 게시글 상호작용 관리 시스템*
+*InteractionService 설계 완료: 게시글 상호작용 관리 시스템*

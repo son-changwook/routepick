@@ -813,7 +813,7 @@ public class PaymentDataEncryption {
 
 ---
 
-*PaymentController 구현 완료일: 2025-08-25*
+*PaymentController 설계 완료일: 2025-08-25*
 *구현 항목: 결제 처리, 환불 관리, 웹훅 처리, 결제 내역 조회*
 *보안 기능: PCI DSS 준수, IP 허용목록, 서명검증, 데이터 암호화*
 *다음 단계: NotificationController 구현*

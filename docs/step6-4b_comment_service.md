@@ -568,4 +568,4 @@ app:
 
 ---
 
-*CommentService 구현 완료: 계층형 댓글 관리 시스템*
+*CommentService 설계 완료: 계층형 댓글 관리 시스템*

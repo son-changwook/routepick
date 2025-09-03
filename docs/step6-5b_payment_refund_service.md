@@ -670,4 +670,4 @@ app:
 
 ---
 
-*PaymentRefundService 구현 완료: 환불 처리 및 승인 시스템*
+*PaymentRefundService 설계 완료: 환불 처리 및 승인 시스템*

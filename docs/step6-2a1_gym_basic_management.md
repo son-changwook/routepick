@@ -402,4 +402,4 @@ public class GymService {
 
 ---
 
-*GymService 기본 체육관 관리 기능 구현 완료*
+*GymService 기본 체육관 관리 기능 설계 완료*

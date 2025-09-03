@@ -726,7 +726,7 @@ public class SecureFileUploadService {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **RouteTaggingService 통합** - AI 기반 태그 추천, 품질 점수 계산  
 ✅ **ClimbingRecordService 확장** - 성취 시스템, 자동 레벨 업데이트  
 ✅ **NotificationService 연동** - 개인 기록, 난이도 돌파, 연속 성공 알림  

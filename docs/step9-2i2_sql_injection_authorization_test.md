@@ -333,7 +333,7 @@ class SqlInjectionAuthorizationTest {
 
 ---
 
-## =고급 Authorization 보안 테스트 구현\
+## =고급 Authorization 보안 테스트 설계\
 
 ### =인가 매트릭스 검증\
 - [x] **USER 권한**: 본인 데이터 CRUD (태그선호도, 클라이밍기록)

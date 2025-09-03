@@ -425,4 +425,4 @@ public class CommentService {
 
 ---
 
-*CommentService CRUD 및 계층 구조 구현 완료*
+*CommentService CRUD 및 계층 구조 설계 완료*

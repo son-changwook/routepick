@@ -559,4 +559,4 @@ public class SecurityDashboard {
 
 ---
 
-*SecurityMonitoringService 보안 대응 및 모니터링 기능 구현 완료*
+*SecurityMonitoringService 보안 대응 및 모니터링 기능 설계 완료*

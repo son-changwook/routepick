@@ -405,4 +405,4 @@ ON route_videos(video_type, is_active, created_at DESC);
 
 ---
 
-*RouteVideoRepository 핵심 기능 구현 완료*
+*RouteVideoRepository 핵심 기능 설계 완료*

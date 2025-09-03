@@ -321,7 +321,7 @@ SecurityContextHolder.getContext().setAuthentication(authentication);
 
 ## ✅ 체크리스트
 
-### 구현 완료
+### 설계 완료
 - [x] JWT 토큰 추출 (3가지 방법)
 - [x] 토큰 검증 로직
 - [x] SecurityContext 설정
@@ -336,4 +336,4 @@ SecurityContextHolder.getContext().setAuthentication(authentication);
 - [ ] CustomUserDetailsService
 
 ---
-*JwtAuthenticationFilter 구현 완료 - 다음: JwtTokenProvider 구현*
+*JwtAuthenticationFilter 설계 완료 - 다음: JwtTokenProvider 구현*

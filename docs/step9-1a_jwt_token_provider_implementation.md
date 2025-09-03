@@ -1,4 +1,4 @@
-# Step 9-1a: JwtTokenProvider 실제 구현
+# Step 9-1a: JwtTokenProvider 실제 설계
 
 ## 📋 구현 목표
 - **JWT 토큰 생성**: Access Token, Refresh Token 생성 로직
@@ -655,7 +655,7 @@ app:
 
 ---
 
-**다음 단계**: step9-1b_auth_service_test.md (AuthService 테스트 구현)  
+**다음 단계**: step9-1b_auth_service_test.md (AuthService 테스트 설계)  
 **연관 시스템**: step8-5a (TokenBlacklistService) 완전 통합  
 **성능 목표**: 토큰 생성 1ms 이내, 검증 0.5ms 이내  
 

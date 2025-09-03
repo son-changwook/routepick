@@ -472,4 +472,4 @@ public class SecurityMonitoringService {
 
 ---
 
-*SecurityMonitoringService 보안 위협 탐지 핵심 기능 구현 완료*
+*SecurityMonitoringService 보안 위협 탐지 핵심 기능 설계 완료*

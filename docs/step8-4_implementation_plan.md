@@ -235,7 +235,7 @@ Security Event → Handler → Analyzer → Dashboard
 
 ### **준비 완료 사항** ✅
 - **8-3 보안 시스템**: 완전 구축 완료
-- **기존 예외 처리**: step3 단계 구현 완료  
+- **기존 예외 처리**: step3 단계 설계 완료  
 - **모니터링 기반**: step6-6d, step8-2d 준비
 - **알림 시스템**: step6-4b 기반 구조 존재
 

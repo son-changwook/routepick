@@ -1,4 +1,4 @@
-# Step 9-1e: AuthIntegration 통합 테스트 구현
+# Step 9-1e: AuthIntegration 통합 테스트 설계
 
 > 인증 및 이메일 전체 플로우 통합 테스트  
 > 생성일: 2025-08-27  
@@ -685,5 +685,5 @@ INSERT INTO tags (id, tag_type, tag_name, description, color, icon, is_system, c
 
 ---
 
-*Step 9-1e 완료: AuthIntegration 통합 테스트 구현*
-*다음 단계: 보안 공격 방어 테스트 구현*
+*Step 9-1e 완료: AuthIntegration 통합 테스트 설계*
+*다음 단계: 보안 공격 방어 테스트 설계*

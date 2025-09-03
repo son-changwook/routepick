@@ -609,7 +609,7 @@ fetch('https://api.routepick.co.kr/api/v1/auth/login', {
 
 ---
 
-## ✅ 구현 완료 체크리스트
+## ✅ 설계 완료 체크리스트
 
 - [x] 환경별 CORS 정책 설정
 - [x] 동적 Origin 화이트리스트 관리

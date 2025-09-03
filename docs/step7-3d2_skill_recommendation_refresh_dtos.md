@@ -365,7 +365,7 @@ public class RecommendationRefreshRequest {
 
 ---
 
-## 📊 구현 완료 사항
+## 📊 설계 완료 사항
 
 ✅ **SkillLevelUpdateRequest** - 실력 레벨 업데이트 (비율 검증)  
 ✅ **RouteRecommendationRequest** - 루트 추천 요청 (가중치 검증)  

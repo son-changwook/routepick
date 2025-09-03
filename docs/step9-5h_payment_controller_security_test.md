@@ -818,7 +818,7 @@ public class RateLimitExceededException extends RuntimeException {
 
 ## ✅ 3단계 완료
 
-PaymentController의 보안 기능을 포괄하는 25개의 테스트 케이스를 구현했습니다:
+PaymentController의 보안 기능을 포괄하는 25개의 테스트 설계했습니다:
 
 - **Rate Limiting**: 사용자별/IP별 요청 제한 및 독립성 보장
 - **PG IP 화이트리스트**: 허용된 PG사 IP에서만 웹훅 수신
@@ -830,4 +830,4 @@ PaymentController의 보안 기능을 포괄하는 25개의 테스트 케이스�
 
 ---
 
-*PaymentController 보안 테스트 완료: 25개 테스트 케이스 구현*
+*PaymentController 보안 테스트 설계*

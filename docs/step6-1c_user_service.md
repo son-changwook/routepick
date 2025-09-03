@@ -454,7 +454,7 @@ userService.updateProfile(userId, updates);
 
 ---
 
-## ✅ 구현 완료 체크리스트
+## ✅ 설계 완료 체크리스트
 
 ### 👤 사용자 관리
 - [x] 사용자 조회 (@Cacheable 캐싱 적용)

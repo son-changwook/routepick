@@ -807,4 +807,4 @@ fcm:
 
 ---
 
-*NotificationService 구현 완료: 종합 알림 관리 시스템*
+*NotificationService 설계 완료: 종합 알림 관리 시스템*

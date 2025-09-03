@@ -687,7 +687,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
 ---
 
-## ✅ Critical 보안 구현 완료 체크리스트
+## ✅ Critical 보안 설계 완료 체크리스트
 
 ### 🚦 Rate Limiting 시스템
 - [x] **API별 세부 제한**: 20개 주요 API 엔드포인트별 차등 적용
@@ -713,7 +713,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
 **완료 상태**: Critical 보안 취약점 해결 완료  
 **보안 등급**: 72점 → 85점 달성 (Rate Limiting + XSS 방어)  
-**다음 단계**: High/Medium 등급 보안 구현 (스팸 방지, 개인정보 보호 등)
+**다음 단계**: High/Medium 등급 보안 설계 (스팸 방지, 개인정보 보호 등)
 
 *Created: 2025-08-27*  
 *Security Grade: A- (85/100)*

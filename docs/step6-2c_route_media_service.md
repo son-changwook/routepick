@@ -717,4 +717,4 @@ routes/
 **Phase 4 완료 후 진행할 작업:**
 - **step6-2d_climbing_record_service.md**: 클라이밍 기록 서비스
 
-*step6-2c 완성: 루트 미디어 도메인 완전 구현 완료*
+*step6-2c 완성: 루트 미디어 도메인 완전 설계 완료*

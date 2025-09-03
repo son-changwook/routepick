@@ -644,4 +644,4 @@ app:
 
 ---
 
-*MessageService 구현 완료: 쪽지 시스템 관리*
+*MessageService 설계 완료: 쪽지 시스템 관리*

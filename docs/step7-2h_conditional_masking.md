@@ -655,7 +655,7 @@ public @interface ProfileAccessControl {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **ConditionalMaskingSerializer** - 동적 마스킹 처리  
 ✅ **MaskingRule 어노테이션** - 선언적 마스킹 규칙  
 ✅ **SecurityContextHolder 확장** - 사용자 관계 체크  

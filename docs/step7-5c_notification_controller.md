@@ -991,7 +991,7 @@ public class RealtimeNotificationService {
 
 ---
 
-*NotificationController 구현 완료일: 2025-08-25*
+*NotificationController 설계 완료일: 2025-08-25*
 *구현 항목: 개인 알림, FCM 푸시, 공지사항, 배너/팝업, 실시간 알림*
 *보안 기능: 사용자별 권한 검증, 알림 설정 관리, 스팸 방지*
 *다음 단계: SystemController 구현*

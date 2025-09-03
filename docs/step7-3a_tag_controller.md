@@ -424,7 +424,7 @@ public class TagController {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **TagController** - 태그 시스템 완전한 REST API  
 ✅ **8개 공개 엔드포인트** - 태그 조회, 검색, 인기 태그  
 ✅ **3개 관리자 엔드포인트** - 태그 CRUD (관리자 전용)  

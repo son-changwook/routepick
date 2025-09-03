@@ -788,4 +788,4 @@ app:
 
 ---
 
-*PaymentService 구현 완료: 결제 처리 및 보안 시스템*
+*PaymentService 설계 완료: 결제 처리 및 보안 시스템*

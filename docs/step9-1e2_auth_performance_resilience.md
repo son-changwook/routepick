@@ -2,7 +2,7 @@
 
 ## 🚀 성능 테스트 및 장애 복구 테스트
 
-### 성능 테스트 구현
+### 성능 테스트 설계
 
 ```java
     // ===== 성능 테스트 =====
@@ -324,5 +324,5 @@ INSERT INTO tags (id, tag_type, tag_name, description, color, icon, is_system, c
 
 ---
 
-*Step 9-1e 완료: AuthIntegration 통합 테스트 구현*
-*다음 단계: 보안 공격 방어 테스트 구현*
+*Step 9-1e 완료: AuthIntegration 통합 테스트 설계*
+*다음 단계: 보안 공격 방어 테스트 설계*

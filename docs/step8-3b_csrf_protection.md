@@ -633,7 +633,7 @@ public class CsrfMonitoringService {
 
 ---
 
-## ✅ 구현 완료 체크리스트
+## ✅ 설계 완료 체크리스트
 
 - [x] Double Submit Cookie 패턴 구현
 - [x] CustomCsrfTokenRepository 구현

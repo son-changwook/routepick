@@ -956,7 +956,7 @@ app:
 
 ## ✅ 1단계 완료: ApplicationIntegrationTest
 
-전체 애플리케이션의 핵심 비즈니스 플로우를 검증하는 포괄적인 통합 테스트를 구현했습니다:
+전체 애플리케이션의 핵심 비즈니스 플로우를 검증하는 포괄적인 통합 테스트 설계했습니다:
 
 - **실제 환경 시뮬레이션**: TestContainers로 MySQL, Redis, SMTP 서버 통합
 - **전체 플로우 검증**: 사용자 여정부터 결제까지 End-to-End 테스트
@@ -964,8 +964,8 @@ app:
 - **캐시 성능 측정**: Redis 캐시 효율성 및 응답시간 비교
 - **실제 API 테스트**: REST API 전체 엔드포인트 통합 검증
 
-이제 다음 단계인 성능 테스트 구현을 진행하겠습니다.
+이제 다음 단계인 성능 테스트 설계을 진행하겠습니다.
 
 ---
 
-*ApplicationIntegrationTest 구현 완료: 15개 핵심 통합 시나리오*
+*ApplicationIntegrationTest 설계 완료: 15개 핵심 통합 시나리오*

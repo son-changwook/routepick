@@ -1,7 +1,7 @@
 # step9-2h2a_security_auth_tests.md
 
 > **RoutePickr - 클라이밍 루트 추천 플랫폼**  
-> Step 9-2h2a: 보안/인증/권한 테스트 구현
+> Step 9-2h2a: 보안/인증/권한 테스트 설계
 
 ## 📋 이 문서의 내용
 
@@ -19,7 +19,7 @@
 
 ---
 
-## 🔐 보안 테스트 구현
+## 🔐 보안 테스트 설계
 
 ### RecommendationController 보안 테스트
 

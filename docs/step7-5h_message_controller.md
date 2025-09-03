@@ -893,7 +893,7 @@ public class RealtimeMessageService {
 
 ---
 
-*MessageController 긴급 구현 완료일: 2025-08-25*  
+*MessageController 긴급 설계 완료일: 2025-08-25*  
 *구현 항목: 개인 메시징, 루트 태깅, 실시간 전송, 스팸 방지, 암호화*  
 *보안 기능: Rate Limiting, 내용 암호화, 스팸 검증, 사용자 차단*  
 *다음 단계: 나머지 보안 취약점 패치*

@@ -459,4 +459,4 @@ public class TagService {
 - display_order 관리로 UI 최적화
 - 사용 중인 태그 보호로 데이터 무결성 유지
 
-*step6-3a1 완성: 태그 CRUD 및 핵심 관리 기능 구현 완료*
+*step6-3a1 완성: 태그 CRUD 및 핵심 관리 기능 설계 완료*

@@ -531,4 +531,4 @@ ON route_videos(video_width, file_size, duration);
 
 ---
 
-*RouteVideoRepository 스트리밍 및 분석 기능 구현 완료*
+*RouteVideoRepository 스트리밍 및 분석 기능 설계 완료*

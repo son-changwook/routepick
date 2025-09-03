@@ -1,4 +1,4 @@
-# Step 9-1g: 성능 테스트 구현
+# Step 9-1g: 성능 테스트 설계
 
 > JWT 인증 및 이메일 시스템 성능 벤치마크 테스트  
 > 생성일: 2025-08-27  
@@ -18,7 +18,7 @@
 
 ---
 
-## 🚀 성능 테스트 구현
+## 🚀 성능 테스트 설계
 
 ### PerformanceTest.java
 ```java
@@ -834,5 +834,5 @@ class LoginPerformanceSimulation extends Simulation {
 
 ---
 
-*Step 9-1g 완료: 성능 테스트 구현*
+*Step 9-1g 완료: 성능 테스트 설계*
 *RoutePickr 9-1단계 인증 및 이메일 테스트 (보안 중심) 완료*

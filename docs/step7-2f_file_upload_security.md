@@ -655,7 +655,7 @@ public class InvalidFileFormatException extends BaseException {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **FileUploadSecurityService** - 종합적인 파일 보안 검증  
 ✅ **VirusScanService** - 바이러스 스캔 (ClamAV 연동 준비)  
 ✅ **ImageProcessingService** - 이미지 재인코딩, EXIF 제거  

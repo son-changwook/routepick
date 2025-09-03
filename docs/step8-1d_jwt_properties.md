@@ -440,7 +440,7 @@ Content-Security-Policy: default-src 'self'
 
 ## ✅ Phase 1 (8-1) 완료!
 
-### 구현 완료
+### 설계 완료
 - [x] SecurityConfig - Spring Security 설정
 - [x] JwtAuthenticationFilter - JWT 인증 필터
 - [x] JwtTokenProvider - 토큰 생성/검증

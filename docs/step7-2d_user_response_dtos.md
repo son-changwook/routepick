@@ -915,7 +915,7 @@ public class UserSummaryResponse {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **UserProfileResponse** - 사용자 프로필 정보 (민감정보 마스킹)  
 ✅ **UserSearchResponse** - 사용자 검색 결과 (페이징, 필터링)  
 ✅ **FollowStatsResponse** - 팔로우 통계 정보 (성장/상호작용 통계)  

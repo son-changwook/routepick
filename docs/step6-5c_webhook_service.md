@@ -676,4 +676,4 @@ external-api:
 
 ---
 
-*WebhookService 구현 완료: 웹훅 처리 및 검증 시스템*
+*WebhookService 설계 완료: 웹훅 처리 및 검증 시스템*

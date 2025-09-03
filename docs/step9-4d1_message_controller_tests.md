@@ -1,4 +1,4 @@
-# 9-4d1: 메시지 Controller 테스트 구현 (완전본)
+# 9-4d1: 메시지 Controller 테스트 설계 (완전본)
 
 > **RoutePickr - 클라이밍 루트 추천 플랫폼**  
 > Step 9-4d: 메시지 시스템 테스트 (Controller API 테스트 Part)
@@ -686,6 +686,6 @@ class MessageControllerTest {
 
 ---
 
-*Step 9-4d1 완료: 메시지 Controller 테스트 구현 완전본*  
+*Step 9-4d1 완료: 메시지 Controller 테스트 설계 완전본*  
 *Created: 2025-08-27*  
 *RoutePickr - 클라이밍 루트 추천 플랫폼*

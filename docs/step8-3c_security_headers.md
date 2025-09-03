@@ -744,7 +744,7 @@ public class SecurityHeadersController {
 
 ---
 
-## ✅ 구현 완료 체크리스트
+## ✅ 설계 완료 체크리스트
 
 - [x] 종합 보안 헤더 필터 구현
 - [x] Content Security Policy 동적 설정

@@ -639,4 +639,4 @@ public class PGServiceConfig {
 
 ---
 
-*PaymentService PG 연동 시스템 구현 완료: 한국 특화 결제 게이트웨이*
+*PaymentService PG 연동 시스템 설계 완료: 한국 특화 결제 게이트웨이*

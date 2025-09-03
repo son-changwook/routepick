@@ -651,4 +651,4 @@ class UserPreferenceChangedEvent {
 - **step6-3c_route_tagging_service.md**: 루트 태깅 Service
 - **step6-3d_recommendation_service.md**: 추천 시스템 Service
 
-*step6-3b 완성: UserPreferenceService 완전 구현 완료*
+*step6-3b 완성: UserPreferenceService 완전 설계 완료*

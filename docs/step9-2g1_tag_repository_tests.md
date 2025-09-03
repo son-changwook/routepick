@@ -545,4 +545,4 @@ void tagMatchingStatistics() {
 - **step9-2g2_user_preference_recommendation_tests.md**: 사용자 선호도 및 추천 테스트
 - **step9-2g3_integration_performance_tests.md**: 통합 성능 테스트
 
-*step9-2g1 완성: TagRepository & RouteTagRepository 테스트 구현 완료*
+*step9-2g1 완성: TagRepository & RouteTagRepository 테스트 설계 완료*

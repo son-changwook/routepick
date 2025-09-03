@@ -484,7 +484,7 @@ public class AccountDeactivateRequest {
 
 ---
 
-## 📋 구현 완료 사항
+## 📋 설계 완료 사항
 ✅ **UserProfileUpdateRequest** - 사용자 프로필 수정 (한국 특화 검증)  
 ✅ **UserSearchRequest** - 사용자 검색 (다양한 필터링 옵션)  
 ✅ **ProfileImageUploadRequest** - 프로필 이미지 업로드 (품질/보안 설정)  

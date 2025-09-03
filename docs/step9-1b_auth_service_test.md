@@ -1,4 +1,4 @@
-# Step 9-1b: AuthService 단위 테스트 구현
+# Step 9-1b: AuthService 단위 테스트 설계
 
 > 인증 서비스 로직 및 보안 기능 테스트  
 > 생성일: 2025-08-27  
@@ -17,7 +17,7 @@
 
 ---
 
-## 🧪 AuthService 테스트 구현
+## 🧪 AuthService 테스트 설계
 
 ### AuthServiceTest.java
 ```java
@@ -750,5 +750,5 @@ public class AuthTestDataBuilder {
 
 ---
 
-*Step 9-1b 완료: AuthService 단위 테스트 구현*
-*다음 단계: EmailService 단위 테스트 구현*
+*Step 9-1b 완료: AuthService 단위 테스트 설계*
+*다음 단계: EmailService 단위 테스트 설계*

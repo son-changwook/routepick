@@ -661,7 +661,7 @@ public boolean isFullyVerified(Long userId) {
 
 ---
 
-## ✅ 구현 완료 체크리스트
+## ✅ 설계 완료 체크리스트
 
 ### ✅ 인증 관리
 - [x] 이메일 인증 처리 (EmailService 연동)

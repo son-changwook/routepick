@@ -1,4 +1,4 @@
-# Step 9-1d: AuthController 웹 레이어 테스트 구현
+# Step 9-1d: AuthController 웹 레이어 테스트 설계
 
 > 인증 API 엔드포인트 및 HTTP 보안 테스트  
 > 생성일: 2025-08-27  
@@ -772,5 +772,5 @@ public class SecurityTestConfig {
 
 ---
 
-*Step 9-1d 완료: AuthController 웹 레이어 테스트 구현*
-*다음 단계: 통합 테스트 구현*
+*Step 9-1d 완료: AuthController 웹 레이어 테스트 설계*
+*다음 단계: 통합 테스트 설계*

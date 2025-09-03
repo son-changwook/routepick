@@ -957,7 +957,7 @@ public class SafeTextValidator implements ConstraintValidator<SafeText, String> 
 
 ---
 
-## ✅ 구현 완료 체크리스트
+## ✅ 설계 완료 체크리스트
 
 - [x] XssProtectionFilter 구현 (악성 패턴 사전 탐지)
 - [x] XssRequestWrapper 구현 (HTML 태그 제거/이스케이프)

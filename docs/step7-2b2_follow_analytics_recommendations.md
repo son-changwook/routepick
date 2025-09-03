@@ -752,4 +752,4 @@ public class FollowRecommendationService {
 - **step7-2c_user_request_dtos.md**: 사용자 관련 Request DTOs
 - **step7-2d_user_response_dtos.md**: 사용자 관련 Response DTOs
 
-*step7-2b2 완성: 팔로우 분석 및 추천 시스템 구현 완료*
+*step7-2b2 완성: 팔로우 분석 및 추천 시스템 설계 완료*

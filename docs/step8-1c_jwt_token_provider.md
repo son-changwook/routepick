@@ -372,7 +372,7 @@ catch (ExpiredJwtException e) {
 
 ## ✅ 체크리스트
 
-### 구현 완료
+### 설계 완료
 - [x] Access Token 생성
 - [x] Refresh Token 생성
 - [x] 토큰 검증
@@ -388,4 +388,4 @@ catch (ExpiredJwtException e) {
 - [ ] SecurityAuditService
 
 ---
-*JwtTokenProvider 구현 완료 - 다음: JwtProperties 구현*
+*JwtTokenProvider 설계 완료 - 다음: JwtProperties 설계*

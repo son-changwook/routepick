@@ -305,4 +305,4 @@ CREATE INDEX idx_user_profile_visibility ON user_profile(profile_visibility);
 
 *보안 검토 완료일: 2025-08-25*  
 *검토자: Claude Code Assistant*  
-*다음 검토 예정일: Controller 구현 완료 후*
+*다음 검토 예정일: Controller 설계 완료 후*

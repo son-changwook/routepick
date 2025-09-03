@@ -1,4 +1,4 @@
-# 9-3e: RouteController 테스트 구현
+# 9-3e: RouteController 테스트 설계
 
 > 루트 관리 REST API 컨트롤러 테스트 - 복합 검색, 스크랩, 난이도 투표 API
 > 생성일: 2025-08-27
