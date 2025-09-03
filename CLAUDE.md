@@ -16,7 +16,7 @@ RoutePickr 프로젝트는 **설계 파일 우선 접근법**을 채택합니다
 # 예시: 회원가입 API 구현
 claude code "회원가입 API를 구현해줘. 다음 설계 파일들을 참고해서:
 - step7-1a_auth_controller.md (Controller 설계)
-- step7-1c_auth_request_dtos.md (Request DTO)  
+- step7-1c_auth_request_dtos.md (Request DTO)
 - step7-1d_auth_response_dtos.md (Response DTO)
 - step7-1f_xss_security.md (보안 구현)
 - step6-1a_auth_service.md (Service 로직)"
@@ -24,14 +24,14 @@ claude code "회원가입 API를 구현해줘. 다음 설계 파일들을 참고
 # 예시: 체육관 검색 API 구현
 claude code "주변 체육관 검색 API를 구현해줘. 관련 설계 파일:
 - step7-4a_gym_controller.md
-- step6-2a1_gym_management_core.md  
+- step6-2a1_gym_management_core.md
 - step6-2a2_gym_spatial_membership.md (공간쿼리 로직)"
 ```
 
 #### 2⃣ 자동 품질 보장 시스템
 설계 파일 참조 시 자동으로 적용되는 기능들:
 - **보안**: XSS, CSRF, Rate Limiting
-- **검증**: Bean Validation, 한국 특화 검증  
+- **검증**: Bean Validation, 한국 특화 검증
 - **예외처리**: 177개 ErrorCode 체계
 - **캐싱**: Redis 캐싱 전략
 - **한국 특화**: 좌표, 휴대폰, 한글, PG사 연동
@@ -40,7 +40,7 @@ claude code "주변 체육관 검색 API를 구현해줘. 관련 설계 파일:
 ```
 Phase 1: 핵심 API 우선 구현
 ├── AuthController (인증/로그인)
-├── UserController (사용자 관리)  
+├── UserController (사용자 관리)
 ├── GymController (체육관 관리)
 └── RouteController (루트 관리)
 
@@ -61,85 +61,91 @@ Phase 3: 통합 테스트 및 최적화
 
 ## 전체 개발 단계
 - [x] 1단계: 데이터베이스 분석 (3분할) - 완료
-  - [x] 1-1: 기본 스키마 구조 분석 - 완료
-  - [x] 1-2: 통합 태그 시스템 심층 분석 - 완료
-  - [x] 1-3: Spring Boot 설계 가이드 - 완료
+ - [x] 1-1: 기본 스키마 구조 분석 - 완료
+ - [x] 1-2: 통합 태그 시스템 심층 분석 - 완료
+ - [x] 1-3: Spring Boot 설계 가이드 - 완료
 - [x] 2단계: 프로젝트 구조 생성 (3분할) - 완료
-  - [x] 2-1: Backend Spring Boot 프로젝트 구조 - 완료
-  - [x] 2-2: Frontend (App/Admin) 프로젝트 구조 - 완료
-  - [x] 2-3: Infrastructure 및 통합 환경 설정 - 완료
+ - [x] 2-1: Backend Spring Boot 프로젝트 구조 - 완료
+ - [x] 2-2: Frontend (App/Admin) 프로젝트 구조 - 완료
+ - [x] 2-3: Infrastructure 및 통합 환경 설정 - 완료
 - [x] 3단계: 예외 처리 체계 (3분할) - 완료
-  - [x] 3-1: 기본 예외 체계 및 ErrorCode 설계 - 완료
-  - [x] 3-2: 도메인별 커스텀 예외 클래스 생성 - 완료
-  - [x] 3-3: GlobalExceptionHandler 및 보안 강화 구현 - 완료
+ - [x] 3-1: 기본 예외 체계 및 ErrorCode 설계 - 완료
+ - [x] 3-2: 도메인별 커스텀 예외 클래스 생성 - 완료
+ - [x] 3-3: GlobalExceptionHandler 및 보안 강화 구현 - 완료
 - [x] 4단계: JPA 엔티티 클래스 생성 (보안 및 성능 강화) - 완료
-  - [x] 4-1: 기본 엔티티 및 BaseEntity 설계 - 완료
-  - [x] 4-2: 태그 시스템 엔티티 집중 생성 - 완료
-  - [x] 4-3a: 암장 관련 엔티티 생성 - 완료
-  - [x] 4-3b: 루트 관련 엔티티 생성 - 완료
-  - [x] 4-3c: 클라이밍 및 활동 엔티티 생성 - 완료
-  - [x] 4-4a: 커뮤니티 엔티티 생성 - 완료
-  - [x] 4-4b: 결제 + 알림 엔티티 생성 - 완료
-  - [x] 4-4c: 시스템 관리 엔티티 완성 - 완료
+ - [x] 4-1: 기본 엔티티 및 BaseEntity 설계 - 완료
+ - [x] 4-2: 태그 시스템 엔티티 집중 생성 - 완료
+ - [x] 4-3a: 암장 관련 엔티티 생성 - 완료
+ - [x] 4-3b: 루트 관련 엔티티 생성 - 완료
+ - [x] 4-3c: 클라이밍 및 활동 엔티티 생성 - 완료
+ - [x] 4-4a: 커뮤니티 엔티티 생성 - 완료
+ - [x] 4-4b: 결제 + 알림 엔티티 생성 - 완료
+ - [x] 4-4c: 시스템 관리 엔티티 완성 - 완료
 - [x] 5단계: Repository 레이어 (50개 Repository 완성) - 완료
-  - [x] 5-1: Base & User Repository 생성 - 완료
-  - [x] 5-2: Tag System Repository 생성 - 완료
-  - [x] 5-3a: Gym Core Repository 생성 - 완료
-  - [x] 5-3b: Gym Additional Repository 생성 - 완료
-  - [x] 5-3c: Route Core Repository 생성 - 완료
-  - [x] 5-3d: Route Media Repository 생성 - 완료
-  - [x] 5-3e: Route Interaction Repository 생성 - 완료
-  - [x] 5-3f: Climbing & Activity Repository 생성 - 완료
-  - [x] 5-4a: Community Core Repository 생성 - 완료
-  - [x] 5-4b: Community Interaction Repository 생성 - 완료
-  - [x] 5-4c: Community Media Repository 생성 - 완료
-  - [x] 5-4d: Payment Repository 생성 - 완료
-  - [x] 5-4e: Notification Repository 생성 - 완료
-  - [x] 5-4f: System Final Repository 완성 - 완료
+ - [x] 5-1: Base & User Repository 생성 - 완료
+ - [x] 5-2: Tag System Repository 생성 - 완료
+ - [x] 5-3a: Gym Core Repository 생성 - 완료
+ - [x] 5-3b: Gym Additional Repository 생성 - 완료
+ - [x] 5-3c: Route Core Repository 생성 - 완료
+ - [x] 5-3d: Route Media Repository 생성 - 완료
+ - [x] 5-3e: Route Interaction Repository 생성 - 완료
+ - [x] 5-3f: Climbing & Activity Repository 생성 - 완료
+ - [x] 5-4a: Community Core Repository 생성 - 완료
+ - [x] 5-4b: Community Interaction Repository 생성 - 완료
+ - [x] 5-4c: Community Media Repository 생성 - 완료
+ - [x] 5-4d: Payment Repository 생성 - 완료
+ - [x] 5-4e: Notification Repository 생성 - 완료
+ - [x] 5-4f: System Final Repository 완성 - 완료
 - [x] 6단계: Service 레이어 (총 20개 Service 완성) - 완료
-  - [x] 6-1a: AuthService (JWT 인증, 소셜 로그인) - 완료
-  - [x] 6-1b: EmailService (비동기 발송, Redis 인증) - 완료 
-  - [x] 6-1c: UserService (프로필, 팔로우, 검색) - 완료
-  - [x] 6-1d: UserVerificationService & 보안 유틸리티 - 완료
-  - [x] 6-2a: GymService (체육관 관리, 한국좌표 검증, 공간쿼리) - 완료
-  - [x] 6-2b: RouteService (루트 관리, V등급/YDS 변환, 난이도 투표) - 완료
-  - [x] 6-2c: RouteMediaService (이미지/동영상, 썸네일, 댓글시스템) - 완료
-  - [x] 6-2d: ClimbingRecordService (기록관리, 통계분석, 신발관리) - 완료
-  - [x] 6-3a: TagService (태그 관리, 6가지 카테고리) - 완료
-  - [x] 6-3b: UserPreferenceService (사용자 선호도, 개인화) - 완료
-  - [x] 6-3~6-6: Community, Message, Notification, Payment, System Service (12개) - 완료
-  - [x] 6-3c: RouteTaggingService (루트-태그 연관, 품질검증) - 완료
-  - [x] 6-3d: RecommendationService (AI 추천, 태그70%+레벨30%) - 완료
-  - [x] 6-4a: PostService (게시글 CRUD, XSS방지, 미디어처리) - 완료
-  - [x] 6-4b: CommentService (계층형 댓글, 3단계 depth) - 완료
-  - [x] 6-4c: InteractionService (좋아요/북마크, Redis 최적화) - 완료
-  - [x] 6-4d: MessageService (개인메시지, 루트태깅, 대량발송) - 완료
-  - [x] 6-5a: PaymentService (한국PG 연동, SERIALIZABLE 트랜잭션) - 완료
-  - [x] 6-5b: PaymentRefundService (자동환불, 부분환불, 승인워크플로우) - 완료
-  - [x] 6-5c: WebhookService (웹훅처리, 서명검증, 지수백오프) - 완료
-  - [x] 6-5d: NotificationService (다채널 알림, FCM/이메일/인앱) - 완료
-  - [x] 6-6a: ApiLogService (API로그, 성능모니터링, 에러분석) - 완료
-  - [x] 6-6b: ExternalApiService (외부API관리, 상태모니터링, 암호화) - 완료
-  - [x] 6-6c: CacheService (Redis캐시, TTL최적화, 스마트워밍업) - 완료
-  - [x] 6-6d1~6-6d4: SystemService (4개 파일 세분화) - 완료
-    - step6-6d1: SystemMonitoring (실시간 모니터링, 345줄)
-    - step6-6d2: HealthCheckService (헬스체크, 520줄)
-    - step6-6d3: BackupManagement (백업관리, 430줄)
-    - step6-6d4: PerformanceMetrics (성능메트릭, 537줄)
+ - [x] 6-1a: AuthService (JWT 인증, 소셜 로그인) - 완료
+ - [x] 6-1b: EmailService (비동기 발송, Redis 인증) - 완료
+ - [x] 6-1c: UserService (프로필, 팔로우, 검색) - 완료
+ - [x] 6-1d: UserVerificationService & 보안 유틸리티 - 완료
+ - [x] 6-2a: GymService (체육관 관리, 한국좌표 검증, 공간쿼리) - 완료
+ - [x] 6-2b: RouteService (루트 관리, V등급/YDS 변환, 난이도 투표) - 완료
+ - [x] 6-2c: RouteMediaService (이미지/동영상, 썸네일, 댓글시스템) - 완료
+ - [x] 6-2d: ClimbingRecordService (기록관리, 통계분석, 신발관리) - 완료
+ - [x] 6-3a: TagService (태그 관리, 6가지 카테고리) - 완료
+ - [x] 6-3b: UserPreferenceService (사용자 선호도, 개인화) - 완료
+ - [x] 6-3~6-6: Community, Message, Notification, Payment, System Service (12개) - 완료
+ - [x] 6-3c: RouteTaggingService (루트-태그 연관, 품질검증) - 완료
+ - [x] 6-3d: RecommendationService (AI 추천, 태그70%+레벨30%) - 완료
+ - [x] 6-4a: PostService (게시글 CRUD, XSS방지, 미디어처리) - 완료
+ - [x] 6-4b: CommentService (계층형 댓글, 3단계 depth) - 완료
+ - [x] 6-4c: InteractionService (좋아요/북마크, Redis 최적화) - 완료
+ - [x] 6-4d: MessageService (개인메시지, 루트태깅, 대량발송) - 완료
+ - [x] 6-5a: PaymentService (한국PG 연동, SERIALIZABLE 트랜잭션) - 완료
+ - [x] 6-5b: PaymentRefundService (자동환불, 부분환불, 승인워크플로우) - 완료
+ - [x] 6-5c: WebhookService (웹훅처리, 서명검증, 지수백오프) - 완료
+ - [x] 6-5d: NotificationService (다채널 알림, FCM/이메일/인앱) - 완료
+ - [x] 6-6a: ApiLogService (API로그, 성능모니터링, 에러분석) - 완료
+ - [x] 6-6b: ExternalApiService (외부API관리, 상태모니터링, 암호화) - 완료
+ - [x] 6-6c: CacheService (Redis캐시, TTL최적화, 스마트워밍업) - 완료
+ - [x] 6-6d1~6-6d4: SystemService (4개 파일 세분화) - 완료
+ - step6-6d1: SystemMonitoring (실시간 모니터링, 345줄)
+ - step6-6d2: HealthCheckService (헬스체크, 520줄)
+ - step6-6d3: BackupManagement (백업관리, 430줄)
+ - step6-6d4: PerformanceMetrics (성능메트릭, 537줄)
 - [x] 7단계: Controller & DTO 구현 - 완료
-  - [x] 7-1: Authentication & Email Controllers + DTOs - 완료
-  - [x] 7-2: User & Profile Controllers + DTOs - 완료
-  - [x] 7-3: Tag & Recommendation Controllers + DTOs - 완료
-  - [x] 7-4: Gym & Route & Climbing Controllers + DTOs - 완료 + Response DTOs 세분화
-    - step7-4e1: GymResponseDTOs (암장 응답 DTOs, 196줄)
-    - step7-4e2: RouteClimbingResponseDTOs (루트/클라이밍 DTOs, 522줄)
-  - [x] 7-5: Community, Payment, System Controllers + DTOs - 완료
-- [x] 8단계: Security 설정 (부분 완료) 🟡
-  - [x] 8-1: JWT & Authentication 설정 - 완료
-  - [x] 8-2: Rate Limiting & IP Access Control - 완료
-  - [x] 8-3: Security Enhancement (CORS, CSRF, XSS) - 완료
-  - [x] 8-4: Security Monitoring & Audit 완료 - 완료
-- [ ] 9단계: 테스트 코드 (준비 완료)
+ - [x] 7-1: Authentication & Email Controllers + DTOs - 완료
+ - [x] 7-2: User & Profile Controllers + DTOs - 완료
+ - [x] 7-3: Tag & Recommendation Controllers + DTOs - 완료
+ - [x] 7-4: Gym & Route & Climbing Controllers + DTOs - 완료 + Response DTOs 세분화
+ - step7-4e1: GymResponseDTOs (암장 응답 DTOs, 196줄)
+ - step7-4e2: RouteClimbingResponseDTOs (루트/클라이밍 DTOs, 522줄)
+ - [x] 7-5: Community, Payment, System Controllers + DTOs - 완료
+- [x] 8단계: Security 설정 (설계 완료)
+ - [x] 8-1: JWT & Authentication 설정
+ - [x] 8-2: Rate Limiting & IP Access Control
+ - [x] 8-3: Security Enhancement (CORS, CSRF, XSS)
+ - [x] 8-4: Security Monitoring & Audit
+- [x] 9단계: 테스트 코드 (설계 완료)
+ - [x] 9-1: 단위 테스트 설계 (Repository, Service 레이어)
+ - [x] 9-2: 통합 테스트 설계 (Controller, API 엔드포인트)
+ - [x] 9-3: 성능 테스트 설계 (부하 테스트, 스트레스 테스트)
+ - [x] 9-4: 보안 테스트 설계 (인증, 권한, XSS, SQL Injection)
+ - [x] 9-5: E2E 테스트 설계 (사용자 시나리오 기반)
+ - [x] 9-6: 테스트 자동화 설계 (CI/CD 파이프라인 연동)
 
 ## 생성된 분석 파일들
 - step1-1_schema_analysis.md - 완료
@@ -155,7 +161,7 @@ Phase 3: 통합 테스트 및 최적화
 - step3-1c_statistics_monitoring.md - 완료 (통계/모니터링/개발도구)
 - step3-2a_auth_user_exceptions.md - 완료 (인증/사용자 예외)
 - step3-2b_gym_route_exceptions.md - 완료 (체육관/루트 예외)
-- step3-2c_tag_payment_exceptions.md - 완료 (태그/결제 예외)  
+- step3-2c_tag_payment_exceptions.md - 완료 (태그/결제 예외)
 - step3-2d_validation_system_exceptions.md - 완료 (검증/시스템 예외)
 - step3-3a1_global_exception_handler.md - 완료 (GlobalExceptionHandler 구현)
 - step3-3a2_error_response_integration.md - 완료 (ErrorResponse DTO & Spring Boot 통합)
@@ -230,31 +236,37 @@ Phase 3: 통합 테스트 및 최적화
 - step7-1h_rate_limiting_implementation.md - 완료 (Rate Limiting 구현체: Redis + Lua)
 - step7-1i_custom_validators.md - 완료 (Custom Validators 구현체: 실시간 검증)
 - step7-1~7-5 완료 파일들 - 완료 (Authentication, User, Tag, Gym/Route, Community/Payment/System)
-  - step7-1: Auth & Email Controllers (인증 시스템)
-  - step7-2: User & Profile Controllers (사용자 관리)
-  - step7-3: Tag & Recommendation Controllers (태그/추천)
-  - step7-4: Gym, Route, Climbing Controllers (암장/루트)
-  - step7-5: Community, Payment, Notification, System Controllers (커뮤니티/결제/시스템)
+ - step7-1: Auth & Email Controllers (인증 시스템)
+ - step7-2: User & Profile Controllers (사용자 관리)
+ - step7-3: Tag & Recommendation Controllers (태그/추천)
+ - step7-4: Gym, Route, Climbing Controllers (암장/루트)
+ - step7-5: Community, Payment, Notification, System Controllers (커뮤니티/결제/시스템)
 - step7-5_security_audit_report.md - 완료 (보안 감사 보고서: 91.3/100점)
 - step8-1~8-4: Security 설정 파일들 (40개 파일)
-  - step8-2d1: SecurityAuditLogger (보안 감사 로거, 297줄)
-  - step8-2d2: ThreatDetectionService (위협 탐지, 323줄)
-  - step8-2d3: SecurityMonitoringConfig (보안 모니터링, 372줄)
-- step9-1~9-6: Testing 준비 파일들 (91개 파일)
+ - step8-2d1: SecurityAuditLogger (보안 감사 로거, 297줄)
+ - step8-2d2: ThreatDetectionService (위협 탐지, 323줄)
+ - step8-2d3: SecurityMonitoringConfig (보안 모니터링, 372줄)
+- step9-1~9-6: Testing 설계 파일들 (91개 파일 완성)
+ - step9-1: 단위 테스트 설계 (Repository & Service 테스트)
+ - step9-2: 통합 테스트 설계 (Controller & API 테스트)
+ - step9-3: 성능 테스트 설계 (부하 & 스트레스 테스트)
+ - step9-4: 보안 테스트 설계 (인증 & 권한 테스트)
+ - step9-5: E2E 테스트 설계 (사용자 시나리오 테스트)
+ - step9-6: 테스트 자동화 설계 (CI/CD 파이프라인)
 - INDEX.md - 완료 (357개 파일 완전 인덱스)
 - QUICKREF.md - 완료 (Claude Code 최적화 참조 가이드)
 - README.md - 완료
 
 ## 현재 진행 상황
-- **현재 위치**: 9단계 Testing 설계까지 완료 (100% 달성)
-- **완료**: 9단계 Testing 설계 (91개 Testing 파일 완성)
-- **완료**: 8단계 Security 설정 (56개 Security 파일 완성)
-- **완료**: 7단계 Controller & DTO (15개 Controller + 65개 DTO 완성)
-- **완료**: 6단계 Service 레이어 (총 20개 Service 완성)
+- **현재 위치**: 9단계 Testing 설계까지 완료 (100% 달성!)
+- **완료**: 9단계 Testing 설계 (91개 Testing 파일 설계 완성)
+- **완료**: 8단계 Security 설정 (56개 Security 파일 설계 완성)
+- **완료**: 7단계 Controller & DTO (15개 Controller + 65개 DTO 설계 완성)
+- **완료**: 6단계 Service 레이어 (총 20개 Service 설계 완성)
 - **최종 완성**: 모든 설계 단계 100% 완성 (353개 설계 파일, 100% 최적화)
 - **다음 할 일**: 설계 기반 실제 코드 구현 시작
 
-## 📝 개발 노트
+## 개발 노트
 - 소셜 로그인: 4개 제공자 (GOOGLE, KAKAO, NAVER, FACEBOOK)
 - 핵심 기능: 통합 태그 시스템 기반 개인화 추천
 - 기술 스택: Spring Boot 3.2+, MySQL 8.0, Redis 7.x
@@ -277,9 +289,9 @@ Phase 3: 통합 테스트 및 최적화
 - **파일 최적화 완료**: 353개 설계 파일 중 100%가 1000라인 이하
 - **세분화 효과**: 토큰 제한 대응, 단계별 품질 검증, 유지보수성 극대화
 - **최근 세분화 완료**:
-  - System Services: step6-6d1~d4 (4개 파일)
-  - Response DTOs: step7-4e1~e2 (2개 파일)
-  - Security Monitoring: step8-2d1~d3 (3개 파일)
+ - System Services: step6-6d1~d4 (4개 파일)
+ - Response DTOs: step7-4e1~e2 (2개 파일)
+ - Security Monitoring: step8-2d1~d3 (3개 파일)
 - Service 레이어: 총 20개 Service 완성 (인증4개, 암장루트4개, 태그추천4개, 커뮤니티4개, 결제알림4개)
 - Service 레이어 세분화: step6-1~6-6 (각 4개씩) 체계적 분할로 관리성 극대화
 - 주요 Service 기능: JWT인증, 소셜로그인, AI추천시스템, 한국PG연동, FCM알림, Redis캐싱, 시스템모니터링
@@ -292,7 +304,7 @@ Phase 3: 통합 테스트 및 최적화
 ## 🗂 프로젝트 구조 요약
 ### 데이터베이스 (50개 테이블)
 - USER 도메인: 5개 (users, user_profile, user_verifications, user_agreements, social_accounts)
-- AUTH 도메인: 2개 (api_tokens, api_logs)  
+- AUTH 도메인: 2개 (api_tokens, api_logs)
 - GYM 도메인: 5개 (gyms, gym_branches, gym_members, branch_images, walls)
 - CLIMB 도메인: 3개 (climbing_levels, climbing_shoes, user_climbing_shoes)
 - TAG 도메인: 4개 (tags, user_preferred_tags, route_tags, user_route_recommendations)
@@ -305,7 +317,7 @@ Phase 3: 통합 테스트 및 최적화
 - SYSTEM 도메인: 3개 (agreement_contents, external_api_configs, webhook_logs)
 
 ### 핵심 기능
--  AI 기반 루트 추천: 태그 매칭(70%) + 레벨 매칭(30%)
+- AI 기반 루트 추천: 태그 매칭(70%) + 레벨 매칭(30%)
 - 🏷 통합 태그 시스템: 6가지 카테고리 (STYLE, MOVEMENT, TECHNIQUE, HOLD_TYPE, WALL_ANGLE, FEATURE)
 - 🇰🇷 한국 특화: GPS 좌표, 한글 지원, 휴대폰 인증, 가상계좌 결제
 
@@ -315,7 +327,7 @@ Phase 3: 통합 테스트 및 최적화
 - N:M 관계: users ↔ tags, routes ↔ tags, users ↔ routes
 - 계층형: comments.parent_id, route_comments.parent_id
 
-##  개발 환경 설정
+## 개발 환경 설정
 ### 필수 명령어
 ```bash
 # 데이터베이스 생성
@@ -334,7 +346,7 @@ CALL CalculateUserRouteRecommendations(1);
 - gym_branches: (latitude, longitude) 위치 인덱스
 - user_route_recommendations: (user_id, recommendation_score DESC)
 
-##  진행률
+## 진행률
 - [x] 데이터베이스 스키마 분석: 100%
 - [x] 태그 시스템 분석: 100%
 - [x] Spring Boot 가이드: 100%
@@ -343,7 +355,10 @@ CALL CalculateUserRouteRecommendations(1);
 - [x] JPA 엔티티 생성: 100%
 - [x] Repository 레이어: 100%
 - [x] Service 레이어 (총 20개): 100%
-- [x] 전체 프로젝트: 100% (9/9 단계 완료) 
+- [x] Controller & DTO 설계: 100%
+- [x] Security 설정 설계: 100%
+- [x] Testing 설계: 100%
+- [x] 전체 프로젝트 설계: 100% (9/9 단계 완료!)
 - [x] 파일 최적화: 100% (353/353개 설계 파일이 1000라인 이하)
 - [x] Claude Code 최적화: INDEX.md, QUICKREF.md 인덱스 시스템 완비
 
@@ -411,7 +426,7 @@ claude code "QUICKREF.md에서 User 도메인 핵심 파일들 알려줘"
 claude code "step6-6d1_system_monitoring.md 기반으로 시스템 모니터링을 구현해줘"
 
 # 4. 세분화된 파일 활용
-claude code "step7-4e1_gym_response_dtos.md와 step7-4e2_route_climbing_response_dtos.md를 
+claude code "step7-4e1_gym_response_dtos.md와 step7-4e2_route_climbing_response_dtos.md를
 조합해서 전체 Response DTO 시스템을 구현해줘"
 ```
 
